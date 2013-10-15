@@ -1,0 +1,173 @@
+We plan to analyze and extend MCSA in order to achieve numerical efficiency,
+robustness, and accuracy combined with resiliency and performance on current
+and future HPC architectures.  The objective is to obtain resiliency in a
+manner that naturally fits into the complete MCSA algorithm.  Numerical
+characterization and improvements to MCSA will be performed using the tools of
+standard numerical analysis.  We intend to verify solver resiliency through
+fault injection.  Likewise, we will extrapolate performance estimates to
+proposed future HPC architectures by developing a performance model.
+
+Numerical investigations of MCSA will be performed in two phases (a)
+demonstrating convergence, accuracy, efficiency, and robustness, and (b)
+determining the applicability of subspace iteration schemes.  Algorithmic
+investigations will be focused on improving parallel performance.  Both
+numerical and algorithmic research will investigate resiliency aspects of the
+solution process.  We define resiliency as the ability to recover from both
+hard and soft errors.  Soft errors consist of logical, floating-point, and
+other processor evaluation faults short of process failure.  Hard errors are
+full process failures.  We will show how we can address each failure type
+algorithmically through numerical analysis and parallel redundancy.
+
+The first stage of our numerics research will be demonstrating convergence,
+accuracy, efficiency, and robustness of the MCSA algorithm.  Preliminary
+results indicate that the fundamental solver converges and is efficient for
+sparse SPD systems.  However, significant analysis remains to determine
+
+ * its convergence properties on non-symmetric systems;
+ * its effectiveness as the linear solver in non-linear Newton methods;
+ * an analytical framework that relates weight cutoff and number of histories
+   to problem parameters;
+ * the effect of high variance events on convergence and robustness.
+
+All of our preliminary studies have focused on sparse SPD systems, in which we
+have shown MCSA to be competitive with PCG.  Because MCSA has no requirements
+on symmetry or positive-definiteness, it is anticipated that the method will
+compare favorably to GMRES, BICGSTAB, or TFQMR.
+
+In general, deterministic and Monte Carlo solution methods have competing
+requirements with regard to achieving concurrency; efficient parallelism in
+deterministic methods is often achieved by decomposing the global phase space
+as much as possible, whereas in Monte Carlo efficiency is often the result of
+replicating as much of the phase space as possible.  An additional constraint
+beyond pure performance considerations is the best decomposition strategy that
+can aid resiliency, particularly to hard system errors.  Balancing these
+requirements, we propose to use a recently developed algorithm for Monte Carlo
+called Multi-Set, Overlapping Domain (MSOD).
+
+The resilience of the proposed algorithm will be modeled though a series of
+fault injection campaigns. The impact of a hard or soft error on the algorithm
+will be investigated by artificially creating such errors during algorithm
+execution and by observing the resulting runtime behavior, execution time, and
+output. The two most likely errors in an extreme-scale system are a process
+failure, e.g., a detected but unrecoverable error leading to process
+termination, and silent data corruption (SDC), e.g., an undetected bit flip in
+a memory latch. Both error types will be injected based on their probability,
+i.e., with a certain frequency and probability distribution, targeting
+specific algorithm vulnerabilities.
+
+The error probability will be modeled using historical log data from ORNL
+systems and assumptions communicated by HPC vendors, such as Cray and Intel,
+regarding the reliability of future-generation systems. The algorithm
+vulnerabilities will be modeled using a whitebox analysis for identifying the
+most vulnerable execution paths and data structures in combination with
+runtime profiling for identifying system component (processor, memory, and
+network) usage. Correlating algorithm vulnerabilities with system component
+usage provides a number of injection points at which a specific error class is
+most likely and is expected to result in a significant impact, such as a
+process fault during a critical collective operation or SDC in the most
+significant bits of an important value. The fault injection campaigns will
+utilize different existing technologies to model the resilience of the
+algorithm on today's and on future-generation HPC systems.
+
+The fault injection campaigns will provide the data points needed to model the
+resilience of the proposed algorithm, such that the probability of computing a
+correct result within a certain time to solution can be estimated for both
+error classes depending on the reliability properties of the HPC system, the
+scale of the application run, and the problem size.
+
+For investigation of hard errors on today's HPC systems, a fault-tolerant MPI
+solution will be used to implement a fully functional resilient algorithm atop
+a message passing runtime environment that is capable of detecting and
+surviving process failures and notifying an application about each
+failure. Injecting a hard error is as simple as manually killing a
+process. The fault-tolerant MPI automatically reconfigures to survive the
+process failure and notifies the application about the failure. The
+notification can be used to trigger any reconfiguration of the application,
+including algorithm-level recovery. The PIs have access to two different
+fault-tolerant MPI solutions, FT-MPI developed by the University of Tennessee
+in 2001 and the prototype for the MPI 3.x standard with fault tolerance
+support developed by ORNL in 2011. This fault injection campaign will observe
+the impact of hard errors on the algorithm's execution time and result.
+
+For investigation of soft errors on today's HPC systems, the redundant MPI
+implementation, redMPI, will be used to perform comparative studies at
+runtime. redMPI transparently executes an application in a redundant fashion
+by utilizing the MPI performance tool interface, PMPI, to transparently
+intercept MPI calls from an application and to hide all redundancy-related
+mechanisms. A redundantly executed application runs with $r*m$ native MPI
+processes, where $r$ is the number of MPI ranks visible to the application and
+$m$ is the replication degree.
+
+Under normal operation, messages between redundant nodes are replicated and
+compared for hard and soft error detection and correction. For fault injection
+campaigns, the message replication and comparison protocol performs detection
+only. This permits the original parallel application to be tainted with data
+corruption, while the fully redundant parallel application serves as a correct
+live control for close observation of the error impact, including its
+propagation, detection, and masking. Differences between the tainted execution
+and the control are detected and recorded at runtime by the message
+replication and comparison protocol, providing detailed information about
+error sensitivity and propagation.
+
+For investigation of hard and soft errors on future-generation HPC systems,
+the Extreme-scale Simulator (xSim) performance investigation toolkit will be
+utilized. xSim is a recently developed performance investigation toolkit that
+permits running HPC applications in a controlled environment with millions of
+concurrent execution threads. It allows observing application performance in a
+simulated extreme-scale system for hardware/software co-design. Using a
+lightweight parallel discrete event simulation, xSim executes an application
+on a much smaller HPC system in an oversubscribed fashion with a virtual wall
+clock time, such that performance data can be extracted based on a processor
+and a network model with the appropriate simulation scalability/accuracy
+trade-off. xSim is designed like a traditional performance tool, as an
+interposition library that sits between the MPI application and the MPI layer,
+using the MPI performance tool interface. It currently holds the world record
+in extreme-scale simulation, running up to 134,217,728 communicating MPI
+tasks, each with its own process context, using just a 960-core Linux-based
+cluster.
+
+To insure the success of the MCREX solvers on exascale hardware, a vigorous
+effort will be undertaken to model the algorithm and code performance
+characteristics as part of the algorithm design process.  This work will take
+place in the setting of the following interrelated steps.
+
+Algorithm Development: The MCREX solver algorithms will be designed with
+  concern not only for the algorithm numerics and convergence properties but
+  also with anticipated future hardware characteristics in mind, such as the
+  presence of hard and soft errors, increasing time and power costs of
+  communicating off-die and off-node, decreasing relative sizes of high-speed
+  cache memories and register files, and the need to expose increasing amounts
+  of thread-level parallelism.
+
+Code Implementation. The algorithms will be implemented in software, initially
+  as prototypes and then as more full-fledged versions, to be evaluated and
+  tested on current state-of-the-art HPC hardware such as the ORNL Titan
+  system and follow-on hardware.
+
+Performance Analysis. The performance characteristics of these codes will be
+  determined, using tools such as VAMPIR, CrayPat and other profiling tools to
+  understand the performance hot spots of the algorithms and understand how
+  the performance depends on characteristics of the different system hardware
+  components.
+
+Performance Modeling.  Quantitative models will be developed to predict the
+  performance of the algorithms for different problem types of interest under
+  the assumption of multiple potential future architecture scenarios, based on
+  possible futures for exascale hardware.  These findings will not only
+  provide a feedback loop for further algorithm design but also provide an
+  assessment of the relative effectiveness of alternative system hardware
+  designs for algorithms of this type. The fully developed performance model
+  will be simulated using the performance investigation features of the xSim
+  toolkit.
+
+The tasks for each year of the proposal are as follows:
+
+1 Derive and implement linear ADR model equations for MCSA algorithm; Y1
+2 Investigate solver runtime parameters and performance for ADR model system;
+  Y1, Y2
+3 Analyze robustness of unbiased estimators to high-variance events; Y1, Y2
+4 Implement MSOD parallel algorithm; Y2
+5 Develop performance model for MSOD/MCSA algorithm; Y2, Y3
+6 Model algorithm resiliency using fault injection campaigns; Y2, Y3
+7 Estimate algorithm performance on future systems using the performance model
+  and xSim; Y3

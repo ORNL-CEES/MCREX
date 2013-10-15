@@ -1,0 +1,91 @@
+%%---------------------------------------------------------------------------%%
+%% emory.tex
+%% LAB 12-742 Proposal
+%% Thomas M. Evans 
+%%---------------------------------------------------------------------------%%
+
+\documentclass[11pt]{article}
+%
+% include ORNL proposal style by C. Webster
+%
+\usepackage{ornl_proposal}
+\usepackage{subfigure}
+\usepackage{wrapfig}
+\usepackage[alwaysadjust]{paralist}
+\usepackage{pdfpages}
+
+%Turn off when finished
+%\usepackage[left]{showlabels}
+
+\graphicspath{{./figures/}}
+
+\pagestyle{fancy}
+% \headrulewidth -2pt
+% \footrulewidth 0pt
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\small\em MCREX: Using MC to achieve resiliency and performance}
+\rhead{\small PI: Evans, Thomas, M.}\chead{}
+\cfoot{}
+\lfoot{}
+\rfoot{} 
+
+%%---------------------------------------------------------------------------%%
+
+\begin{document}
+
+%%---------------------------------------------------------------------------%%
+%% ABSTRACT
+%%---------------------------------------------------------------------------%%
+
+\input{frontpage}
+
+%%---------------------------------------------------------------------------%%
+%% MAIN NARRATIVE
+%%---------------------------------------------------------------------------%%
+
+\input{narrative}
+
+%%---------------------------------------------------------------------------%%
+%% BIBLIOGRAPHY
+%%---------------------------------------------------------------------------%%
+
+\bibliography{references,references_engelmann}
+\bibliographystyle{rnote}
+\pagebreak
+
+%%---------------------------------------------------------------------------%%
+%% BACK MATTER
+%%---------------------------------------------------------------------------%%
+
+\appendix
+
+\section{Biographical sketches}
+\label{app:bios}
+
+\input{./bios/benzi}
+
+%%---------------------------------------------------------------------------%%
+\section{Current \& pending support}
+\label{sec:current--pending}
+
+\subsection{Emory senior personnel}
+
+\input{cnp/cnp_benzi}
+\pagebreak
+
+%%---------------------------------------------------------------------------%%
+
+\section{Facilities \& resources}
+
+\subsection{Emory University}
+\input{supp/emory}
+
+%%---------------------------------------------------------------------------%%
+
+\end{document}
+
+%%---------------------------------------------------------------------------%%
+%% end of emory.tex
+%%---------------------------------------------------------------------------%%
+

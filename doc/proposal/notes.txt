@@ -1,0 +1,15 @@
+NOTES WHILE PREPARING PROPOSAL
+==============================
+
+* Somewhere we may want to mention that when the residual is large everywhere,
+  MCSA may lose efficiency.  The MC part of the solve is most efficient when
+  the residual is large in only a few parts of the vector space.
+
+* 40 node+GPU per node (24 cores per node) Cumulus computing cluster is
+  available for performance and resiliency modeling
+
+* xSIM can be used to do Performance Modeling verification
+
+* define model problems with references (ADR and incompressible Navier-Stokes)
+
+* casl reference

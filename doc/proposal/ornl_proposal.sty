@@ -1,0 +1,217 @@
+%--------------------------------------------------------------
+% ORNL_PROPOSAL.STY
+% Author:  Clayton Webster
+% Last modified:  01.26.12
+%--------------------------------------------------------------
+%
+%  Include packages
+%
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{wrapfig}
+\usepackage{ae} 
+\usepackage{amsmath, amssymb, amsbsy, amsfonts}
+\usepackage{appendix}
+%\usepackage{backref}
+\usepackage{bm}
+\usepackage{boxedminipage}
+\usepackage{cite}
+\usepackage{color, colortbl}
+\usepackage{comment}
+\usepackage{crop}
+%\usepackage{fancyheadings, lastpage}
+\usepackage{fancybox}
+\usepackage{fancyhdr, lastpage}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, bookmarksopen,
+            pdfauthor={Clayton G. Webster},
+            %pdfcreator={pdftex},
+            pdfsubject={algorithms},
+            linkcolor={blue},
+            anchorcolor={black},
+            citecolor={red},
+            filecolor={magenta},
+            menucolor={black},
+            pagecolor={red},
+            plainpages=false,pdfpagelabels,
+            backref=page,
+            urlcolor={blue}]{hyperref}
+\usepackage{longtable} 
+\usepackage{makeidx}
+\usepackage{mathrsfs}
+\usepackage{marginnote}
+\usepackage{multicol}
+%
+%  My definitions
+%
+\usepackage{mydef}
+%\usepackage[sort&compress]{natbib}
+\usepackage[nice]{nicefrac}
+\usepackage{pdfpages}
+%\usepackage{pstricks}
+%\usepackage{subeqn}
+\usepackage{simplemargins}
+\usepackage{tabularx}
+\usepackage{times}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage{xspace}
+%--------------------------------------------------------------
+%
+%  Define section heading and add to TOC
+%
+\makeatletter
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+                                  {-3.5ex \@plus -1ex \@minus -.2ex}%
+                                  {2.3ex \@plus.2ex}%
+                                  {\normalfont\Large\bfseries}}
+\makeatother
+%--------------------------------------------------------------
+%
+%  User-defined commands
+%
+\newcommand{\annual}{\$700,000} % one year
+\newcommand{\total} {\$2,100,000} % three year         
+%   
+%  Put title in here but space it accordingly
+%
+\newcommand{\Title} { 
+  \centerline{\Large\sc 
+    MCREX: Using Monte Carlo algorithms to achieve resiliency } 
+  \vskip3pt 
+  \centerline{\Large\sc 
+    and performance at scale for linear and non-linear }
+  \vskip3pt 
+  \centerline{\Large\sc 
+    solver applications }
+  }
+%
+%  Main PI 
+%
+\newcommand{\ProposalType}{LAB 12-742 Resilient Extreme-Scale Solvers} 
+\newcommand{\Author}{Dr.~Thomas M. Evans}
+\newcommand{\AuthorInst}{Oak Ridge National Laboratory}
+\newcommand{\AuthorEmail}{\href{mailto:evanstm@ornl.gov}
+  {\texttt{evanstm@ornl.gov}}}
+\newcommand{\AuthorDiv}{Reactor and Nuclear Systems Division}
+\newcommand{\AuthorTel}{(865) 576-3535} 
+\newcommand{\AuthorFax}{(865) 576-3513} 
+\newcommand{\Date}{\today} 
+\newcommand{\FundingDates}{October 1, 2012 to September 30, 2015}
+%
+\renewcommand*{\refname}{Literature cited}
+%\vskip5pt
+%\hrule 
+%\vskip10pt}
+%
+\renewcommand*{\contentsname}{Table of contents}
+%\vskip5pt
+%\hrule 
+%\vskip10pt}
+%--------------------------------------------------------------
+%
+%  Set margins and spacing
+%
+%\setleftmargin{1.0in}
+%\setrightmargin{1.0in}
+%\settopmargin{1.0in}
+%\setbottommargin{1.0in}
+\setallmargins{1.0in}
+\setlength{\headsep}{15pt}
+\setlength{\footskip}{25pt}
+\setlength{\parskip}{0pt}
+\setlength{\parsep}{0pt}
+\setlength{\topskip}{0pt}
+\setlength{\parindent}{1.5em}
+\setlength{\partopsep}{0pt}
+\linespread{1.0}
+%--------------------------------------------------------------
+%
+%  Define the page styles used in ORNL proposal
+%
+\fancypagestyle{plain}
+{
+\lhead{}
+\rhead{}
+\lfoot{} 
+\rfoot{\small{Page\ \thepage}}
+\renewcommand{\headrulewidth}{0pt}
+}
+\fancypagestyle{toc}
+{
+\lfoot{} 
+\rfoot{\small{Page\ \thepage}}
+\lhead{\small\em  MCREX: Using MC to achieve resiliency and performance}
+\rhead{\small PI: Evans, Thomas, M.}
+\renewcommand{\headrulewidth}{0.1pt}
+}
+\pagestyle{fancy}
+% \headrulewidth -2pt
+% \footrulewidth 0pt
+\renewcommand{\headrulewidth}{0.1pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\small\em MCREX: Using MC to achieve resiliency and performance}
+\rhead{\small PI: Evans, Thomas, M.}\chead{}
+\cfoot{}
+\lfoot{}
+\rfoot{\small{Page\ \thepage\ of\ \pageref{LastPage}}} 
+
+%%---------------------------------------------------------------------------%%
+%% Stuff needed by TME for neutronics section
+
+\newcommand{\bra}[1]{\ensuremath{\langle #1|}}
+\newcommand{\ket}[1]{\ensuremath{|#1\rangle}}
+\newcommand{\obra}[2]{\ensuremath{\langle #1|#2}}
+\newcommand{\oket}[2]{\ensuremath{#2|#1\rangle}}
+\newcommand{\bket}[2]{\ensuremath{\langle #1|#2\rangle}}
+\newcommand{\obket}[3]{\ensuremath{\langle #1|#3|#2\rangle}}
+\newcommand{\kbra}[2]{\ensuremath{|#2\rangle\langle #1|}}
+\newcommand{\ve}[1]{\ensuremath{\mathbf{#1}}}
+\newcommand{\dive}[1]{\ensuremath{\nabla\cdot\mathbf{#1}}}
+\newcommand{\curl}[1]{\ensuremath{\nabla\times\mathbf{#1}}}
+\newcommand{\pder}[2]{\ensuremath{\frac{\partial #1}{\partial #2}}}
+\newcommand{\der}[2]{\ensuremath{\frac{d #1}{d #2}}}
+\newcommand{\grad}[1]{\ensuremath{\nabla #1}}
+\newcommand{\ele}[2]{\ensuremath{^{#1}\text{#2}}}
+\newcommand{\sn}[2]{\ensuremath{#1\times 10^{#2}}}
+\newcommand{\invcm}{\ensuremath{\text{cm}^{-1}}}
+\newcommand{\barsig}{\ensuremath{\bar{\sigma}}}
+\newcommand{\barphi}{\ensuremath{\bar{\phi}}}
+
+\newcommand{\vA}{\ensuremath{\ve{A}}}
+\newcommand{\vb}{\ensuremath{\ve{b}}}
+\newcommand{\vx}{\ensuremath{\ve{x}}}
+\newcommand{\vr}{\ensuremath{\ve{r}}}
+\newcommand{\vu}{\ensuremath{\ve{u}}}
+\newcommand{\vI}{\ensuremath{\ve{I}}}
+\newcommand{\vH}{\ensuremath{\ve{H}}}
+\newcommand{\vP}{\ensuremath{\ve{P}}}
+
+\newcommand{\Cv}{\ensuremath{C_{v}}}
+\newcommand{\ros}{\ensuremath{\sigma_{\scriptscriptstyle\mathrm{R}}}}
+\newcommand{\bOmega}{\ensuremath{\mathbf{\Omega}}}
+
+\newcommand{\dt}{\ensuremath{\Delta t}}
+\newcommand{\sign}{\ensuremath{\tilde{\sigma}^n}}
+\newcommand{\qn}{\ensuremath{q^n}}
+\newcommand{\Tn}{\ensuremath{T^n}}
+\newcommand{\Dn}{\ensuremath{D^n}}
+\newcommand{\phin}{\ensuremath{\phi^n}}
+\newcommand{\Di}{\ensuremath{\Delta_i}}
+\newcommand{\Dj}{\ensuremath{\Delta_j}}
+\newcommand{\Dk}{\ensuremath{\Delta_k}}
+
+\newcommand{\sigT}{\ensuremath{\sigma_{T\,ijk}}}
+\newcommand{\sigm}{\ensuremath{\sigma^{-}}}
+\newcommand{\sigp}{\ensuremath{\sigma^{+}}}
+
+\newcommand{\bphi}{\ensuremath{\boldsymbol{\phi}}}
+
+\newcommand{\latin}[1]{\textit{#1}}
+
+\newcommand{\ff}{\ensuremath{\mathrm{f}}}
+
+
+
+

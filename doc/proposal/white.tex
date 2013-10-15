@@ -1,0 +1,194 @@
+%%---------------------------------------------------------------------------%%
+%% white.tex
+%%
+%% White paper for MCREX proposal
+%%---------------------------------------------------------------------------%%
+
+\documentclass[10pt,letterpaper,english]{article}
+\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{tmath}
+
+%%---------------------------------------------------------------------------%%
+
+\newcommand{\vA}{\ensuremath{\ve{A}}}
+\newcommand{\vb}{\ensuremath{\ve{b}}}
+\newcommand{\vx}{\ensuremath{\ve{x}}}
+\newcommand{\vr}{\ensuremath{\ve{r}}}
+\newcommand{\vI}{\ensuremath{\ve{I}}}
+\newcommand{\vH}{\ensuremath{\ve{H}}}
+\newcommand{\vP}{\ensuremath{\ve{P}}}
+
+%%---------------------------------------------------------------------------%%
+
+\title{MCREX: Using Monte Carlo algorithms to achieve resiliency and
+  performance at scale for linear and non-linear solver applications}
+\author{Thomas Evans\thanks{PI}, Steven Hamilton, Wayne Joubert\\
+  Oak Ridge National Laboratory
+  \and Michele Benzi\\Emory University}
+\date{July 10, 2012}
+
+\begin{document}
+
+\pagestyle{fancy}
+\lhead{MCREX}
+\rhead{T.M. Evans}
+
+\maketitle
+
+%%---------------------------------------------------------------------------%%
+
+\section*{Proposal Objective}
+
+The DOE LAB 12-742 FOA, {\em Resilient Extreme-Scale Solvers}, is looking for
+research proposals in numerical solver algorithms that address three
+components:
+\begin{enumerate}
+\item Advances in solvers
+\item Fault tolerance and resilience at the algorithmic level
+\item Performance of proposed algorithms
+\end{enumerate} 
+To address these topical areas we are proposing to investigate new stochastic
+methods for solving linear systems or Monte Carlo Resilient, Exascale (MCREX)
+solvers.  The family of methods that we have developed build on the sequential
+Monte Carlo work of Halton \cite {halton_1962, halton_1994}. The methods that
+we have developed use Monte Carlo to accelerate a fixed-point iteration;
+therefore, we have called them Monte Carlo Synthetic Acceleration
+(MCSA). Preliminary work \cite{rmc,mc} using MCSA has demonstrated that they
+are at least as efficient as Jacobi-preconditioned Conjugate Gradient (PCG) on
+sparse, SPD systems.
+
+MCSA fits ideally into this call because, as described in the next section, we
+can show how these algorithms can be used to address all three required
+aspects of the FOA.  Furthermore, we will demonstrate how this can be achieved
+by a small focused team.  We are seeking an award in the \$500K range, which
+should be sufficient to perform algorithmic enhancements, demonstrate
+resiliency, and do performance analysis.
+
+%%---------------------------------------------------------------------------%%
+
+\section*{Research Plan}
+
+The Fixed-Point Monte Carlo Synthetic-Acceleration (MCSA) method is defined,
+for the linear system, $\vA\vx = \vb$, as follows:
+\begin{subequations}
+  \begin{gather}
+    \vx^{l+1/2} = (\vI - \vA)\vx^l + \vb\:, \\
+    %%
+    \vr^{l+1/2} = \vb - \vA\vx^{l+1/2}\:,\\
+    %%
+    \hat{\vA}\delta\vx^{l+1/2} = \vr^{l+1/2}\:,
+    \label{eq:MCSA-residual_solve}\\ 
+    %%
+    \vx^{l+1}=\vx^{l+1/2}+\delta\vx^{l+1/2}\:.
+  \end{gather}
+  \label{eq:general-MCSA}
+\end{subequations}
+We use Monte Carlo to perform random walks through the elements of the matrix
+to solve Eq.~(\ref{eq:MCSA-residual_solve}). The hat on $\vA$ indicates that
+the Monte Carlo solution only approximately inverts this operator.  Thus, we
+have defined a scheme in which the initial estimate of $\vx$ in each iteration
+is updated using a single fixed-point iteration.  The residual is calculated
+and is used as a source to estimate the error, $\delta\vx^{l+1/2}$.
+
+As described in Refs.~\cite{rmc} and \cite{mc}, the power of this algorithm
+derives from the fact that random walks are only performed where the residual
+is large.  The components of the system that are converged do not require
+further work.  Furthermore, as opposed to PCG, there are no symmetry
+requirements for MCSA; thus, it could be an excellent alternative to GMRES,
+especially for consistently-treated non-linear problems that are solved using
+Newton's method.  Also, this algorithm naturally addresses resiliency because
+random walk histories that are lost due to processor or system faults can be
+neglected during any iteration.
+
+The proposed research plan for this project is broken down to address each
+component of the FOA:
+\begin{enumerate}
+\item Advances in solvers
+  \begin{itemize}
+  \item Investigate efficiency of MCSA on non-symmetric matrix systems.
+  \item Investigate the efficiency of MCSA on non-linear solvers using
+    automatic differentiation of the Jacobian matrix elements.  Numerical
+    automatic differentiation will be provided by Trilinos.
+  \item Investigate the extension of the method to non-stationary (Krylov
+    sub-space) iteration schemes.
+  \end{itemize}
+\item Fault tolerance and resilience at the algorithmic level
+  \begin{itemize}
+  \item Incorporate MPI error signals into the algorithm to address cases of
+    core failure.
+  \end{itemize}
+\item Performance of proposed algorithms
+  \begin{itemize}
+  \item Leverage work from CASL on the Multi-Set, Overlapping Domain (MSOD)
+    Monte Carlo parallel decomposition method to test its efficiency for MCSA.
+  \item Develop heuristic models to project its performance on projected
+    heterogeneous, exa-scale computing platforms.
+  \end{itemize}
+\end{enumerate}
+The model equations that we will utilize in all of these studies will be the
+linear heat transfer equation and the non-linear, incompressible,
+Navier-Stokes equations.
+
+%%---------------------------------------------------------------------------%%
+
+\section*{Summary}
+
+We have proposed a highly focused, innovative project that naturally addresses
+all three components of the FOA: novel algorithmic advances, resiliency, and
+performance modeling.  The proposed team is 
+\begin{center}
+  \begin{tabular}{llr}\hline\hline
+    \multicolumn{1}{c}{Team Member} & 
+    \multicolumn{1}{c}{Role}        & 
+    \multicolumn{1}{c}{Budget (K)} \\\hline
+    %%
+    Tom Evans       & PI                & 100  \\
+    Steven Hamilton & Solver Algorithms & 175  \\
+    Wayne Joubert   & Performance       & 100  \\
+    Michele Benzi   & Solver Algorithms & 75   \\
+    Other           & Resiliency        & 100  \\ \hline
+    {\bf Total}     &                   & 550  \\
+    \hline\hline
+  \end{tabular}
+\end{center}
+The strength of this proposal is its focus on a single, innovative solver
+technology that addresses aspects of all three pieces of the FOA.  Therefore,
+we feel that a local, small team is both justified and appropriate.
+
+%%---------------------------------------------------------------------------%%
+
+\begin{thebibliography}{300}
+
+\bibitem{halton_1962} 
+  J.H. Halton. Sequential Monte Carlo, \textit{
+    Proc. Camb. Phil. Soc.}, {\bf 58}, pp. 57-78, 1962.
+
+\bibitem{halton_1994} 
+  J.H. Halton. Sequential Monte Carlo Techniques for the
+  Solution of Linear Systems, \textit{J. Sci. Comp.}, {\bf 9}(2), pp. 213-257,
+  1994.
+  
+\bibitem{rmc}
+  T.M. Evans, T.J. Urbatsch, H.Lichtenstein, and J.E. Morel. A
+  residual Monte Carlo Method for Discrete Thermal Radiative
+  Diffusion. \textit{J. Comp. Phys.}, {\bf 189}(2), 539--556, 2003.
+
+\bibitem{mc} 
+  T.M. Evans and S.W. Mosher.  A Monte Carlo Synthetic
+  Acceleration Method for the Non-Linear, Time-Dependent Diffusion
+  Equation.  \textit{International Conference on Mathematics,
+    Computational Methods and Reactor Physics}, Saratoga Springs, NY,
+  ISBN: 978-0-89448-069-0, American Nuclear Society, LaGrange Park,
+  IL, 2009.
+
+\end{thebibliography}
+
+\end{document}
+
+%%---------------------------------------------------------------------------%%
+%% end of white.tex
+%%---------------------------------------------------------------------------%%
+
+
