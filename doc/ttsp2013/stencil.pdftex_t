@@ -1,0 +1,31 @@
+\begin{picture}(0,0)%
+\includegraphics{chapters/spn_equations/stencil.pdf}%
+\end{picture}%
+\setlength{\unitlength}{1657sp}%
+%
+\begingroup\makeatletter\ifx\SetFigFont\undefined%
+\gdef\SetFigFont#1#2#3#4#5{%
+  \reset@font\fontsize{#1}{#2pt}%
+  \fontfamily{#3}\fontseries{#4}\fontshape{#5}%
+  \selectfont}%
+\fi\endgroup%
+\begin{picture}(8889,8214)(3544,-8353)
+\put(5941,-5821){\makebox(0,0)[lb]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\phi_{i-1,j-1}$}%
+}}}}
+\put(8146,-5821){\makebox(0,0)[lb]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\phi_{i,j-1}$}%
+}}}}
+\put(5941,-3751){\makebox(0,0)[lb]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\phi_{i-1,j}$}%
+}}}}
+\put(10441,-5821){\makebox(0,0)[lb]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\phi_{i+1,j-1}$}%
+}}}}
+\put(10441,-3751){\makebox(0,0)[lb]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\phi_{i+1,j}$}%
+}}}}
+\put(8146,-3751){\makebox(0,0)[lb]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\phi_{i,j}$}%
+}}}}
+\put(10441,-1726){\makebox(0,0)[lb]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\phi_{i+1,j+1}$}%
+}}}}
+\put(5941,-1726){\makebox(0,0)[lb]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\phi_{i-1,j+1}$}%
+}}}}
+\put(8146,-1726){\makebox(0,0)[lb]{\smash{{\SetFigFont{7}{8.4}{\rmdefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$\phi_{i,j+1}$}%
+}}}}
+\end{picture}%
