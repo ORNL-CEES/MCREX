@@ -1,0 +1,63 @@
+\documentclass[letterpaper,12pt]{article}
+\usepackage[top=1.0in,bottom=1.0in,left=1.0in,right=1.0in]{geometry}
+\usepackage{verbatim}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{tmadd,tmath}
+\usepackage{longtable}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{tmath,tmadd}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage[mathcal]{euscript} 
+\usepackage[usenames]{color}
+\usepackage[
+naturalnames = true, 
+colorlinks = true, 
+linkcolor = black,
+anchorcolor = black,
+citecolor = black,
+menucolor = black,
+urlcolor = blue
+]{hyperref}
+
+%%---------------------------------------------------------------------------%%
+\author{Stuart R. Slattery, Thomas M. Evans, Steven P. Hamilton
+\\ \href{mailto:slatterysr@ornl.gov}{\texttt{slatterysr@ornl.gov}}
+}
+
+\date{\today} \title{Multilevel Monte Carlo Solvers for Linear Systems}
+\begin{document}
+\maketitle
+
+%%---------------------------------------------------------------------------%%
+\abstract
+
+Linear solvers based on Monte Carlo techniques are currntly being
+studied as potentially resilient alternatives to conventional
+iterative methods. These solvers produce stochastic estimates of the
+solutions to linear systems by estimating the terms of the Neumann
+series formed by the Richardson iteration; thus providing a stochastic
+realization of a relaxation method. The random walks used to estimate
+the solution are a variant of Markov Chain Monte Carlo (MCMC) methods
+and recent work has aimed to adapt various techniques in MCMC to
+linear solver applications.
+
+In this work we consider leveraging recent developments in multilevel
+MCMC where the space over which the Markov chains are generated is
+represented by a sequence of coarse and fine grids. The estimates on
+the grids are then combined via superposition to achieve results with
+lower statistical uncertainty than those on a single grid. When
+applied to Monte Carlo linear solvers the multilevel technique
+resembles the multigrid method where the Monte Carlo scheme acts as a
+stochastic smoother. We will present both the Monte Carlo method for
+linear systems as well as the multilevel method. We will then compare
+the performance of the multilevel method against that of the
+traditional method and discuss applicabililty to various problems.
+
+\end{document}
+
+
