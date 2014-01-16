@@ -70,14 +70,21 @@ handle the intense computational loads required by these models, and
 modern algorithms for solving these problems that leverage this high
 performance hardware. For nuclear reactor analysis, this predictive
 capability can enable tighter design tolerances for improved thermal
-performance and efficiency, higher fuel burn-up and therefore
-reduction in generated waste, and high confidence in accident scenario
-models. Modern high fidelity deterministic methods for large scale
-problems are often variants on the discrete ordinates ($S_N$) method
-\cite{evans_denovo:_2010}. For fission reactor neutronics simulations,
-the $S_N$ method requires potentially trillions of unknown angular
-flux moments to be computed to achieve good accuracy for the responses
-of interest \cite{slaybaugh_acceleration_2011}.
+performance and efficiency, higher fuel utilization, and high
+confidence in accident scenario models. Modern high fidelity
+deterministic methods for large scale problems are often variants on
+the discrete ordinates ($S_N$) method \cite{evans_denovo:_2010}. For
+fission reactor neutronics simulations, the $S_N$ method requires
+potentially trillions of unknown angular flux moments to be computed
+to achieve good accuracy for the responses of interest
+\cite{slaybaugh_acceleration_2011}. In the 1960's, Gelbard developed
+an ad-hoc, multidimensional extension of the simple single dimension
+planar $P_N$ equations that created a system of coupled,
+diffusion-like equations known as the simplified $P_N$ ($SP_N$)
+equations (cite gelbard). The reduction in numerical complexity
+compared to current deterministic solution methods using the $S_N$
+approximation could mean significant savings in both compute time and
+memory required.
 
 As machines begin to operate at hundreds of petaflops peak performance
 and beyond, trends toward reduced energy consumption will require
@@ -115,19 +122,15 @@ continuation of these studies, we have applied the method light water
 reactor problems discretized by the $SP_N$ equations. This system has
 no time dependence, a large scattering component, and assymetry in the
 linear operator, creating a set of problems complementary to the
-transient, opaque and symmetric systems of our previous analyis.
-
-In order to leverage Monte Carlo Synthetic Acceleration as a solution
-technique for neutron transport problems, its current formulation
-requires the linear operator and all preconditioners to be explicitly
-formed. Recent developments in the Exnihilo neutronics package at Oak
-Ridge National Laboratory have permitted generation of the $SP_N$
-system of equations for detailed neutronics models of fission
-reactor-based systems\cite{evans_simplified_2013}. By fully forming
-these equations and formulating them as a linear algebra problem
-instead of using an explicit iterative method, we now have access to
-modern advancements in computational linear algebra including Krylov
-solvers for asymmetric systems and algebraic preconditioning methods.
+transient, opaque, and symmetric systems of our previous analyis. In
+addition, solving the $SP_N$ equations in this way also breaks away
+from the $S_N$ forms of parallelism where spatial parallelism is
+achieved by an efficient parallel sweep, angular efficiency achieved
+by pipe-lining, and energy parallelism achieved by decoupling the
+groups. With the $SP_N$ equations as a full matrix system, we now can
+parallelize the problem as prescribed by the Monte Carlo algorithm,
+which may be significantly more scalable than current $S_N$ transport
+practices.
 
 The paper is organized as follows. First, we briefly introduce the
 model $SP_N$ problem and describe the application of the MCSA
@@ -189,39 +192,6 @@ scattering as defined on the left-hand side.
 
 \subsection{MCSA Solution of the $SP_N$ Equations}
 \label{subsec:mcsa_solution}
-Using the ideas of Halton, Evans and Mosher recently developed a Monte
-Carlo solution method that was not prohibited severely by the quality
-of the initial guess for the system \cite{evans_monte_2009} and later
-applied it more rigorously as a solution mechanism for the radiation
-diffusion equation \cite{evans_monte_2012}. With their new methods,
-they achieved identical numerical results as conventional Krylov
-solvers as well as comparable performance in both number of iterations
-and CPU time. Their approach was instead to use residual Monte Carlo
-as a synthetic acceleration for a stationary method. The
-\textit{Fixed-Point Monte Carlo Synthetic Acceleration} (MCSA) method
-is defined as:
-\begin{subequations}
-  \begin{gather}
-    \ve{x}^{k+1/2} = \ve{x}^k + \ve{r}^k\:,\\
-    \ve{r}^{k+1/2} = \ve{b} - \ve{A}\ve{x}^{k+1/2}\:,\\
-    \ve{A}\delta\ve{x}^{k+1/2} = \ve{r}^{k+1/2}\:,\\
-    \ve{x}^{k+1} = \ve{x}^{k+1/2} + \delta \ve{x}^{k+1/2}\:,\\
-    \ve{r}^{k+1} = \ve{b} - \ve{A}\ve{x}^{k+1}\:,
-  \end{gather}
-  \label{eq:mcsa}
-\end{subequations}
-where a Neumann-Ulam Monte Carlo method is used to generate the
-solution correction from the residual and Richardson's iteration in
-the first step has been rewritten as a residual correction. Using
-Monte Carlo in this way achieves the same effect as Halton's method,
-decoupling its convergence rate from the overall convergence rate of
-the method. Here, the approximate Monte Carlo solution is not driven
-to a particular convergence as it merely supplies a correction for the
-initial guess generated by Richardson's iteration. Rather, only a set
-number of histories are required using the Neumann-Ulam method to
-generate the correction. We refer the reader to
-\cite{evans_monte_2012} for a more rigorous defintion of the method.
-
 To generate the multiplication factor and steady-state flux
 distribution for this problem, at every eigenvalue iteration MCSA is
 used to solve the resulting $SP_N$ problem using the provided fission
@@ -259,6 +229,25 @@ iteration will dictate convergence and remain unchanged throughout the
 computation while the addition of fission to the system will only
 modify the source of neutrons and the multiplication factor while not
 affecting Monte Carlo transport.
+
+At each eigenvalue iteration, we then solve the linear system with the
+MCSA:
+\begin{subequations}
+  \begin{gather}
+    \ve{r}_{l} = \frac{1}{k^n}\ve{F}\mathbf{\Phi}^n -
+    \ve{M}\mathbf{\Phi}^{n+1}_{l}\:,\\
+    \mathbf{\Phi}^{n+1}_{l+1/2} = \mathbf{\Phi}^{n+1}_l + \ve{r}_l\:,\\
+    \ve{r}_{l+1/2} = \frac{1}{k^n}\ve{F}\mathbf{\Phi}^n -
+    \ve{M}\mathbf{\Phi}^{n+1}_{l+1/2}\:,\\
+    \ve{M}\delta\mathbf{\Phi}^{n+1}_{l+1/2} = \ve{r}_{l+1/2}\:,\\
+    \mathbf{\Phi}^{n+1}_{l+1} = \mathbf{\Phi}^{n+1}_{l+1/2} + \delta
+    \mathbf{\Phi}_{l+1/2}\:,
+  \end{gather}
+  \label{eq:mcsa}
+\end{subequations}
+where the $l$ subscript indicates the MCSA iteration number and $n$
+again indicates the eigenvalue iteration. We refer the reader to
+\cite{evans_monte_2012} for a more rigorous defintion of the method.
 
 \subsection{Preconditioned MCSA}
 \label{subsec:preconditioning}
@@ -343,6 +332,37 @@ do, however, gain the benefits of this general preconditioning by
 building the iteration matrix in
 Eq~(\ref{eq:left_right_iteration_matrix}) from the fully
 preconditioned linear operator.
+
+\subsection{Alternative Fixed Point Iterations}
+\label{subsubsec:alternative_fixed_point}
+In addition to preconditioning the basic Richardson iteration, the
+MCSA algorithm presented in Eq~(\ref{eq:mcsa}) can be used to
+accelerate any fixed point iteration which only depends on the state
+(typically the residual) of the last iteration. As an example, for
+positive-definite but not necessarily symmetric problems, the minimal
+residual iteration \cite{saad_iterative_2003} can be used in
+conjunction with MCSA:
+\begin{subequations}
+  \begin{gather}
+    \alpha = \frac{\langle \mathbf{A}\mathbf{r}^k, \mathbf{r}^k
+      \rangle}{\langle \mathbf{A}\mathbf{r}^k, \mathbf{A}\mathbf{r}^k
+      \rangle}\:, \\
+    \ve{x}^{k+1/2} = \ve{x}^k + \alpha \ve{r}^k\:,
+    \label{eq:min_res_correction}\\
+    \ve{r}^{k+1/2} = \ve{b} - \ve{A}\ve{x}^{k+1/2}\:,\\ 
+    \ve{A}\delta\ve{x}^{k+1/2} = \ve{r}^{k+1/2}\:,\\ 
+    \ve{x}^{k+1} = \ve{x}^{k+1/2} + \delta\ve{x}^{k+1/2}\:,\\ 
+    \ve{r}^{k+1} = \ve{b} - \ve{A}\ve{x}^{k+1}\:.
+  \end{gather}
+  \label{eq:mcsa_min_res}
+\end{subequations}
+where $\alpha$ is an optimal extrapolation parameter generated from
+the constraints. Interestingly, this scheme is nearly identical to the
+Richardson iteration version in Eq~(\ref{eq:mcsa}) except now the
+additional extrapolation parameter, $\alpha$, is applied to the
+residual correction in Eq~(\ref{eq:min_res_correction}) as a means of
+selecting a more optimal search direction at each iteration,
+potentially further improving convergence.
 
 %%---------------------------------------------------------------------------%%
 \section{Fuel Assembly Model Problem}
@@ -841,30 +861,29 @@ presented here.
 In this paper, the Monte Carlo Synthetic Acceleration method has been
 applied to the $SP_N$ discretization of the neutron transport equation
 and explored in the context of a difficult nuclear fuel assembly
-criticality problem. We observed that MCSA can solve the asymmetric
-system generated by the $SP_N$ equations by incorporating the solution
-technique into the Exnihilo neutronics code base developed at Oak
-Ridge National Laboratory. In contrast to the thermal radiation
-diffusion problem addressed in our previous work, light water reactor
-problems are difficult to solve with MCSA as they have large spectral
-radii due to the neutron scattering in the moderator. Because of this,
-simple Jacobi-based preconditioning reduces the spectral radius of the
-$SP_N$ system below unity, however, this alone was discovered not to
-be sufficient criteria alone for MCSA convergence. As the spectral
-radius approaches unity, MCSA was demonstrated to break down with more
-stochastic histories required for convergence and more CPU time
-required per history. To alleviate these effects, a left-right
-preconditioned form of the MCSA method was developed and applied to
-the $SP_N$ equations to obtain convergence. For the nuclear fuel
-assembly problem, MCSA was observed to converge in fewer iterations
-per eigenvalue iteration than GMRES for the fuel assembly criticality
-problem and more than Bi-CGStab using the same
-preconditioning. However, the explicit preconditioning strategy
-required to overcome the MCSA spectral radius restriction creates run
-times $O(100)$ larger than the production Krylov methods for the fuel
-assembly criticality problem, indicating that significant research in
-the area of Monte Carlo preconditioning implementations is required in
-order for the method to be competetive in terms of time to solution.
+criticality problem. We observed that MCSA can in fact solve the
+asymmetric system generated by the $SP_N$ equations. In contrast to
+the thermal radiation diffusion problem addressed in our previous
+work, light water reactor problems are difficult to solve with MCSA as
+they have large spectral radii due to the neutron scattering in the
+moderator. Because of this, simple Jacobi-based preconditioning
+reduces the spectral radius of the $SP_N$ system below unity, however,
+this alone was discovered not to be sufficient criteria alone for MCSA
+convergence. As the spectral radius approaches unity, MCSA was
+demonstrated to break down with more stochastic histories required for
+convergence and more CPU time required per history. To alleviate these
+effects, a left-right preconditioned form of the MCSA method was
+developed and applied to the $SP_N$ equations to obtain
+convergence. For the nuclear fuel assembly problem, MCSA was observed
+to converge in fewer iterations per eigenvalue iteration than GMRES
+for the fuel assembly criticality problem and more than Bi-CGStab
+using the same preconditioning. However, the explicit preconditioning
+strategy required to overcome the MCSA spectral radius restriction
+creates run times $O(100)$ larger than the production Krylov methods
+for the fuel assembly criticality problem, indicating that significant
+research in the area of Monte Carlo preconditioning implementations is
+required in order for the method to be competetive in terms of time to
+solution.
 
 %%---------------------------------------------------------------------------%%
 \pagebreak
