@@ -1,4 +1,4 @@
-\documentclass[letterpaper,12pt]{article}
+\documentclass[letterpaper,11pt]{article}
 \usepackage[top=1.0in,bottom=1.0in,left=1.0in,right=1.0in]{geometry}
 \usepackage{verbatim}
 \usepackage{amssymb}
@@ -26,7 +26,7 @@ urlcolor = blue
 
 %%---------------------------------------------------------------------------%%
 \author{Stuart R. Slattery, Thomas M. Evans, Steven P. Hamilton
-\\ \href{mailto:sslattery@wisc.edu}{\texttt{sslattery@wisc.edu}}
+\\ \href{mailto:slatterysr@ornl.gov}{\texttt{slatterysr@ornl.gov}}
 }
 
 \date{\today} \title{A Preconditioned Monte Carlo
@@ -38,28 +38,26 @@ urlcolor = blue
 %%---------------------------------------------------------------------------%%
 \abstract
 
-In this paper, we present Monte Carlo Synthetic Acceleration (MCSA) as
-a linear solver technique for the simplified $P_N$ ($SP_N$)
-discretization of the Boltzmann neutron transport equation. Using the
-fully-formed linear operator for the transport problem, we explore
-solutions to the $SP_N$ equations with MCSA using a challenging light
-water reactor fuel assembly criticality calculation as the driving
-problem. Due to neutron scattering in the light water moderator,
-several difficulties arise when applying MCSA to these problems that
-were not observed in previous work where the method was applied to
-more opaque thermal radiaton transport systems. In order to
-effectively solve the $SP_N$ equations for the model problem, an
-algebraic preconditioning strategy is developed for MCSA where we
-utilize incomplete factorizations as preconditioners to achieve
-convergence.  Using the preconditioners, MCSA performance is compared
-with production impelementations of the preconditioned GMRES and
-BiCGSTAB methods. Although the algebraic preconditioning strategy
-presented in this work will not be practical from a high performance
-implementation standpoint with results demonstrating poor time to
-solution, it does indicate that the iterative performance of the
-method is competitive with the preconditioned Krylov methods when
-operator spectrum is properly conditioned.
-
+We present Monte Carlo Synthetic Acceleration (MCSA) as a linear
+solver technique for the simplified $P_N$ ($SP_N$) discretization of
+the Boltzmann neutron transport equation. Using the fully-formed
+linear operator for the transport problem, we explore solutions to the
+$SP_N$ equations with MCSA using a challenging light water reactor
+fuel assembly criticality calculation as the driving problem. Due to
+neutron scattering in the light water moderator, several difficulties
+arise when applying MCSA to these problems that were not observed in
+previous work where the method was applied to more opaque thermal
+radiaton transport systems. Of most significance, it was discovered
+that simply reducing the spectral radius of the Monte Carlo problem
+below unity is not enough to achieve convergence as outlined in
+previous work. In order to effectively solve the $SP_N$ equations for
+the model problem, an algebraic preconditioning strategy is developed
+for MCSA where we utilize incomplete factorizations as preconditioners
+to achieve convergence. Using the preconditioners, MCSA performance is
+compared with production implementations of the preconditioned GMRES
+and BiCGSTAB methods. Studies indicate that the iterative performance
+of the method is competitive with the preconditioned Krylov methods
+when operator spectrum is properly conditioned.
 
 %%---------------------------------------------------------------------------%%
 \section{Introduction}
@@ -84,53 +82,45 @@ diffusion-like equations known as the simplified $P_N$ ($SP_N$)
 equations (cite gelbard). The reduction in numerical complexity
 compared to current deterministic solution methods using the $S_N$
 approximation could mean significant savings in both compute time and
-memory required.
+memory required and permit larger simulations to be performed on the
+available computing platforms.
 
-As machines begin to operate at hundreds of petaflops peak performance
-and beyond, trends toward reduced energy consumption will require
-incredibly high levels of concurrency to achieve the desired
-computation rates. The end result of these hardware changes is that
-the larger number of low-powered processors will be prone to both soft
-failures such as bit errors in floating point operations and hard
-failures where the data owned by that processor cannot be
-recovered. Because these failures are predicted to be common,
-resilient solver technologies are required to overcome these events at
-the application level. With solutions to deterministic transport
-problems based on Monte Carlo techniques, such issues are potentially
-alleviated by statistical arguments. In the case of soft failures,
-isolated floating point errors in the Monte Carlo simulation are
-absorbed within tally statistics while a hard failure is treated as a
-high variance event where some portion of the Monte Carlo histories
-lost.
+Looking towards future computing platforms, as machines begin to
+operate at hundreds of petaflops peak performance and beyond, trends
+toward reduced energy consumption will require incredibly high levels
+of concurrency to achieve the desired computation rates. The end
+result of these hardware changes is that the larger number of
+low-powered processors will be prone to both soft failures such as bit
+errors in floating point operations and hard failures where the data
+owned by that processor cannot be recovered. Because these failures
+are predicted to be common, resilient solver technologies are required
+to overcome these events at the application level. With solutions to
+deterministic transport problems based on Monte Carlo techniques, such
+issues are potentially alleviated by statistical arguments. In the
+case of soft failures, isolated floating point errors in the Monte
+Carlo simulation are absorbed within tally statistics while a hard
+failure is treated as a high variance event where some portion of the
+Monte Carlo histories lost.
 
-Considering these physics and hardware issues, this goal of this work
+Considering these physics and hardware issues, the goal of this work
 is to research and develop Monte Carlo Synthetic Acceleration methods
 for neutron transport problems. These methods are based on using the
 Monte Carlo method to directly accelerate the convergence of
 traditional fixed-point iterative schemes for these problems. We aim
 to address both their benefits and their shortcomings in the context
 of the physics of interest and desire to identify areas in which
-improvements can be made. Using these numerical studies, we look
-forward to parallelizing them with the goal that they may be leveraged
-competitively on leadership-class computing platforms.
-
-In previous work \cite{evans_monte_2012}, we applied the Monte Carlo
-synthetic acceleration (MCSA) method the thermal radiation diffusion
-equation. For several transient problems we observed that MCSA
-performed competetively with preconditioned Krylov methods. In a
-continuation of these studies, we have applied the method light water
-reactor problems discretized by the $SP_N$ equations. This system has
-no time dependence, a large scattering component, and assymetry in the
-linear operator, creating a set of problems complementary to the
-transient, opaque, and symmetric systems of our previous analyis. In
-addition, solving the $SP_N$ equations in this way also breaks away
-from the $S_N$ forms of parallelism where spatial parallelism is
-achieved by an efficient parallel sweep, angular efficiency achieved
-by pipe-lining, and energy parallelism achieved by decoupling the
-groups. With the $SP_N$ equations as a full matrix system, we now can
-parallelize the problem as prescribed by the Monte Carlo algorithm,
-which may be significantly more scalable than current $S_N$ transport
-practices.
+improvements can be made. In previous work \cite{evans_monte_2012}, we
+applied the Monte Carlo synthetic acceleration (MCSA) method to the
+thermal radiation diffusion equation. For several transient problems
+we observed that MCSA performed competetively with preconditioned
+Krylov methods. In a continuation of these studies, we apply the
+method to light water reactor problems discretized by the $SP_N$
+equations. This system has no time dependence, a large scattering
+component, and assymetry in the linear operator, creating a set of
+problems complementary to the transient, opaque, and symmetric systems
+of our previous analyis. In addition, we apply a new fixed point
+iteration in the MCSA sequence as well as a new estimator in order to
+study their effects on convergence.
 
 The paper is organized as follows. First, we briefly introduce the
 model $SP_N$ problem and describe the application of the MCSA
@@ -190,6 +180,212 @@ eigenvalue schemes used in this work. The linear operator, and
 therefore overall MCSA performance will be dictated by streaming and
 scattering as defined on the left-hand side.
 
+\subsection{Monte Carlo Synthetic Acceleration}
+\label{subsec:mcsa}
+In this section we briefly review the Monte Carlo method for linear
+systems and Monte Carlo Synthetic Acceleration. Given a linear
+problem:
+\begin{equation}
+  \ve{A} \ve{x} = \ve{b}\:,
+  \label{eq:linear_problem}
+\end{equation}
+where $\ve{A} \in \mathbb{R}^{N \times N}$ is a matrix operator such
+that $\ve{A} : \mathbb{R}^{N} \rightarrow \mathbb{R}^{N}$, $\ve{x} \in
+\mathbb{R}^N$ is the solution vector, and $\ve{b} \in
+\mathbb{R}^N$. To form the Monte Carlo method we define the linear
+system adjoint to Eq~(\ref{eq:linear_problem}):
+\begin{equation}
+  \ve{A}^T \ve{y} = \ve{d}\:,
+  \label{eq:adjoint_linear_problem}
+\end{equation}
+where $\ve{y}$ and $\ve{d}$ are the adjoint solution and source
+vectors respectively and $\ve{A}^T$ is the adjoint operator for
+$\ve{A} \in \mathbb{R}^{N \times N}$ which we hten split to get:
+\begin{equation}
+  \ve{y} = \ve{H}^T \ve{y} + \ve{d}\:,
+  \label{eq:adjoint_split_system}
+\end{equation}
+where $\ve{H}^T$ is the adjoint iteration matrix. The spectral radius
+of $\ve{H}^T$ must remain less than 1 for convergence. By defining the
+following adjoint inner product equivalence \cite{spanier_monte_1969}:
+\begin{equation}
+  \langle \ve{A}^T \ve{y}, \ve{x} \rangle = \langle \ve{y}, \ve{A}
+  \ve{x} \rangle\:.
+  \label{eq:adjoint_operator_product}
+\end{equation}
+it follows that:
+\begin{equation}
+  \langle \ve{x}, \ve{d} \rangle = \langle \ve{y}, \ve{b} \rangle\:.
+  \label{eq:adjoint_vector_relation}
+\end{equation}
+We can acquire the adjoint solution by forming the Neumann series by
+writing Eq~(\ref{eq:adjoint_split_system}) as:
+\begin{equation}
+  \ve{y} = (\ve{I} - \ve{H}^T)^{-1} \ve{d}\:,
+  \label{eq:adjoint_split_system_2}
+\end{equation}
+which in turn yields the Neumann series using the adjoint operator:
+\begin{equation}
+  \ve{y} = \sum_{k=0}^{\infty} (\ve{H}^T)^k\ve{d}\:.
+  \label{eq:adjoint_neumann_series}
+\end{equation}
+We expand this summation to again yield a series of transitions that
+can be approximated by a Monte Carlo random walk sequence by forming
+the Neumann series in reverse order:
+\begin{equation}
+  y_i = \sum_{k=0}^{\infty}\sum_{i_1}^{N}\sum_{i_2}^{N}\ldots
+  \sum_{i_k}^{N}h_{i_k,i_{k-1}}\ldots h_{i_2,i_1} h_{i_1,i} d_{i_k}\:.
+  \label{eq:adjoint_neumann_solution}
+\end{equation}
+We can readily build an estimator for the adjoint solution from this
+series expansion, but we instead desire the solution to
+Eq~(\ref{eq:linear_problem}). Here we have 2 unknowns, $\ve{y}$ and
+$\ve{d}$, and therefore we require two constraints to close the
+system. We use Eq~(\ref{eq:adjoint_vector_relation}) as the first
+constraint and as a second constraint we select:
+\begin{equation}
+  \ve{d} = \boldsymbol{\delta}_j\:,
+  \label{eq:adjoint_second_constraint}
+\end{equation}
+where $\boldsymbol{\delta}_j$ is one of a set of vectors in which the
+$j^{th}$ component is the Kronecker delta function $\delta_{i,j}$. If
+we apply Eq~(\ref{eq:adjoint_second_constraint}) to our first
+constraint Eq~(\ref{eq:adjoint_vector_relation}), we get the following
+convenient outcome:
+\begin{equation}
+  \langle \ve{y}, \ve{b} \rangle = \langle \ve{x},
+  \boldsymbol{\delta}_j \rangle = x_j \:,
+  \label{eq:inner_product_constraint}
+\end{equation}
+meaning that if we compute the inner product of the original source
+and the adjoint solution using a delta function source, we recover one
+component of the original solution.
+
+In terms of radiation transport, this adjoint method is equivalent to
+a traditional forward method where the initial state $i_0$ of the
+random walk is determined by sampling the source vector $\ve{b}$ with
+probabilities:
+\begin{equation}
+  P_{(i_0=i)}(\nu) = \frac{|b_i|}{||\ve{b}||_1}\:,
+  \label{eq:adjoint_source_probability}
+\end{equation}
+with a random walk starting weight of:
+\begin{equation}
+  W_0 = ||\ve{b}||_1 \frac{b_i}{|b_i|}\:,
+  \label{eq:adjoint_starting_weight}
+\end{equation}
+which gives the additional useful relation:
+\begin{equation}
+  b_{i_0} = W_0 P_{(i_0=i)}\:.
+  \label{eq:adjoint_source_definition}
+\end{equation}
+We build weights and probabilities for the random walk using the
+\textit{adjoint Neumann-Ulam decomposition} of $\ve{H}$:
+\begin{equation}
+  \ve{H}^{T} = \ve{P} \circ \ve{W}\:,
+  \label{eq:adjoint_neumann_ulam}
+\end{equation}
+where we are forming the decomposition with respect to the transpose
+of $\ve{H}$. $\ve{P}$ is defined element-wise as:
+\begin{equation}
+  p_{ij} = \frac{|h_{ji}|}{\sum_j |h_{ji}|}\:,
+  \label{eq:adjoint_probability}
+\end{equation}
+such that we expect to select a new state, $j$, from the current state
+in the random walk, $i$, by sampling column-wise (or row-wise if an
+adjoint probability matrix is formed). Per
+Eq~(\ref{eq:adjoint_neumann_ulam}), the transition weight is then
+defined as:
+\begin{equation}
+  w_{ij} = \frac{h_{ji}}{p_{ij}}\:.
+  \label{eq:adjoint_weight}
+\end{equation}
+Using the decomposition we can then define an expectation value for
+the adjoint method. The contribution to the solution in state $j$ from
+a particular random walk permutation of $k$ events is given by
+\textit{collision estimator}:
+\begin{equation}
+  X_{j}(\nu) = \sum_{m=0}^k W_{m} \delta_{i_m,j}\:,
+  \label{eq:adjoint_permutation_contribution}
+\end{equation}
+where the Kronecker delta indicates that the tally contributes only in
+the current state, $i_m$, of the random walk. The expectation value
+using all permutations is then:
+\begin{equation}
+  E\{X_j\} = \sum_{\nu} P_{\nu} X_{j}(\nu)\:,
+  \label{eq:adjoint_expectation_value}
+\end{equation}
+which, if expanded utilizing Eq~(\ref{eq:adjoint_source_definition})
+to insert the source term, directly recovers the exact solution:
+\begin{equation}
+  \begin{split}
+    E\{X_j\} &=\sum_{k=0}^{\infty}\sum_{i_1}^{N}\sum_{i_2}^{N}\ldots
+    \sum_{i_k}^{N} b_{i_0} p_{i_0,i_1}p_{i_1,i_2}\ldots
+    p_{i_{k-1},i_k} w_{i_0,i_1}w_{i_1,i_2}\ldots
+    w_{i_{k-1},i_k} \delta_{i_k,j} \\ &= x_{j}\:,
+  \end{split}
+  \label{eq:adjoint_expectation_expansion}
+\end{equation}
+therefore, also providing an unbiased Monte Carlo estimate of the
+solution. It should be noted here that
+Eq~(\ref{eq:adjoint_expectation_expansion}) only computes a single
+component of our desired solution vector when really what we desire is
+the entire solution vector. In an adjoint Monte Carlo simulation using
+this estimator, the $w_{ij}$ elements that are added into the tally
+for each state are only selected if/when the random walk currently
+resides in that state. Much like a mesh tally in a particle transport
+simulation, we have $N$ simultaneous tallies for $\ve{A} \in
+\mathbb{R}^{N \times N}$ that will yield the entire solution vector.
+
+In addition to the collision estimator, an additional estimator is
+available due to the work of Okten \cite{okten_solving_2005} that uses
+the method of expected values as a means to improve the Monte Carlo
+estimate. As outlined by Spanier and Gelbard
+\cite{spanier_monte_1969}, the method of expected values is a
+deterministic averaging of events that may potentially occur in the
+Monte Carlo random walk sequence. Okten applied this principle
+directly to discrete Monte Carlo by forming the \textit{expected value
+  estimator}\footnote{The variance for this estimator is discussed in
+  Appendix~\ref{chap:estimator_variance}.} for a random walk of $k$
+events:
+\begin{equation}
+  X_{j}(\nu) = b_j + \sum_{m=0}^k W_m h_{j,i_m}\,
+  \label{eq:expected_value_estimator}
+\end{equation}
+where now the contribution of the iteration matrix is
+deterministically averaged at step $m$ over all potential states $j$
+that may be reached from the current state $i_m$. Via Okten, the
+estimator can be shown to be unbiased through a comparison to the
+collision estimator. We can first rewrite the summation in
+Eq~(\ref{eq:expected_value_estimator}):
+\begin{equation}
+  X_{j}(\nu) = b_j + \sum_{m=0}^k \sum_{i=1}^N W_m
+  \delta_{i_m,i} h_{ji}\,
+  \label{eq:unbiased_eval_1}
+\end{equation}
+where $N$ is the number of states in the system. Immediately, we see
+the collision estimator as defined by
+Eq~(\ref{eq:adjoint_permutation_contribution}) and can therefore write
+the expectation value as:
+\begin{equation}
+  E\{X_{j}\} = b_j + \sum_{i=1}^N E\{X_{i}\} h_{ji}\,
+  \label{eq:unbiased_eval_2}
+\end{equation}
+which is equivalently is the $j^{th}$ component of
+Eq~(\ref{eq:richardson_split}):
+\begin{equation}
+  E\{X_{j}\} = b_j + \sum_{i=1}^N x_{i} h_{ji}\,
+  \label{eq:unbiased_eval_2}
+\end{equation}
+and is therefore an unbiased estimate. Compared to the collision
+estimator, the expected value estimator provides additional
+information at every step of the random walk, yielding potentially
+better statistics with the same amount of transport
+work. Conveniently, even if no Monte Carlo histories are computed, the
+expected value estimator still deterministically computes the first
+term of the Neumann Series, $\ve{H}^0\ve{b}$, whereas the collision
+estimator will provide no information.
+
 \subsection{MCSA Solution of the $SP_N$ Equations}
 \label{subsec:mcsa_solution}
 To generate the multiplication factor and steady-state flux
@@ -247,7 +443,8 @@ MCSA:
 \end{subequations}
 where the $l$ subscript indicates the MCSA iteration number and $n$
 again indicates the eigenvalue iteration. We refer the reader to
-\cite{evans_monte_2012} for a more rigorous defintion of the method.
+\cite{evans_monte_2012} for more a more complete definition of the
+Monte Carlo method for linear systems and MCSA.
 
 \subsection{Preconditioned MCSA}
 \label{subsec:preconditioning}
