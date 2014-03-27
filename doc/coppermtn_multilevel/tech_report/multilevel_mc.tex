@@ -154,13 +154,13 @@ used. Figure~\ref{fig:richardson} gives infinity norm of the error in
 the solution vector\footnote{The solution to the homogenous problem is
   zero and therefore $||\ve{e}||_{\infty} = ||\ve{x}||_{\infty}$.} as
 a function of iteration for wave numbers of 1, 5, and 10 on a grid
-with $G = 100$.
+with $J = 100$.
 \begin{figure}[h!]
   \begin{center}
     \includegraphics[width=5in]{richardson.png}
   \end{center}
   \caption{\textbf{Convergence of Richardson's iteration as a function
-      of iteration for a grid of size $G = 100$.} \textit{Richardson's
+      of iteration for a grid of size $J = 100$.} \textit{Richardson's
       iteration performs better for larger wave numbers and therefore
       more oscillatory modes.}}
   \label{fig:richardson}
@@ -200,7 +200,7 @@ effective correction, $\ve{d}$, to the initial guess to give the
 solution. This approach is also equivalent to performing a single
 iteration of Halton's method \cite{halton_sequential_1962}. Using this
 formulation we can again solve the model problem with wave numbers of
-1, 5 and 10 on a grid of size $G = 100$ but this time we vary the
+1, 5 and 10 on a grid of size $J = 100$ but this time we vary the
 number of histories used to compute the solution instead of the number
 of iterations. Figure~\ref{fig:adjoint_mc} gives the results of these
 calculations.
@@ -209,7 +209,7 @@ calculations.
     \includegraphics[width=5in]{adjoint_mc.png}
   \end{center}
   \caption{\textbf{Convergence of the adjoint Monte Carlo method as a
-      function of sampled histories for a grid of size $G = 100$.}
+      function of sampled histories for a grid of size $J = 100$.}
     \textit{Adjoint Monte Carlo performs better for smaller wave
       numbers and therefore smoother modes.}}
   \label{fig:adjoint_mc}
@@ -430,8 +430,26 @@ arising from algebraic multigrid formulations.
 \label{sec:results}
 To demonstrate the multilevel Monte Carlo algorithm we solve the
 Poisson problem presented in \S~\ref{sec:fourier_analysis}, this time
-with a grid of size $G = 1024$. For the coarsening parameter we will
-first use a value of $M = 2$. In addition, we will introduce the
+with a grid of size $J = 1024$. For the coarsening parameter we will
+first use a value of $M = 2$. For simplicity, we will assume a basic
+geometric multigrid formulation of the linear problem per
+\cite{briggs_multigrid} with the the following prolongation operator
+for $M=2$:
+\begin{gather}
+  \begin{subequations}
+    x^h_{2j} = x_j^{2h} \\
+    x^h_{2j+1} = \frac{1}{2} ( x_j^{2h} + x_{j+1}^{2h} )\:,
+  \end{subequations}
+  \label{eq:m2_prolongation}
+\end{gather}
+for $0 \leq j \leq \frac{J}{2} - 1$ and the restriction operator:
+\begin{equation}
+  x^{2h}_j = \frac{1}{4} ( x_{2j-1}^{h} + 2 x_{2j}^{2h} + x_{2j+1}^{2h} )
+  \label{eq:m2_restriction}
+\end{equation}
+for $1 \leq j \leq \frac{J}{2} - 1$.
+
+To measure performance of the algorithm, we will introduce the
 following standard figure of merit metric to assess the quality of the
 Monte Carlo solver:
 \begin{equation}
