@@ -6,6 +6,8 @@
 \usepackage{cite}
 \usepackage{c++}
 \usepackage{tmadd,tmath}
+\usepackage{caption}
+\usepackage{subcaption}
 
 %%---------------------------------------------------------------------------%%
 \begin{document}
@@ -143,7 +145,7 @@ equivalently a Jacobi iteration when Jacobi preconditioning is used:
 where $k$ is the iteration index. Figure~\ref{fig:richardson} gives
 infinity norm of the error in the solution vector\footnote{The
   solution to the homogenous problem is zero and therefore
-  $||\ve{e}||_{\infty} = ||\ve{x}||_{\infty}$} as a function of
+  $||\ve{e}||_{\infty} = ||\ve{x}||_{\infty}$.} as a function of
 iterations for wave numbers of 1, 5, and 10 on a grid with N = 100.
 \begin{figure}[h!]
   \begin{center}
@@ -159,7 +161,7 @@ Immediately we note that the larger the wave number the better
 Richardson's iteration performs. Per the spectral analysis in
 \cite{briggs_multigrid}, this iteration sequence perfoms better for
 higher wave numbers as the eigenvalue spectrum spans a smaller space
-then less oscillatory modes. This behavior motivated the multigrid
+then less oscillatory modes. This behavior motivates the multigrid
 approach where moving a smooth mode to a coarser grid makes that mode
 appear more oscillatory relative to that coarser grid, thus improving
 convergence for that particular mode.
@@ -207,11 +209,11 @@ calculation.
 Surprisingly, the Monte Carlo method performs better for smooth modes
 then more oscillatory modes\footnote{This behavior was also observed
   for the forward Monte Carlo method presented in
-  \cite{evans_monte_2012}}. The results of these calculations are
+  \cite{evans_monte_2012}.}. The results of these calculations are
 counterintuitive given the fact that the Monte Carlo solver is
 effectively a stochastic realization of of Richardson's iteration and
 therefore one should expect the same spectral behavior from the
-results. 
+results.
 
 Looking at the timing results in Table~\ref{tab:mc_timing}, we see
 that the behavior of the Monte Carlo solver is in fact consistent with
@@ -240,11 +242,52 @@ criteria. In Figure~\ref{fig:richardson}, we see that fewer iterations
 are required to converge larger wave numbers and therefore we should
 also expect shorter random walks in the Monte Carlo solver and
 therefore a faster time to solution as observed in
-Table~\ref{tab:mc_timing}.
+Table~\ref{tab:mc_timing}. However, this does not indicate why the
+Monte Carlo solvers perform better for smoother modes rather than
+oscillatory modes. Fortunately, the explanation for this behavior is
+simple. Consider the plots for the Fourier modes with $k = 1$ and $k =
+10$ given in Figure~\ref{fig:fourier_modes}.
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{mode_1.pdf}
+    \caption{\textbf{Fourier mode with $k = 1$.}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{mode_10.pdf}
+    \caption{\textbf{Fourier mode with $k = 10$.}}
+  \end{subfigure}
+  \caption{\textit{The more oscillatory the mode the finer the
+      structure of the error. Finer structures require more samples to
+      resolve them.}}
+  \label{fig:fourier_modes}
+\end{figure}
+The higher the wave number is the more oscillatory the mode
+appears. To resolve these fine structures in the error we therefore
+naturally require more Monte Carlo samples to distinguish them from
+one another.
+
+Based on this, it may not seem that applying Monte Carlo in a
+multigrid context will be useful considering that error modes appear
+more oscillatory as the grid is coarsened. This would indicate that in
+order to achieve the same amount of error on a coarse grid
+representation of the problem, one would be required to compute many
+more samples to resolve the resulting finer structures. However, we
+may gain a computational advantage for two reasons. First, consider
+the timing results in Table~\ref{tab:mc_timing}. As the error
+structure becomes more oscillatory, the time it takes to compute a
+sample decreases. Second, if we coarsen the grid the time it takes to
+compute a sample will also decrease due to the decreased problem
+size. Therefore, it is plausible that we might observe an improvement
+in run times for the Monte Carlo problem by using a multigrid
+approach. This then motivates applying recently developed techniques
+in multilevel Markov chain Monte Carlo to the adjoint solver as a
+potential means of accelerating time to solution.
 
 %%---------------------------------------------------------------------------%%
 \section{Multilevel Monte Carlo Algorithm}
 \label{sec:algorithm}
+
 
 %%---------------------------------------------------------------------------%%
 \section{Results}
