@@ -42,10 +42,10 @@
   partial differential equations, and other algorithms that leverage
   Markov chain Monte Carlo. We adapt these ideas to form a multilevel
   Monte Carlo solver for linear systems which, in the form presented
-  here, is effectively a stochastic realization of a geometric
-  multigrid solver. Numerical studies indicate that the new multilevel
-  method can reduce the time required to achieve a certain statistical
-  error in the solution by at least two orders of magnitude, thereby
+  here, is effectively a stochastic realization of a multigrid
+  solver. Numerical studies indicate that the new multilevel method
+  can reduce the time required to achieve a certain statistical error
+  in the solution by at least two orders of magnitude, thereby
   dramatically reducing the computational complexity of the
   problem. Furthermore, the general formulation presented here
   indicates that this methodology is not restricted to geometric
@@ -62,9 +62,9 @@ decades as a stochastic alternative to iterative methods
 these methods have failed to gain popularity both in the mathematics
 and applications community partly due to their slow convergence bound
 by the central limit theorem. Recent work has indicated that when used
-as an acceleration in the Monte Carlo Synethetic Acceleration (MCSA)
+as an acceleration in the Monte Carlo Synthetic Acceleration (MCSA)
 method, exponential convergence rates may be achieved that are
-competetive with contemporary iterative methods
+competitive with contemporary iterative methods
 \cite{evans_residual_2003,evans_monte_2009,evans_monte_2012,slattery_phd_2013}.
 However, in this recent work it was discovered that for physics
 problems that are largely elliptic (e.g. neutron transport in a light
@@ -78,7 +78,7 @@ sequence independent of the condition number of the linear problem.
 
 Recent work in Monte Carlo methods for problems in finance and
 stochastic partial differential equations has indicated that the
-computationaly complexity of the problem can be dramatically reduced
+computationally complexity of the problem can be dramatically reduced
 by incorporating multigrid concepts into the solution scheme
 \cite{heinrich_2001,giles_2008,cliffe_2011}. In this work, we adapt
 those ideas and apply them to the Monte Carlo problem for linear
@@ -99,7 +99,7 @@ We would first like to analyze the behavior of Monte Carlo solvers in
 the context of error modes for a given model problem with the
 numerical analysis presented here closely following that presented in
 \cite{briggs_multigrid}. For this analysis, we will use the following
-one-dimensional, homogenous model problem:
+one-dimensional, homogeneous model problem:
 \begin{equation}
   \nabla^2 x = 0\:.
   \label{eq:model_problem}
@@ -144,20 +144,20 @@ k is the wave number of the chosen Fourier mode.
 
 Monte Carlo solvers are effectively a stochastic realization of
 Richardson's iteration and therefore we will first look at the
-performance ofRichardson's iteration as a smoother:
+performance of Richardson's iteration as a smoother:
 \begin{equation}
   \ve{x}^{k+1} = (\ve{I}-\ve{M}^{-1}\ve{A})\ve{x}^k\:,
 \end{equation}
 where $k$ is the iteration index and which is equivalently a Jacobi
 iteration when Jacobi preconditioning is
 used. Figure~\ref{fig:richardson} gives infinity norm of the error in
-the solution vector\footnote{The solution to the homogenous problem is
+the solution vector\footnote{The solution to the homogeneous problem is
   zero and therefore $||\ve{e}||_{\infty} = ||\ve{x}||_{\infty}$.} as
 a function of iteration for wave numbers of 1, 5, and 10 on a grid
 with $J = 100$.
 \begin{figure}[h!]
   \begin{center}
-    \includegraphics[width=5in]{richardson.png}
+    \includegraphics[width=4in]{richardson.png}
   \end{center}
   \caption{\textbf{Convergence of Richardson's iteration as a function
       of iteration for a grid of size $J = 100$.} \textit{Richardson's
@@ -167,7 +167,7 @@ with $J = 100$.
 \end{figure}
 Immediately we note that the larger the wave number the better
 Richardson's iteration performs. Per the spectral analysis in
-\cite{briggs_multigrid}, this iteration sequence perfoms better for
+\cite{briggs_multigrid}, this iteration sequence performs better for
 higher wave numbers as the eigenvalue spectrum spans a smaller space
 then less oscillatory modes. This behavior motivates the multigrid
 approach where moving a smooth mode to a coarser grid makes that mode
@@ -177,14 +177,14 @@ convergence for that particular mode.
 Next we perform the same calculations using the adjoint Monte Carlo
 solver presented in \cite{evans_monte_2012}. Before doing this
 however, we must first modify the linear problem as the Monte Carlo
-solver is a direct method and therefore a homogenous problem with a
+solver is a direct method and therefore a homogeneous problem with a
 right hand side of $\ve{0}$ will yield no samples. Instead, we will
 solve the residual problem:
 \begin{equation}
   \ve{A}\ve{d} = \ve{r}\:,
   \label{eq:residual_problem}
 \end{equation}
-where the residual of the homogenous problem is:
+where the residual of the homogeneous problem is:
 \begin{equation}
   \ve{r} = -\ve{A}\ve{x}^0\:,
   \label{eq:homogenous_residual}
@@ -195,7 +195,7 @@ and the solution is computed as:
   \label{eq:residual_solution}
 \end{equation}
 Forming the problem in this way lets us directly apply the adjoint
-Monte Carlo method to the homogenous problem and then apply the
+Monte Carlo method to the homogeneous problem and then apply the
 effective correction, $\ve{d}$, to the initial guess to give the
 solution. This approach is also equivalent to performing a single
 iteration of Halton's method \cite{halton_sequential_1962}. Using this
@@ -206,7 +206,7 @@ of iterations. Figure~\ref{fig:adjoint_mc} gives the results of these
 calculations.
 \begin{figure}[h!]
   \begin{center}
-    \includegraphics[width=5in]{adjoint_mc.png}
+    \includegraphics[width=4in]{adjoint_mc.png}
   \end{center}
   \caption{\textbf{Convergence of the adjoint Monte Carlo method as a
       function of sampled histories for a grid of size $J = 100$.}
@@ -273,9 +273,11 @@ simple. Consider the plots for the Fourier modes with $k = 1$ and $k =
 The higher the wave number is the more oscillatory the mode
 appears. To resolve these fine structures in the error we therefore
 naturally require more Monte Carlo samples to distinguish them from
-one another.
+one another. In other words, statistical noise in the solution must be
+reduced by more samples in order to resolve fine structures in the
+error that would otherwise be buried in the noise.
 
-Based on this, it may not seem that applying Monte Carlo in a
+Based on this, it may not seem likely that applying Monte Carlo in a
 multigrid context will be useful considering that error modes appear
 more oscillatory as the grid is coarsened. This would indicate that in
 order to achieve the same amount of error on a coarse grid
@@ -290,32 +292,34 @@ size. Therefore, it is plausible that we might observe an improvement
 in run times for the Monte Carlo problem by using a multigrid
 approach.
 
+\clearpage
+
 %%---------------------------------------------------------------------------%%
 \section{Multilevel Monte Carlo Algorithm}
 \label{sec:algorithm}
 A potential improvement in computational complexity motivates applying
 techniques in multilevel Markov chain Monte Carlo recently developed
 by Heinrich \cite{heinrich_2001} and Giles \cite{giles_2008}. We start
-first with the standard Monte Carlo estimator for the $i^{th}$
-component of the solution vector:
+first with the standard Monte Carlo estimator for the solution vector:
 \begin{equation}
-  \hat{\ve{x}}_i = \frac{1}{N} \sum_{m=1}^N x^m_i\:,
+  \hat{\ve{x}} = \frac{1}{N} \sum_{m=1}^N x^m\:,
   \label{eq:standard_estimator}
 \end{equation}
-where $i \in [1,N]$, $N$ samples are made and $x^m_i$ is the $m^{th}$
-observation. We next consider representing the problem in multiple
-levels designated by $l$ with each one finer than the next such that
-there are $L$ total levels and $l=L$ the coarsest level. We can
-combine expectation values of the estimates from each of these levels
-using the linearity of expectation such that:
+where $x^m$ is the $m^{th}$ observation. We next consider representing
+the problem in multiple levels designated by $l$ with each one finer
+than the next such that there are $L$ total levels and $l=L$ is the
+coarsest level. We can combine expectation values of the estimates
+from each of these levels using the linearity of expectation such
+that:
 \begin{equation}
   E(\ve{x}_{0}) = E(\ve{x}_{L}) + E(\ve{x}_{L-1} - \ve{x}_{L}) +
   E(\ve{x}_{L-2} - \ve{x}_{L-1}) + \dots + E(\ve{x}_{0} -
-  \ve{x}_{(1)})\:,
+  \ve{x}_{1})\:,
   \label{eq:linearity_of_expectation}
 \end{equation}
 where $E(\ve{x}_{L})$ is the expectation value of the solution vector
-at the coarsest level, $l = L$.  If we rewrite this summation as:
+at the coarsest level and $E(\ve{x}_{0})$ the expectation at the
+finest level. If we rewrite this summation as:
 \begin{equation}
   E(\ve{x}_{0}) = E(\ve{x}_{L}) + \sum_{l=1}^L E(\ve{x}_{l} -
   \ve{x}_{l+1})\:,
@@ -340,22 +344,23 @@ in Eq~(\ref{eq:level_estimate}) consists of observations from the same
 Markov chain computed over the space of the $l^{th}$ level. 
 
 Although multigrid methods for linear algebra problems indicate that a
-coarsening parameter of $M = 2$ is optimal such that every level is
-half the size of the finer level. However, Giles reports that values
-of 4 and larger give optimal perfomance for these particular
-estimators. In addition, as mentioned in
+coarsening parameter of $M = 2$ is optimal such that every coarse
+level is half the size of the previous finer level. However, Giles
+reports that values of 4 and larger give optimal performance for these
+particular estimators. In addition, as mentioned in
 \S~\ref{sec:fourier_analysis}, because coarsening the problem makes
-the modes appear more oscillatory, we therefore must compute more
-samples at coarser levels to balance the error amongst the levels. For
-this work we will use the result reported by Hienrich for computing
-the number of samples at each level:
+the modes appear more oscillatory, we must compute more samples at
+coarser levels to balance the error amongst the levels. For this work
+we will use the result reported by Heinrich for computing the number
+of samples at each level:
 \begin{equation}
-  N_l = M^{-3(L-l-1)/2}N\:.
+  N_l = M^{-3(L-l)/2}N\:,
   \label{eq:level_histories}
 \end{equation}
-It should be noted that Giles does not compute this quantity a priori
-but instead first estimates the variance at each level and then
-computes $N_l$ based on that variance.
+which provides a larger number of samples at the coarse levels. It
+should be noted that Giles does not compute this quantity a priori but
+instead first estimates the variance at each level and then computes
+$N_l$ based on that variance.
 
 Using the estimator given by Eq~(\ref{eq:multilevel_estimator}) we can
 now define a multilevel Monte Carlo method for linear systems based on
@@ -364,35 +369,36 @@ this, we must consider how to compute the expectation value
 $E(\ve{x}_{l} - \ve{x}_{l+1})$ at each level in the problem. We are
 required to construct observations on both grids from the same Markov
 chain. Computing observations on the $l^{th}$ grid in this case is
-simply the procedure for solving the adjoint Monte Carlo problem. In
-this procedure we can simply tally observations on the grid for the
-$l+1$ level through the use of a linear interpolation operator such
-that a tally in some state of level $l$ is also a tally in some state
-of level $l+1$ with that state determined by the linear operator such
-that the weight of the observation is preserved. If this is the case,
-then we can actually avoid tallying observations of the coarse grid
-altogether and simply apply the linear interpolation operator the fine
-grid results once all samples have been computed.
+simply the procedure for solving the adjoint Monte Carlo problem. We
+could modify this procedure such that we tally observations on the
+grid for the $l+1$ level through the use of a weight preserving linear
+interpolation operator such that a tally in some state of level $l$ is
+also a tally in some state of level $l+1$ with that state determined
+by the operator. If this is the case, then we can actually avoid
+tallying observations of the coarse grid altogether and simply apply
+the linear interpolation operator the fine grid results once all
+samples have been computed instead of modifying the Monte Carlo
+sequence.
 
 Using this idea we then define a \textit{prolongation operator},
 $\ve{P}_{l+1}^l$, which maps a vector defined on grid $l+1$ to a
 vector defined on grid $l$ and a \textit{restriction operator},
-$\ve{R}_l^{l+1}$, which mpas a solution defined on grid $l$ to a
+$\ve{R}_l^{l+1}$, which maps a vector defined on grid $l$ to a
 vector defined on grid $l+1$. We can then define the following
-equivalent expecation value for a given level $l$:
+equivalent expectation value for a given level $l$:
 \begin{equation}
   E(\ve{x}_{l} - \ve{x}_{(l+1)}) = \Big(\ve{I} - \ve{P}_{l+1}^l
   \ve{R}_l^{l+1}\Big) \hat{\ve{x}}_{l}\:,
   \label{eq:level_expectation}
 \end{equation}
-with $\hat{\ve{x}}_{l}$ given Eq~(\ref{eq:standard_estimator}) as the
-solution on grid $l$ and where now the action of the restriction
-operator maps the tally to the coarse level to compute the
+with $\hat{\ve{x}}_{l}$ given by Eq~(\ref{eq:standard_estimator}) as
+the solution on grid $l$. In this estimator, the action of the
+restriction operator maps the tally to the coarse level to compute the
 observations on that grid and the action of the prolongation operator
-on the coarse tally maps the result back to the fine
-level. Eq~(\ref{eq:level_expectation}) then gives the following
-multilevel Monte Carlo algorithm for linear systems now with arbitrary
-right hand side vector, $\ve{b}$:
+on the coarse tally maps the result back to the fine level. Using this
+estimator, Algorithm~\ref{alg:mlamc} gives the multilevel Monte Carlo
+algorithm for linear systems now with an arbitrary right hand side
+vector, $\ve{b}$.
 \begin{algorithm}[h!]
   \caption{Multilevel Adjoint Monte Carlo}
   \label{alg:mlamc}
@@ -417,7 +423,7 @@ right hand side vector, $\ve{b}$:
 \end{algorithm}
 This algorithm permits each of the levels to be computed independently
 and then combined appropriately with the prolongation and restriction
-operators. Like other multigrid algorithms for linear system, we are
+operators. Like other multigrid algorithms for linear systems, we are
 required to produce a representation of the linear operator on each
 level, $\ve{A}^l$, as well as the right hand side, $\ve{b}^l$. The
 formulation of Algorithm~\ref{alg:mlamc} places no restrictions on the
@@ -435,13 +441,13 @@ first use a value of $M = 2$. For simplicity, we will assume a basic
 geometric multigrid formulation of the linear problem per
 \cite{briggs_multigrid} with the the following prolongation operator
 for $M=2$:
-\begin{gather}
-  \begin{subequations}
+\begin{subequations}
+  \begin{gather}
     x^h_{2j} = x_j^{2h} \\
     x^h_{2j+1} = \frac{1}{2} ( x_j^{2h} + x_{j+1}^{2h} )\:,
-  \end{subequations}
+  \end{gather}
   \label{eq:m2_prolongation}
-\end{gather}
+\end{subequations}
 for $0 \leq j \leq \frac{J}{2} - 1$ and the restriction operator:
 \begin{equation}
   x^{2h}_j = \frac{1}{4} ( x_{2j-1}^{h} + 2 x_{2j}^{2h} + x_{2j+1}^{2h} )
@@ -463,11 +469,16 @@ is. For example, if two solutions schemes arrive at the same error but
 the first calculation takes twice as long as the second, the figure of
 merit will be twice as large for the second calculation.
 
-We again perform calculations with initial guesses of wave numbers 1,
-5 and 10 with Tables~\ref{tab:k1_results}, \ref{tab:k5_results}, and
+We again perform calculations with $N=10,000$ and initial guesses of
+wave numbers 1, 5 and 10 and vary the number of levels used in the
+calculation. Tables~\ref{tab:k1_results}, \ref{tab:k5_results}, and
 \ref{tab:k10_results} giving the results of these calculations. In
 these tables, the RFOM column indicates the relative figure of merit
-which has been normalized to the single level calculation.
+which has been normalized to the single level calculation. The results
+indicate the performance of the multilevel method compared to the
+original adjoint Monte Carlo method is excellent, offering a dramatic
+improvement in time to solution and figure of merit values 10-100
+times that of the single level solver.
 \begin{table}[h!]
   \begin{center}
     \begin{tabular}{cllll}\hline\hline
@@ -544,7 +555,105 @@ which has been normalized to the single level calculation.
   \label{tab:k10_results}
 \end{table}
 
+Next we perform the calculations with $M=4$ using the following
+prolongation operator:
+\begin{subequations}
+  \begin{gather}
+    x^h_{4j} = x_j^{4h} \\
+    x^h_{4j+1} = \frac{3}{4} x_j^{4h} + \frac{1}{4} x_{j+1}^{4h}\:\\
+    x^h_{4j+2} = \frac{1}{2} x_j^{4h} + \frac{1}{2} x_{j+1}^{4h}\:\\
+    x^h_{4j+3} = \frac{1}{4} x_j^{4h} + \frac{3}{4} x_{j+1}^{4h}\:,
+  \end{gather}
+  \label{eq:m4_prolongation}
+\end{subequations}
+for $0 \leq j \leq \frac{J}{4} - 1$ and the restriction operator:
+\begin{equation}
+  x^{4h}_j = \frac{1}{10} ( x_{4j-2}^{h} + 2 x_{4j-1}^{h} + 4
+  x_{4j}^{4h} + 2 x_{4j+1}^{4h} + x_{4j+2}^{4h} )
+  \label{eq:m4_restriction}
+\end{equation}
+for $1 \leq j \leq \frac{J}{4} - 1$. For these calculations we fix
+$k=10$ and vary $N$ to study performance for the more difficult larger
+wave numbers. Tables~\ref{tab:n4_results}, \ref{tab:n5_results}, and
+\ref{tab:n6_results} give the results for $N=10,000$, $N=100,000$, and
+$N=1,000,000$ respectively. Because of the time required to compute
+problems with a small number of levels and large numbers of samples,
+single level calculations were not performed for the last two
+cases. For these cases, relative figure of merit values were computed
+relative to the single level case with $N=10,000$.
+\begin{table}[h!]
+  \begin{center}
+    \begin{tabular}{cllll}\hline\hline
+      \multicolumn{1}{c}{\textbf{Levels}} & 
+      \multicolumn{1}{l}{\textbf{Samples}} & 
+      \multicolumn{1}{l}{\textbf{$||\ve{e}||_{\infty}$}} & 
+      \multicolumn{1}{l}{\textbf{Time (s)}} & 
+      \multicolumn{1}{l}{\textbf{RFOM}} \\
+      \hline
+      1 & 10,000 & 1.81 & 98.6 & 1 \\
+      2 & 11,250 & 2.64 & 18.2 & 2.53 \\
+      3 & 11,406 & 2.61 & 3.1 & 15.15 \\
+      4 & 11,425 & 4.56 & 0.47 & 33.04 \\
+      5 & 11,427 & 16.5 & 0.07 & 16.95 \\
+      \hline\hline
+    \end{tabular}
+  \end{center}
+  \caption{\textbf{Multilevel Monte Carlo results for $k = 10$ with $M
+      = 4$, $N = 10,000$ and run times reported in seconds.}}
+  \label{tab:n4_results}
+\end{table}
+\begin{table}[h!]
+  \begin{center}
+    \begin{tabular}{cllll}\hline\hline
+      \multicolumn{1}{c}{\textbf{Levels}} & 
+      \multicolumn{1}{l}{\textbf{Samples}} & 
+      \multicolumn{1}{l}{\textbf{$||\ve{e}||_{\infty}$}} & 
+      \multicolumn{1}{l}{\textbf{Time (s)}} & 
+      \multicolumn{1}{l}{\textbf{RFOM}} \\
+      \hline
+      3 & 114,062 & 0.76 & 28.3 & 19.63 \\
+      4 & 114,275 & 1.53 & 4.4 & 31.43 \\
+      5 & 114,281 & 4.60 & 0.67 & 22.78 \\
+      \hline\hline
+    \end{tabular}
+  \end{center}
+  \caption{\textbf{Multilevel Monte Carlo results for $k = 10$ with $M
+      = 4$, $N = 100,000$ and run times reported in seconds.}}
+  \label{tab:n5_results}
+\end{table}
+\begin{table}[h!]
+  \begin{center}
+    \begin{tabular}{cllll}\hline\hline
+      \multicolumn{1}{c}{\textbf{Levels}} & 
+      \multicolumn{1}{l}{\textbf{Samples}} & 
+      \multicolumn{1}{l}{\textbf{$||\ve{e}||_{\infty}$}} & 
+      \multicolumn{1}{l}{\textbf{Time (s)}} & 
+      \multicolumn{1}{l}{\textbf{RFOM}} \\
+      \hline
+      4 & 1,142,758 & 0.56 & 41.8 & 25.00 \\
+      5 & 1,142,822 & 1.42 & 6.49 & 24.68 \\
+      \hline\hline
+    \end{tabular}
+  \end{center}
+  \caption{\textbf{Multilevel Monte Carlo results for $k = 10$ with $M
+      = 4$, $N = 1,000,000$ and run times reported in seconds.}}
+  \label{tab:n6_results}
+\end{table}
+Although Giles reports that $M \geq 4$ provides good performance in
+the context of his calculations, the improvement is not as dramatic
+for these cases. A coarser discretization of $M=4$ does provide a
+small improvement in the time required to compute a single sample and
+therefore enables slightly higher figures of merit. However, these
+results do not rule out using $M=2$. This is an important result in
+that both geometric and algebraic multigrid methods utilize $M=2$ and
+therefore we may leverage the interpolation operators and other
+infrastructure developed for those methods within the multilevel Monte
+Carlo scheme presented here without a dramatic increase in
+computational complexity.
+
 %%---------------------------------------------------------------------------%%
+\clearpage
+
 \bibliographystyle{ieeetr}
 \bibliography{references}
 
