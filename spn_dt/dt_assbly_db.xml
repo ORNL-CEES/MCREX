@@ -1,0 +1,58 @@
+<ParameterList name="dt_assbly-PROBLEM">
+  <Parameter docString="" id="0" isDefault="false" isUsed="true" name="radial mesh" type="int" value="2"/>
+  <Parameter docString="" id="1" isDefault="false" isUsed="true" name="axial mesh" type="Array(int)" value="{1}"/>
+  <Parameter docString="" id="2" isDefault="false" isUsed="true" name="symmetry" type="string" value="full"/>
+  <Parameter docString="" id="3" isDefault="false" isUsed="true" name="Pn_order" type="int" value="0"/>
+  <Parameter docString="" id="4" isDefault="false" isUsed="true" name="do_transport" type="bool" value="false"/>
+  <Parameter docString="" id="5" isDefault="false" isUsed="true" name="output_matrices" type="bool" value="true"/>
+  <Parameter docString="" id="6" isDefault="false" isUsed="true" name="problem_name" type="string" value="dt_assbly"/>
+  <ParameterList id="8" name="timestep control">
+    <Parameter docString="" id="7" isDefault="false" isUsed="true" name="dt" type="double" value="9.99999999999999955e-07"/>
+  </ParameterList>
+  <Parameter docString="" id="9" isDefault="false" isUsed="true" name="num_cells_i" type="int" value="34"/>
+  <Parameter docString="" id="10" isDefault="false" isUsed="true" name="delta_x" type="double" value="1.26000000000000001e+00"/>
+  <Parameter docString="" id="11" isDefault="false" isUsed="true" name="num_cells_j" type="int" value="34"/>
+  <Parameter docString="" id="12" isDefault="false" isUsed="true" name="delta_y" type="double" value="1.26000000000000001e+00"/>
+  <Parameter docString="" id="13" isDefault="false" isUsed="true" name="z_edges" type="Array(double)" value="{0.00000000000000000e+00, 1.00000000000000000e+00}"/>
+  <Parameter docString="" id="14" isDefault="false" isUsed="true" name="num_blocks_i" type="int" value="1"/>
+  <Parameter docString="" id="15" isDefault="false" isUsed="true" name="num_blocks_j" type="int" value="1"/>
+  <Parameter docString="" id="16" isDefault="false" isUsed="true" name="num_z_blocks" type="int" value="1"/>
+  <Parameter docString="" id="17" isDefault="false" isUsed="true" name="num_sets" type="int" value="1"/>
+  <Parameter docString="" id="18" isDefault="false" isUsed="true" name="dimension" type="int" value="3"/>
+  <Parameter docString="" id="19" isDefault="true" isUsed="true" name="g_first" type="int" value="0"/>
+  <Parameter docString="" id="20" isDefault="true" isUsed="true" name="g_last" type="int" value="6"/>
+  <Parameter docString="" id="21" isDefault="true" isUsed="true" name="SPn_order" type="int" value="1"/>
+  <Parameter docString="" id="22" isDefault="false" isUsed="true" name="problem_type" type="string" value="fixed_tdep"/>
+  <Parameter docString="" id="23" isDefault="true" isUsed="true" name="solver_type" type="string" value="stratimikos"/>
+  <Parameter docString="" id="24" isDefault="true" isUsed="true" name="tolerance" type="double" value="9.99999999999999955e-07"/>
+  <Parameter docString="" id="25" isDefault="true" isUsed="true" name="max_itr" type="int" value="100"/>
+  <ParameterList id="41" name="Stratimikos">
+    <Parameter docString="" id="26" isDefault="false" isUsed="true" name="Preconditioner Type" type="string" value="None"/>
+    <Parameter docString="" id="27" isDefault="false" isUsed="true" name="Linear Solver Type" type="string" value="AztecOO"/>
+    <Parameter docString="" id="28" isDefault="true" isUsed="true" name="Enable Delayed Solver Construction" type="bool" value="false"/>
+    <ParameterList id="40" name="Linear Solver Types">
+      <ParameterList id="39" name="AztecOO">
+        <Parameter docString="" id="29" isDefault="true" isUsed="true" name="Output Every RHS" type="bool" value="false"/>
+        <ParameterList id="32" name="Forward Solve">
+          <Parameter docString="" id="30" isDefault="true" isUsed="true" name="Max Iterations" type="int" value="400"/>
+          <Parameter docString="" id="31" isDefault="true" isUsed="true" name="Tolerance" type="double" value="9.99999999999999955e-07"/>
+        </ParameterList>
+        <ParameterList id="35" name="Adjoint Solve">
+          <Parameter docString="" id="33" isDefault="true" isUsed="true" name="Max Iterations" type="int" value="400"/>
+          <Parameter docString="" id="34" isDefault="true" isUsed="true" name="Tolerance" type="double" value="9.99999999999999955e-07"/>
+        </ParameterList>
+        <ParameterList id="38" name="VerboseObject">
+          <Parameter docString="" id="36" isDefault="true" isUsed="true" name="Output File" type="string" value="none"/>
+          <Parameter docString="" id="37" isDefault="true" isUsed="true" name="Verbosity Level" type="string" value="default"/>
+        </ParameterList>
+      </ParameterList>
+    </ParameterList>
+  </ParameterList>
+  <Parameter docString="" id="42" isDefault="true" isUsed="true" name="eqn_type" type="string" value="fv"/>
+  <Parameter docString="" id="43" isDefault="false" isUsed="true" name="boundary" type="string" value="reflect"/>
+  <ParameterList id="45" name="boundary_db">
+    <Parameter docString="" id="44" isDefault="false" isUsed="true" name="reflect" type="Array(int)" value="{1, 1, 1, 1, 1, 1}"/>
+  </ParameterList>
+  <Validators/>
+</ParameterList>
+
