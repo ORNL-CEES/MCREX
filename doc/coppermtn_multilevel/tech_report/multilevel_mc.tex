@@ -90,7 +90,8 @@ used with the multigrid method. Next, we present the multilevel Monte
 Carlo method for linear systems using a general algebraic
 formulation. Finally, we present results using the model problem the
 demonstrate the superiority of the multilevel method in terms of time
-to solution.
+to solution using both geometric and algebraic multigrid
+representations of the linear problem.
 
 %%---------------------------------------------------------------------------%%
 \section{Monte Carlo Solver Fourier Analysis}
@@ -381,14 +382,14 @@ samples have been computed instead of modifying the Monte Carlo
 sequence.
 
 Using this idea we then define a \textit{prolongation operator},
-$\ve{P}_{l+1}^l$, which maps a vector defined on grid $l+1$ to a
+$\ve{P}_l$, which maps a vector defined on grid $l+1$ to a
 vector defined on grid $l$ and a \textit{restriction operator},
-$\ve{R}_l^{l+1}$, which maps a vector defined on grid $l$ to a
+$\ve{R}_l$, which maps a vector defined on grid $l$ to a
 vector defined on grid $l+1$. We can then define the following
 equivalent expectation value for a given level $l$:
 \begin{equation}
-  E(\ve{x}_{l} - \ve{x}_{(l+1)}) = \Big(\ve{I} - \ve{P}_{l+1}^l
-  \ve{R}_l^{l+1}\Big) \hat{\ve{x}}_{l}\:,
+  E(\ve{x}_{l} - \ve{x}_{l+1}) = \Big(\ve{I} - \ve{P}_l
+  \ve{R}_l\Big) \hat{\ve{x}}_{l}\:,
   \label{eq:level_expectation}
 \end{equation}
 with $\hat{\ve{x}}_{l}$ given by Eq~(\ref{eq:standard_estimator}) as
@@ -398,26 +399,37 @@ observations on that grid and the action of the prolongation operator
 on the coarse tally maps the result back to the fine level. Using this
 estimator, Algorithm~\ref{alg:mlamc} gives the multilevel Monte Carlo
 algorithm for linear systems now with an arbitrary right hand side
-vector, $\ve{b}$.
+vector, $\ve{b}$, and an initial solution guess, $\ve{x}^0$.
 \begin{algorithm}[h!]
-  \caption{Multilevel Adjoint Monte Carlo}
+  \caption{Multilevel Monte Carlo Method}
   \label{alg:mlamc}
   \begin{algorithmic}[1]
-
     \For{ l = 0...L }
-    \State $\ve{A}_l \ve{x}_l = \ve{b}_l$
+    \State $\ve{P}_l = P(\ve{A}_l)$
+    \Comment{Build the prolongation and restriction operators for
+      the $l^{th}$ level.}
+    \State $\ve{R}_l = c \ve{P}_l^T$
+    \State $\ve{r}_l = \ve{b}_l - \ve{A}_l \ve{x}_l^0$
+    \Comment{Build the $l^{th}$ level residual.}
+    \State $\ve{d}_l = \hat{\ve{A}}_l^{-1} \ve{r}_l$
     \Comment{Solve the $l^{th}$ level problem with adjoint Monte
       Carlo}
     \If{ l != L }
-    \State $\ve{x}_l = (\ve{I} - \ve{P}_{l+1}^l\ve{R}_l^{l+1}) \ve{x}_{l}$
+    \State $\ve{d}_l = (\ve{I} - \ve{P}_l\ve{R}_l) \ve{d}_{l}$
     \Comment{Apply the multilevel tally}
+    \State $\ve{A}_{l+1} = \ve{R}_l \ve{A}_l \ve{P}_l$
+    \Comment{Construct the next level.}
+    \State $\ve{x}_{l+1}^0 = \ve{R}_l \ve{x}_l^0$
+    \State $\ve{b}_{l+1} = \ve{R}_l \ve{b}_l$
     \EndIf
     \EndFor
 
     \For{ l = L...1 }
-    \State $\ve{x}_{l-1} = ( \ve{I} + \ve{P}_{l}^{l-1} ) \ve{x}_{l}$
+    \State $\ve{d}_{l-1} = ( \ve{I} + \ve{P}_{l} ) \ve{d}_{l}$
     \Comment{Collapse the tallies to the finest grid}
     \EndFor
+
+    \State $\ve{x} = \ve{x}^0 + \ve{d}_0$
 
   \end{algorithmic}
 \end{algorithm}
@@ -425,15 +437,15 @@ This algorithm permits each of the levels to be computed independently
 and then combined appropriately with the prolongation and restriction
 operators. Like other multigrid algorithms for linear systems, we are
 required to produce a representation of the linear operator on each
-level, $\ve{A}^l$, as well as the right hand side, $\ve{b}^l$. The
+level, $\ve{A}_l$, as well as the right hand side, $\ve{b}_l$. The
 formulation of Algorithm~\ref{alg:mlamc} places no restrictions on the
-form of $\ve{A}^l$, $\ve{b}^l$, $\ve{P}_{l+1}^l$, or $\ve{R}_l^{l+1}$
+form of $\ve{A}_l$, $\ve{b}_l$, $\ve{P}_l$, or $\ve{R}_l$
 and therefore could be used with any multigrid scheme including those
 arising from algebraic multigrid formulations.
 
 %%---------------------------------------------------------------------------%%
-\section{Results}
-\label{sec:results}
+\section{Geometric Multigrid Results}
+\label{sec:geometric_results}
 To demonstrate the multilevel Monte Carlo algorithm we solve the
 Poisson problem presented in \S~\ref{sec:fourier_analysis}, this time
 with a grid of size $J = 1024$. For the coarsening parameter we will
@@ -650,6 +662,10 @@ therefore we may leverage the interpolation operators and other
 infrastructure developed for those methods within the multilevel Monte
 Carlo scheme presented here without a dramatic increase in
 computational complexity.
+
+%%---------------------------------------------------------------------------%%
+\section{Algebraic Multigrid Results}
+\label{sec:algebraic_results}
 
 %%---------------------------------------------------------------------------%%
 \clearpage
