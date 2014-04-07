@@ -1,7 +1,8 @@
 \documentclass{beamer}
 \usetheme{Warsaw}
 \usepackage{graphicx}
-\usepackage{sidecap}
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{longtable}
 \usepackage{listings}
 \usepackage{color}
@@ -232,25 +233,191 @@
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Model Problem}
 
+  Choose a simple homogeneous problem with Dirichlet conditions:
+  \[
+  \nabla^2 x = 0, \ \ve{x}_1 = 0,\ \ \ve{x}_N = 0
+  \]
+
+  Second order finite difference:
+  \[
+  (\nabla \ve{u})_i = \frac{\ve{u}_{i-1} - 2 \ve{u}_{i} + \ve{u}_{i+1}}{h^2}
+  \]
+
+  Monte Carlo requires $\rho(\ve{H})$ so we scale by the diagonal:
+  \[
+  \ve{M}^{-1}\ve{A}\ve{x} = \ve{0}
+  \]
+
+  Choose initial guess to be some Fourier mode
+  \[
+  \ve{x}^0_i = \sin\Bigg( \frac{ik\pi}{N} \Bigg)
+  \]
+
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Error Analysis}
+
+  \begin{columns}
+
+    \begin{column}{0.5\textwidth}
+      \begin{figure}[h!]
+        \begin{center}
+          \includegraphics[width=2in]{richardson.png}
+        \end{center}
+        \caption{\textbf{Convergence of Richardson's iteration.}
+          \textit{Better for larger wave numbers.}}
+        \label{fig:richardson}
+      \end{figure}
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+      \begin{figure}[h!]
+        \begin{center}
+          \includegraphics[width=2in]{adjoint_mc.png}
+        \end{center}
+        \caption{\textbf{Convergence of the adjoint Monte Carlo
+            method.} \textit{Better for smaller wave numbers.} }
+        \label{fig:adjoint_mc}
+      \end{figure}
+    \end{column}
+
+  \end{columns}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Error Analysis}
+
+  \begin{columns}
+
+    \begin{column}{0.5\textwidth}
+
+      \begin{figure}[h!]
+        \includegraphics[width=1.5in]{mode_1.pdf}
+        \caption{\textbf{$k = 1$.}}
+      \end{figure}
+
+      \begin{figure}[b]
+        \includegraphics[width=1.5in]{mode_10.pdf}
+        \caption{\textbf{$k = 10$.}}
+      \end{figure}
+
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+
+      { \tiny
+      \begin{table}[h!]
+        \begin{center}
+          \begin{tabular}{cc}\hline\hline
+            \multicolumn{1}{c}{\textbf{Wave Number}} & 
+            \multicolumn{1}{c}{\textbf{Time per History (s)}} \\
+            \hline
+            1 & 1 \\
+            5 & 0.85 \\
+            10 & 0.83 \\
+            \hline\hline
+          \end{tabular}
+        \end{center}
+        \caption{\textbf{Normalized average CPU time per history.}}
+        \label{tab:mc_timing}
+      \end{table}
+      }
+
+      \begin{itemize}
+        \item $\sigma(A)$ dictates the characteristics of the Markov
+          chain
+        \item $N$ dictates the convergence of the Monte Carlo
+      \end{itemize}
+
+    \end{column}
+
+  \end{columns}
 
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Multilevel Monte Carlo Methods}
 
+  \begin{itemize}
+  \item Formalized by Heinrich for integral equations in 2001 and by
+    Giles in 2008 for finance calculations
+  \item Recent work includes Bayesian inference techniques for
+    stochastic PDEs in ground water flow
+  \end{itemize}
+
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Multilevel Expectation}
 
+  We start first with the standard Monte Carlo estimator for the
+  solution vector:
+  \[
+  \hat{\ve{x}} = \frac{1}{N} \sum_{m=1}^N x^m
+  \]
+
+  \medskip
+
+  Consider $L$ levels with level 0 the finest $L$ the coarsest:
+  \[
+  E(\ve{x}_{0}) = E(\ve{x}_{L}) + E(\ve{x}_{L-1} - \ve{x}_{L}) +
+  E(\ve{x}_{L-2} - \ve{x}_{L-1}) + \dots + E(\ve{x}_{0} - \ve{x}_{1})
+  \]
+
+  \medskip
+
+  Reduce to a sum:
+  \[
+    \hat{\ve{y}}_{l} = \frac{1}{N_l} \sum_{m=1}^{N_l} (x^m_{l} -
+    x^m_{l+1})
+  \]
+
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Multilevel Expectation}
+
+  Build a correction estimator for a given level $l$:
+  \[
+    \hat{\ve{y}}_{l} = \frac{1}{N_l} \sum_{m=1}^{N_l} (x^m_{l} -
+    x^m_{l+1})
+  \]
+
+  \medskip
+
+  Leaving a final multilevel estimator of:
+  \[
+  \hat{\ve{x}} = \sum_{l=0}^L \hat{\ve{y}}_{l}
+  \]
+
+  \medskip
+
+  \textbf{Critical observation:} $x^m_{l}$ and $x^m_{l+1}$
+  must be constructed from the \textit{same} Markov chain
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Constructing Multilevel Estimates}
+
+  Number of samples at each level should be determined from the
+  estimated variance. For simplicity:
+  \[
+  N_l = M^{-3(L-l)/2}N
+  \]
+
+  \medskip
+
+  Define a \textit{prolongation operator}, $\ve{P}_l$, which maps a
+  vector defined on grid $l+1$ to a vector defined on grid $l$ and a
+  \textit{restriction operator}, $\ve{R}_l$, which maps a vector
+  defined on grid $l$ to a vector defined on grid $l+1$
+  \[
+  E(\ve{x}_{l} - \ve{x}_{l+1}) = \Big(\ve{I} - \ve{P}_l \ve{R}_l\Big)
+  \hat{\ve{x}}_{l}
+  \]
 
 \end{frame}
 
@@ -258,7 +425,7 @@
 \begin{frame}[fragile]{Multilevel Monte Carlo Solver}
 
   \begin{algorithm}[H]
-    \caption{Multilevel Monte Carlo Method}
+    \caption{\small Multilevel Monte Carlo Method}
     \label{alg:mlamc}
     \begin{algorithmic}[1]
       { \small
@@ -286,7 +453,6 @@
       \STATE $\ve{d}_{l-1} = ( \ve{I} + \ve{P}_{l} ) \ve{d}_{l}$
       \COMMENT{Collapse the tallies to the finest grid}
       \ENDFOR
-
       \STATE $\ve{x} = \ve{x}^0 + \ve{d}_0$
       }
     \end{algorithmic}
