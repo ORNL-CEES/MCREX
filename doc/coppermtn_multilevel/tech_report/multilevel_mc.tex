@@ -47,10 +47,9 @@
   can reduce the time required to achieve a certain statistical error
   in the solution by at least two orders of magnitude, thereby
   dramatically reducing the computational complexity of the
-  problem. Furthermore, the general formulation presented here
-  indicates that this methodology is not restricted to geometric
-  formulations of the multigrid method and could additionally be
-  formulated using algebraic techniques.
+  problem. Furthermore, the general formulation and results presented
+  here indicate that this methodology may be used with both geometric
+  and algebraic formulations of the Galerkin mutlgrid method.
 \end{abstract}
 
 %%---------------------------------------------------------------------------%%
@@ -441,7 +440,9 @@ level, $\ve{A}_l$, as well as the right hand side, $\ve{b}_l$. The
 formulation of Algorithm~\ref{alg:mlamc} places no restrictions on the
 form of $\ve{A}_l$, $\ve{b}_l$, $\ve{P}_l$, or $\ve{R}_l$
 and therefore could be used with any multigrid scheme including those
-arising from algebraic multigrid formulations.
+arising from algebraic multigrid formulations. It should be noted,
+however, that work to date has only tested the algorithm for the
+Galerkin formulation presented in Algorithm~\ref{alg:mlamc}.
 
 %%---------------------------------------------------------------------------%%
 \section{Geometric Multigrid Results}
@@ -512,8 +513,9 @@ times that of the single level solver.
       \hline\hline
     \end{tabular}
   \end{center}
-  \caption{\textbf{Multilevel Monte Carlo results for $k = 1$ with $M
-      = 2$, $N = 10,000$ and run times reported in seconds.}}
+  \caption{\textbf{Geometric Multilevel Monte Carlo results for $k =
+      1$ with $M = 2$, $N = 10,000$ and run times reported in
+      seconds.}}
   \label{tab:k1_results}
 \end{table}
 \begin{table}[h!]
@@ -537,8 +539,9 @@ times that of the single level solver.
       \hline\hline
     \end{tabular}
   \end{center}
-  \caption{\textbf{Multilevel Monte Carlo results for $k = 5$ with $M
-      = 2$, $N = 10,000$ and run times reported in seconds.}}
+  \caption{\textbf{Geometric Multilevel Monte Carlo results for $k =
+      5$ with $M = 2$, $N = 10,000$ and run times reported in
+      seconds.}}
   \label{tab:k5_results}
 \end{table}
 \begin{table}[h!]
@@ -562,8 +565,9 @@ times that of the single level solver.
       \hline\hline
     \end{tabular}
   \end{center}
-  \caption{\textbf{Multilevel Monte Carlo results for $k = 10$ with $M
-      = 2$, $N = 10,000$ and run times reported in seconds.}}
+  \caption{\textbf{Geometric Multilevel Monte Carlo results for $k =
+      10$ with $M = 2$, $N = 10,000$ and run times reported in
+      seconds.}}
   \label{tab:k10_results}
 \end{table}
 
@@ -610,8 +614,9 @@ relative to the single level case with $N=10,000$.
       \hline\hline
     \end{tabular}
   \end{center}
-  \caption{\textbf{Multilevel Monte Carlo results for $k = 10$ with $M
-      = 4$, $N = 10,000$ and run times reported in seconds.}}
+  \caption{\textbf{Geometric Multilevel Monte Carlo results for $k =
+      10$ with $M = 4$, $N = 10,000$ and run times reported in
+      seconds.}}
   \label{tab:n4_results}
 \end{table}
 \begin{table}[h!]
@@ -629,8 +634,9 @@ relative to the single level case with $N=10,000$.
       \hline\hline
     \end{tabular}
   \end{center}
-  \caption{\textbf{Multilevel Monte Carlo results for $k = 10$ with $M
-      = 4$, $N = 100,000$ and run times reported in seconds.}}
+  \caption{\textbf{Geometric Multilevel Monte Carlo results for $k =
+      10$ with $M = 4$, $N = 100,000$ and run times reported in
+      seconds.}}
   \label{tab:n5_results}
 \end{table}
 \begin{table}[h!]
@@ -647,8 +653,9 @@ relative to the single level case with $N=10,000$.
       \hline\hline
     \end{tabular}
   \end{center}
-  \caption{\textbf{Multilevel Monte Carlo results for $k = 10$ with $M
-      = 4$, $N = 1,000,000$ and run times reported in seconds.}}
+  \caption{\textbf{Geometric Multilevel Monte Carlo results for $k =
+      10$ with $M = 4$, $N = 1,000,000$ and run times reported in
+      seconds.}}
   \label{tab:n6_results}
 \end{table}
 Although Giles reports that $M \geq 4$ provides good performance in
@@ -666,6 +673,88 @@ computational complexity.
 %%---------------------------------------------------------------------------%%
 \section{Algebraic Multigrid Results}
 \label{sec:algebraic_results}
+We next solve the same model problem, this time using an algebraic
+multigrid formulation of the Galerkin problem. For these calculations
+we used the ML multigrid library to construct $\ve{A}$, $\ve{P}$, and
+$\ve{R}$ on each level with $\ve{M} \approx 3$
+\cite{ml_manual}. Tables~\ref{tab:ml_k1_results},
+\ref{tab:ml_k5_results}, and \ref{tab:ml_k10_results} give the results
+of these calculations.
+\begin{table}[h!]
+  \begin{center}
+    \begin{tabular}{cllll}\hline\hline
+      \multicolumn{1}{c}{\textbf{Levels}} & 
+      \multicolumn{1}{l}{\textbf{Samples}} & 
+      \multicolumn{1}{l}{\textbf{$||\ve{e}||_{\infty}$}} & 
+      \multicolumn{1}{l}{\textbf{Time (s)}} & 
+      \multicolumn{1}{l}{\textbf{RFOM}} \\
+      \hline
+      1 & 10,000 & 0.022 & 119.1 & 1 \\
+      2 & 11,924 & 0.037 & 31.9 & 1.28 \\
+      3 & 12,294 & 0.055 & 7.6 & 2.40 \\
+      4 & 12,365 & 0.051 & 1.8 & 11.76 \\
+      5 & 12,378 & 0.094 & 0.5 & 12.01 \\
+      \hline\hline
+    \end{tabular}
+  \end{center}
+  \caption{\textbf{Algebraic Multilevel Monte Carlo results for $k =
+      1$ with $M = 3$, $N = 10,000$ and run times reported in
+      seconds.}}
+  \label{tab:ml_k1_results}
+\end{table}
+\begin{table}[h!]
+  \begin{center}
+    \begin{tabular}{cllll}\hline\hline
+      \multicolumn{1}{c}{\textbf{Levels}} & 
+      \multicolumn{1}{l}{\textbf{Samples}} & 
+      \multicolumn{1}{l}{\textbf{$||\ve{e}||_{\infty}$}} & 
+      \multicolumn{1}{l}{\textbf{Time (s)}} & 
+      \multicolumn{1}{l}{\textbf{RFOM}} \\
+      \hline
+      1 & 10,000 & 0.668 & 101.6 & 1 \\
+      2 & 11,924 & 0.834 & 30.8 & 2.12 \\
+      3 & 12,294 & 1.140 & 7.5 & 4.63 \\
+      4 & 12,365 & 0.975 & 1.6 & 29.09 \\
+      5 & 12,378 & 2.240 & 0.4 & 25.10 \\
+      \hline\hline
+    \end{tabular}
+  \end{center}
+  \caption{\textbf{Algebraic Multilevel Monte Carlo results for $k =
+      5$ with $M = 3$, $N = 10,000$ and run times reported in
+      seconds.}}
+  \label{tab:ml_k5_results}
+\end{table}
+\begin{table}[h!]
+  \begin{center}
+    \begin{tabular}{cllll}\hline\hline
+      \multicolumn{1}{c}{\textbf{Levels}} & 
+      \multicolumn{1}{l}{\textbf{Samples}} & 
+      \multicolumn{1}{l}{\textbf{$||\ve{e}||_{\infty}$}} & 
+      \multicolumn{1}{l}{\textbf{Time (s)}} & 
+      \multicolumn{1}{l}{\textbf{RFOM}} \\
+      \hline
+      1 & 10,000 & 1.81 & 98.6 & 1 \\
+      2 & 11,924 & 2.33 & 30.0 & 1.99 \\
+      3 & 12,294 & 3.19 & 7.6 & 4.20 \\
+      4 & 12,365 & 3.31 & 1.8 & 16.29 \\
+      5 & 12,378 & 9.98 & 0.5 & 7.21 \\
+      \hline\hline
+    \end{tabular}
+  \end{center}
+  \caption{\textbf{Algebraic Multilevel Monte Carlo results for $k =
+      10$ with $M = 3$, $N = 10,000$ and run times reported in
+      seconds.}}
+  \label{tab:ml_k10_results}
+\end{table}
+In general, the results show similar performance to the geometric
+multigrid method, however, gains in figure of merit were not as
+significant which may be in part due to the simplified selection of
+sample size at each level. In addition, the Dirichlet conditions for
+the model problem were explicitly included in the geometric
+interpolation operators while the level operators generated by the
+algebraic scheme did not. Most importantly, these results indicate
+that Algorithm~\ref{alg:mlamc} can be used with general Galerkin
+formulations of the multigrid problem.
 
 %%---------------------------------------------------------------------------%%
 \clearpage
