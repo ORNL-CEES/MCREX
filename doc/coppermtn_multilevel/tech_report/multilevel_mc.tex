@@ -424,7 +424,7 @@ vector, $\ve{b}$, and an initial solution guess, $\ve{x}^0$.
     \EndFor
 
     \For{ l = L...1 }
-    \State $\ve{d}_{l-1} = ( \ve{I} + \ve{P}_{l} ) \ve{d}_{l}$
+    \State $\ve{d}_{l-1} = \ve{d}_{l-1} + \ve{P}_{l} \ve{d}_{l}$
     \Comment{Collapse the tallies to the finest grid}
     \EndFor
 
