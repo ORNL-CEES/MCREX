@@ -57,9 +57,9 @@
   Oak Ridge National Laboratory}
 
 \date{\today} 
-\title[Multilevel Monte Carlo Solvers \hspace{1mm}
-  \insertframenumber/\inserttotalframenumber]{Multilevel Monte Carlo
-  Solvers for Linear Systems}
+\title[Multilevel Monte Carlo \hspace{1mm}
+  \insertframenumber/\inserttotalframenumber]{A Multilevel Monte Carlo
+  Method for Linear Systems}
 \begin{document}
 \maketitle
 
@@ -233,7 +233,7 @@
   W_{m} = w_{i,i_1} w_{i_1,i_2} \cdots w_{i_{m-1},i_m}
   \]
   \[
-  X_{\nu}(i_0 = i) = \sum_{m=0}^k W_{m} b_{i_m}
+  X_{i=i_0}(\nu) = \sum_{m=0}^k W_{m} b_{i_m}
   \]
 \end{frame}
 
@@ -246,7 +246,7 @@
   \end{itemize}
 
   \[
-  P_{\nu} = p_{i,i_1} p_{i_1,i_2} \cdots p_{i_{k-1},i_k}
+  P(\nu) = p_{i,i_1} p_{i_1,i_2} \cdots p_{i_{k-1},i_k}
   \]
 
   \begin{itemize}
@@ -254,7 +254,7 @@
   \end{itemize}
 
   \[
-  E\{X(i_0 = i)\} = \sum_{\nu} P_{\nu} X_{\nu}
+  E\{X(i_0 = i)\} = \sum_{\nu} P(\nu) X(\nu)
   \]
 
   \begin{itemize}
@@ -281,7 +281,7 @@
     \begin{center}
       \scalebox{1.0}{ \input{heat_eq_setup.pdftex_t} }
     \end{center}
-    \caption{\textbf{Poisson Problem.}
+    \caption{\textbf{Heat Equation.}
       \textit{Distributed source of 1.0 in the domain.}}
   \end{figure}
 
@@ -298,13 +298,13 @@
       \includegraphics<4>[width=4in]{direct_1000.png}
     \end{center}
     \caption{
-      \only<1>{\textbf{Direct solution to Poisson Equation.}
+      \only<1>{\textbf{Direct solution to heat equation.}
         \textit{\sn{1}{0} total histories.} }
-      \only<2>{\textbf{Direct solution to Poisson Equation.}
+      \only<2>{\textbf{Direct solution to heat equation.}
         \textit{\sn{1}{1} total histories.} }
-      \only<3>{\textbf{Direct solution to Poisson Equation.}
+      \only<3>{\textbf{Direct solution to heat equation.}
         \textit{\sn{1}{2} total histories.} }
-      \only<4>{\textbf{Direct solution to Poisson Equation.}
+      \only<4>{\textbf{Direct solution to heat equation.}
         \textit{\sn{1}{3} total histories.} }
     }
   \end{figure}
@@ -398,7 +398,7 @@
   \end{itemize}
 
   \[
-  X_{\nu} = \sum_{m=0}^k W_{m} \delta_{i,i_m}
+  X_j(\nu) = \sum_{m=0}^k W_{m} \delta_{i_m,j}
   \]
 
   \[
@@ -426,21 +426,21 @@
       \includegraphics<8>[width=4in]{adjoint_10000000.png}
     \end{center}
     \caption{
-      \only<1>{\textbf{Adjoint solution to Poisson Equation.}
+      \only<1>{\textbf{Adjoint solution to heat equation.}
         \textit{\sn{1}{0} total histories.} }
-      \only<2>{\textbf{Adjoint solution to Poisson Equation.}
+      \only<2>{\textbf{Adjoint solution to heat equation.}
         \textit{\sn{1}{1} total histories.} }
-      \only<3>{\textbf{Adjoint solution to Poisson Equation.}
+      \only<3>{\textbf{Adjoint solution to heat equation.}
         \textit{\sn{1}{2} total histories.} }
-      \only<4>{\textbf{Adjoint solution to Poisson Equation.}
+      \only<4>{\textbf{Adjoint solution to heat equation.}
         \textit{\sn{1}{3} total histories.} }
-      \only<5>{\textbf{Adjoint solution to Poisson Equation.}
+      \only<5>{\textbf{Adjoint solution to heat equation.}
         \textit{\sn{1}{4} total histories.} }
-      \only<6>{\textbf{Adjoint solution to Poisson Equation.}
+      \only<6>{\textbf{Adjoint solution to heat equation.}
         \textit{\sn{1}{5} total histories.} }
-      \only<7>{\textbf{Adjoint solution to Poisson Equation.}
+      \only<7>{\textbf{Adjoint solution to heat equation.}
         \textit{\sn{1}{6} total histories.} }
-      \only<8>{\textbf{Adjoint solution to Poisson Equation.}
+      \only<8>{\textbf{Adjoint solution to heat equation.}
         \textit{\sn{1}{7} total histories.} } 
     }
   \end{figure}
@@ -460,7 +460,7 @@
   (\nabla \ve{u})_i = \frac{\ve{u}_{i-1} - 2 \ve{u}_{i} + \ve{u}_{i+1}}{h^2}
   \]
 
-  Monte Carlo requires $\rho(\ve{H})$ - scale by the diagonal:
+  Monte Carlo requires $\rho(\ve{H}) < 1$ - scale by the diagonal:
   \[
   \ve{M}^{-1}\ve{A}\ve{x} = \ve{0}
   \]
@@ -580,9 +580,8 @@
     \medskip
   \item Expanded for time-dependent finance calculations (Giles,2008)
     \medskip
-  \item Recent work includes Bayesian inference techniques for
-    stochastic PDEs in ground water flow (Cliffe,2011)
-    (Teckentrup,2013)
+  \item Recent work includes techniques for stochastic elliptic PDEs
+    in ground water flow (Cliffe,2011) (Teckentrup,2013)
     \medskip
   \item Idea is to leverage multigrid ideas to reduce variance
   \end{itemize}
@@ -662,9 +661,9 @@
   \medskip
   
   Number of samples at each level should be determined from the
-  estimated variance. For simplicity:
+  estimated variance. For simplicity (Heinrich,2001):
   \[
-  N_l = 2^{-3(L-l)/2}N
+  N_l = M^{-3(L-l)/2}N
   \]
 
 \end{frame}
