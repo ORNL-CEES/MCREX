@@ -676,43 +676,104 @@ time with a constant forcing of $\ve{b}=1.0$ such that:
   \label{eq:heterogeneous_problem}
 \end{equation}
 We will choose an initial guess of $\ve{0}$ for these calculations as
-the solution is non-trivial. Studies indicate that residual norms are
-controlled by the convergence of the finest level. However, adding
-additional levels provides significant smoothing to the statistical
-error. For example, given a fixed amount of compute time of
-approximately 7 seconds, Eq~(\ref{eq:heterogeneous_problem}) was
-solved using 1 level and 10,000 samples and again using 9 levels and
-1,546,783 total samples ($N=1,000,000$). The 1 level calculation gave
-$||\ve{r}||_\infty = 0.027$ and $||\ve{r}||_2 = 0.230$ while the 1
-level calculation gave $||\ve{r}||_\infty = 0.129$ and $||\ve{r}||_2 =
-0.812$. Based on the residual norm values, it would seem as though the
-1 level result was superior as better convergence was achieved in the
-same amount of compute time. However, the structure of the actual
-solutions would indicate otherwise. Figure~\ref{fig:7_sec_1_level}
-gives the 1 level result and Figure~\ref{fig:7_sec_9_level} gives the
-9 level result, both plotted against an exact solution computed using
-a minimal residual iteration. Clearly, the estimate produced by the 9
-level computation is more representative of the exact solution than
-the single level scheme due to the well-converged results provided
-coarse level estimates.
-\begin{figure}[h!]
+the solution is non-trivial and fix $N$ at 10,000 while increasing the
+number of levels. Table~\ref{tab:heterogeneous_fixed_N} gives the
+results of these calculations. Here the relative error error
+calculations were computed using an exact solution computed using a
+minimal residual iteration converged to a residual norm tolerance of
+$\sn{1}{-12}$.
+\begin{table}[h!]
   \begin{center}
-    \includegraphics[width=4in]{7_sec_1_level.pdf}
+    \begin{tabular}{cllllllll}\hline\hline
+      \multicolumn{1}{c}{\textbf{Levels}} &
+      \multicolumn{1}{l}{\textbf{Samples}} &
+      \multicolumn{1}{l}{\textbf{$||\ve{r}||_{\infty}$}} &
+      \multicolumn{1}{l}{\textbf{$||\ve{r}||_{2}$}} &
+      \multicolumn{1}{l}{\textbf{$||\ve{e}||_{\infty}$}} &
+      \multicolumn{1}{l}{\textbf{$||\ve{e}||_{2}$}} &
+      \multicolumn{1}{l}{\textbf{Time (s)}} &
+      \multicolumn{1}{l}{\textbf{RRESFOM}} &
+      \multicolumn{1}{l}{\textbf{RERRFOM}} \\
+      \hline
+      1 & 10,000 & 0.025 & 0.223 & 0.241 & 2.97 & 6.77 & 1.0 & 1.0 \\
+      2 & 17,596 & 0.044 & 0.339 & 0.277 & 5.49 & 7.19 & 0.31 & 0.71 \\
+      3 & 29,571 & 0.050 & 0.365 & 0.131 & 1.66 & 7.21 & 0.23 & 3.18 \\
+      4 & 53,295 & 0.062 & 0.483 & 0.081 & 0.96 & 7.29 & 0.16 & 8.28 \\
+      5 & 92,301 & 0.086 & 0.662 & 0.105 & 0.88 & 7.13 & 0.08 & 5.00 \\
+      6 & 185,266 & 0.120 & 0.891 & 0.102 & 0.72 & 7.10 & 0.04 & 5.32 \\
+      7 & 355,543 & 0.069 & 0.513 & 0.056 & 0.51 & 6.92 & 0.13 & 18.12 \\
+      8 & 742,337 & 0.093 & 0.654 & 0.081 & 0.67 & 7.07 & 0.07 & 8.47 \\
+      9 & 1,624,121 & 0.122 & 0.758 & 0.107 & 0.83 & 7.08 & 0.04 &
+      4.85 \\
+      \hline\hline
+    \end{tabular}
   \end{center}
-  \caption{\textbf{Solution of the Poisson problem using the geometric
-      multilevel Monte Carlo method with 1 level and 6.87 seconds of
-      compute time.}}
-  \label{fig:7_sec_1_level}
-\end{figure}
+  \caption{\textbf{Geometric Multilevel Monte Carlo results for
+      $\ve{b} = 1$ with $M = 2$, $t \approx 7s$ and run times reported
+      in seconds.} \textit{RRESSFOM values are the relative figure of
+      merit computed using the infinity norm of the residual. RERRFORM
+    values are the relative figure of merit computed using the
+    infinity norm of the absolute error vector.}}
+  \label{tab:heterogeneous_fixed_N}
+\end{table}
+Based on the residual norm values, it would seem as though the 1 level
+result was superior as better convergence was achieved in the same
+amount of compute time using residual norm metrics. However, the
+structure of the actual solutions would indicate
+otherwise. Figure~\ref{fig:heterogeneous_ml_solutions} gives the
+results for with 1-9 levels all plotted against the exact
+solution. Clearly, the estimate produced by the 9 level computation is
+more representative of the exact solution than the single level scheme
+as indicated by the error norms due to the well-converged results
+provided coarse level estimates. Furthermore, the error norms also
+indicate a more efficient solution scheme when multiple levels are
+used showing similar relative figure of merit metrics for the error
+norm computations.
+
 \begin{figure}[h!]
-  \begin{center}
-    \includegraphics[width=4in]{7_sec_9_level.pdf}
-  \end{center}
+  \centering
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{7_sec_1_level.pdf}
+    \caption{\textbf{1 level.}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{7_sec_2_level.pdf}
+    \caption{\textbf{2 levels.}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{7_sec_3_level.pdf}
+    \caption{\textbf{3 levels.}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{7_sec_4_level.pdf}
+    \caption{\textbf{4 levels.}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{7_sec_5_level.pdf}
+    \caption{\textbf{5 levels.}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{7_sec_6_level.pdf}
+    \caption{\textbf{6 levels.}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{7_sec_7_level.pdf}
+    \caption{\textbf{7 levels.}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{7_sec_8_level.pdf}
+    \caption{\textbf{8 levels.}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{7_sec_9_level.pdf}
+    \caption{\textbf{9 levels.}}
+  \end{subfigure}
   \caption{\textbf{Solution of the Poisson problem using the geometric
-      multilevel Monte Carlo method with 9 levels and 6.78 seconds of
-      compute time.}}
-  \label{fig:7_sec_9_level}
+      multilevel Monte Carlo method with 1-9 levels and approximately
+      7 seconds of compute time.}}
+  \label{fig:heterogenous_ml_solutions}
 \end{figure}
+
 To show that the 1 level calculation will eventually converge to the
 correct result, Figure~\ref{fig:converged_1_level} shows the solution
 with 1,000,000 samples. This calculation required 665.7 seconds to run
@@ -734,7 +795,16 @@ multilevel estimator has signficantly better local convergence
 properties for a fixed amount of work when compared to single level
 methods. Therefore, we must determine if this improved local
 convergence is satisfactory to improve the convergence of MCSA or if
-convergence of global metrics is also required of the Monte Carlo method.
+convergence of global metrics is also required of the Monte Carlo
+method.
+
+%%---------------------------------------------------------------------------%%
+\section{Coarse Grid Monte Carlo Acceleration}
+Based on the above results we then consider using only the coarse grid
+calculations as the acceleration. Consider the following results where
+a coarse grid solution has been produced and then simply prolongated
+back to the fine grid rather than solving all levels as a simple
+coarse approximation of the solution.
 
 %%---------------------------------------------------------------------------%%
 \clearpage
