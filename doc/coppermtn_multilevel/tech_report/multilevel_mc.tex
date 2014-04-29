@@ -708,14 +708,15 @@ $\sn{1}{-12}$.
       \hline\hline
     \end{tabular}
   \end{center}
-  \caption{\textbf{Geometric Multilevel Monte Carlo results for
-      $\ve{b} = 1$ with $M = 2$, $t \approx 7s$ and run times reported
-      in seconds.} \textit{RRESSFOM values are the relative figure of
-      merit computed using the infinity norm of the residual. RERRFORM
-    values are the relative figure of merit computed using the
-    infinity norm of the absolute error vector.}}
-  \label{tab:heterogeneous_fixed_t}
+  \caption{\textbf{Coarse grid results for $\ve{b} = 1$ with $M = 2$,
+      $t \approx 7s$ and run times reported in seconds.}
+    \textit{RRESSFOM values are the relative figure of merit computed
+      using the infinity norm of the residual. RERRFORM values are the
+      relative figure of merit computed using the infinity norm of the
+      absolute error vector.}}
+  \label{tab:heterogeneous_coarse_grids}
 \end{table}
+
 Based on the residual norm values, it would seem as though the 1 level
 result was superior as better convergence was achieved in the same
 amount of compute time using residual norm metrics. However, the
@@ -732,39 +733,39 @@ norm computations.
 
 \begin{figure}[h!]
   \centering
-  \begin{subfigure}[b]{0.3\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\textwidth]{7_sec_1_level.pdf}
     \caption{\textbf{1 level.}}
   \end{subfigure}
-  \begin{subfigure}[b]{0.3\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\textwidth]{7_sec_2_level.pdf}
     \caption{\textbf{2 levels.}}
   \end{subfigure}
-  \begin{subfigure}[b]{0.3\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\textwidth]{7_sec_3_level.pdf}
     \caption{\textbf{3 levels.}}
   \end{subfigure}
-  \begin{subfigure}[b]{0.3\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\textwidth]{7_sec_4_level.pdf}
     \caption{\textbf{4 levels.}}
   \end{subfigure}
-  \begin{subfigure}[b]{0.3\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\textwidth]{7_sec_5_level.pdf}
     \caption{\textbf{5 levels.}}
   \end{subfigure}
-  \begin{subfigure}[b]{0.3\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\textwidth]{7_sec_6_level.pdf}
     \caption{\textbf{6 levels.}}
   \end{subfigure}
-  \begin{subfigure}[b]{0.3\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\textwidth]{7_sec_7_level.pdf}
     \caption{\textbf{7 levels.}}
   \end{subfigure}
-  \begin{subfigure}[b]{0.3\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\textwidth]{7_sec_8_level.pdf}
     \caption{\textbf{8 levels.}}
   \end{subfigure}
-  \begin{subfigure}[b]{0.3\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\textwidth]{7_sec_9_level.pdf}
     \caption{\textbf{9 levels.}}
   \end{subfigure}
@@ -774,7 +775,7 @@ norm computations.
       levels in the computation improves convergence with respect to
       the relative solution error but convergence with respect to the
       linear problem residual is worse.}}
-  \label{fig:heterogenous_ml_solutions}
+  \label{fig:heterogenous_fixed_t}
 \end{figure}
 
 To show that the 1 level calculation will eventually converge to the
@@ -804,10 +805,18 @@ method.
 %%---------------------------------------------------------------------------%%
 \section{Coarse Grid Monte Carlo Acceleration}
 Based on the above results we then consider using only the coarse grid
-calculations as the acceleration. Consider the following results where
-a coarse grid solution has been produced and then simply prolongated
-back to the fine grid rather than solving all levels as a simple
-coarse approximation of the solution.
+calculations as the acceleration. Consider the following results given
+in Table~\ref{tab:heterogeneous_cg_solutions} where a coarse grid
+solution has been produced at a fixed $N=10,000$ and then simply
+prolongated back to the fine grid rather than solving all levels using
+Algorithm~\ref{alg:mlamc}. Figure~\ref{fig:hetergeneous_cg_solutions}
+plots the coarse grid solutions prolongated back to the fine grid
+along with the exact solution. We see that as we coarsen the grid
+while fixing $N$, the coarse grid statistics are better than the fine
+grid as there is a larger ratio of samples to grid points. The result
+is a very precise coarse grid result that when prolongated to the fine
+grid simply incurs the grid error associated with the linear
+interpolation.
 
 \begin{table}[h!]
   \begin{center}
@@ -823,72 +832,71 @@ coarse approximation of the solution.
       \multicolumn{1}{l}{\textbf{RERRFOM}} \\
       \hline
       1 & 10,000 & 0.025 & 0.223 & 0.241 & 2.97 & 6.77 & 1.0 & 1.0 \\
-      2 & 17,596 & 0.044 & 0.339 & 0.277 & 5.49 & 7.19 & 0.31 & 0.71 \\
-      3 & 29,571 & 0.050 & 0.365 & 0.131 & 1.66 & 7.21 & 0.23 & 3.18 \\
-      4 & 53,295 & 0.062 & 0.483 & 0.081 & 0.96 & 7.29 & 0.16 & 8.28 \\
-      5 & 92,301 & 0.086 & 0.662 & 0.105 & 0.88 & 7.13 & 0.08 & 5.00 \\
-      6 & 185,266 & 0.120 & 0.891 & 0.102 & 0.72 & 7.10 & 0.04 & 5.32 \\
-      7 & 355,543 & 0.069 & 0.513 & 0.056 & 0.51 & 6.92 & 0.13 & 18.12 \\
-      8 & 742,337 & 0.093 & 0.654 & 0.081 & 0.67 & 7.07 & 0.07 & 8.47 \\
-      9 & 1,624,121 & 0.122 & 0.758 & 0.107 & 0.83 & 7.08 & 0.04 &
-      4.85 \\
+      2 & 10,000 & 0.012 & 0.067 & 0.303 & 6.05 & 3.29 & 9.70 & 1.3 \\
+      3 & 10,000 & 0.005 & 0.028 & 0.133 & 1.70 & 1.62 & 103.6 & 13.7 \\
+      4 & 10,000 & 0.004 & 0.013 & 0.058 & 0.61 & 0.81 & 292.7 & 146.3 \\
+      5 & 10,000 & 0.023 & 0.031 & 0.141 & 3.06 & 0.40 & 20.8 & 49.4 \\
+      6 & 10,000 & 0.006 & 0.008 & 0.051 & 0.77 & 0.20 & 557.0 & 741.1 \\
+      7 & 10,000 & 0.006 & 0.006 & 0.049 & 0.77 & 0.10 & 1,103 & 1,589 \\
+      8 & 10,000 & 0.009 & 0.009 & 0.022 & 0.29 & 0.05 & 952.8 & 15,329 \\
+      9 & 10,000 & 0.013 & 0.014 & 0.032 & 0.51 & 0.03 & 997.9 &
+      14,826 \\
       \hline\hline
     \end{tabular}
   \end{center}
-  \caption{\textbf{Coarse grid results for $\ve{b} = 1$ with $M = 2$,
-      $N = 10,000$ and run times reported in seconds.}
-    \textit{RRESSFOM values are the relative figure of merit computed
-      using the infinity norm of the residual. RERRFORM values are the
-      relative figure of merit computed using the infinity norm of the
-      absolute error vector.}}
-  \label{tab:heterogeneous_coarse_grids}
+  \caption{\textbf{Geometric Multilevel Monte Carlo results for
+      $\ve{b} = 1$ with $M = 2$, $N = 10,000$ and run times reported
+      in seconds.} \textit{RRESSFOM values are the relative figure of
+      merit computed using the infinity norm of the residual. RERRFORM
+    values are the relative figure of merit computed using the
+    infinity norm of the absolute error vector.}}
+  \label{tab:heterogeneous_cg_solutions}
 \end{table}
+
 
 \begin{figure}[h!]
   \centering
-  \begin{subfigure}[b]{0.3\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\textwidth]{7_sec_1_level.pdf}
     \caption{\textbf{Level 1 solution.}}
   \end{subfigure}
-  \begin{subfigure}[b]{0.3\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\textwidth]{cg_2_level.pdf}
     \caption{\textbf{Level 2 solution.}}
   \end{subfigure}
-  \begin{subfigure}[b]{0.3\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\textwidth]{cg_3_level.pdf}
     \caption{\textbf{Level 3 solution.}}
   \end{subfigure}
-  \begin{subfigure}[b]{0.3\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\textwidth]{cg_4_level.pdf}
     \caption{\textbf{Level 4 solution.}}
   \end{subfigure}
-  \begin{subfigure}[b]{0.3\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\textwidth]{cg_5_level.pdf}
     \caption{\textbf{Level 5 solution.}}
   \end{subfigure}
-  \begin{subfigure}[b]{0.3\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\textwidth]{cg_6_level.pdf}
     \caption{\textbf{Level 6 solution.}}
   \end{subfigure}
-  \begin{subfigure}[b]{0.3\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\textwidth]{cg_7_level.pdf}
     \caption{\textbf{Level 7 solution.}}
   \end{subfigure}
-  \begin{subfigure}[b]{0.3\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\textwidth]{cg_8_level.pdf}
     \caption{\textbf{Level 8 solution.}}
   \end{subfigure}
-  \begin{subfigure}[b]{0.3\textwidth}
+  \begin{subfigure}[b]{0.32\textwidth}
     \includegraphics[width=\textwidth]{cg_9_level.pdf}
     \caption{\textbf{Level 9 solution.}}
   \end{subfigure}
   \caption{\textbf{Solution of the Poisson problem using the geometric
-      multilevel Monte Carlo method with 1-9 levels and approximately
-      7 seconds of compute time.} \textit{Increasing the number of
-      levels in the computation improves convergence with respect to
-      the relative solution error but convergence with respect to the
-      linear problem residual is worse.}}
-  \label{fig:heterogenous_ml_solutions}
+      multilevel Monte Carlo method with 1-9 levels and $N = 10,000$.}
+    \textit{Coarse solutions prolongated to the fine grid give better
+      results in less time than fine grid solutions.}}
+  \label{fig:heterogenous_cg_solutions}
 \end{figure}
 
 %%---------------------------------------------------------------------------%%
