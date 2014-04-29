@@ -677,7 +677,7 @@ time with a constant forcing of $\ve{b}=1.0$ such that:
 \end{equation}
 We will choose an initial guess of $\ve{0}$ for these calculations as
 the solution is non-trivial and fix $N$ at 10,000 while increasing the
-number of levels. Table~\ref{tab:heterogeneous_fixed_N} gives the
+number of levels. Table~\ref{tab:heterogeneous_fixed_t} gives the
 results of these calculations. Here the relative error error
 calculations were computed using an exact solution computed using a
 minimal residual iteration converged to a residual norm tolerance of
@@ -714,7 +714,7 @@ $\sn{1}{-12}$.
       merit computed using the infinity norm of the residual. RERRFORM
     values are the relative figure of merit computed using the
     infinity norm of the absolute error vector.}}
-  \label{tab:heterogeneous_fixed_N}
+  \label{tab:heterogeneous_fixed_t}
 \end{table}
 Based on the residual norm values, it would seem as though the 1 level
 result was superior as better convergence was achieved in the same
@@ -770,7 +770,10 @@ norm computations.
   \end{subfigure}
   \caption{\textbf{Solution of the Poisson problem using the geometric
       multilevel Monte Carlo method with 1-9 levels and approximately
-      7 seconds of compute time.}}
+      7 seconds of compute time.} \textit{Increasing the number of
+      levels in the computation improves convergence with respect to
+      the relative solution error but convergence with respect to the
+      linear problem residual is worse.}}
   \label{fig:heterogenous_ml_solutions}
 \end{figure}
 
@@ -805,6 +808,88 @@ calculations as the acceleration. Consider the following results where
 a coarse grid solution has been produced and then simply prolongated
 back to the fine grid rather than solving all levels as a simple
 coarse approximation of the solution.
+
+\begin{table}[h!]
+  \begin{center}
+    \begin{tabular}{cllllllll}\hline\hline
+      \multicolumn{1}{c}{\textbf{Levels}} &
+      \multicolumn{1}{l}{\textbf{Samples}} &
+      \multicolumn{1}{l}{\textbf{$||\ve{r}||_{\infty}$}} &
+      \multicolumn{1}{l}{\textbf{$||\ve{r}||_{2}$}} &
+      \multicolumn{1}{l}{\textbf{$||\ve{e}||_{\infty}$}} &
+      \multicolumn{1}{l}{\textbf{$||\ve{e}||_{2}$}} &
+      \multicolumn{1}{l}{\textbf{Time (s)}} &
+      \multicolumn{1}{l}{\textbf{RRESFOM}} &
+      \multicolumn{1}{l}{\textbf{RERRFOM}} \\
+      \hline
+      1 & 10,000 & 0.025 & 0.223 & 0.241 & 2.97 & 6.77 & 1.0 & 1.0 \\
+      2 & 17,596 & 0.044 & 0.339 & 0.277 & 5.49 & 7.19 & 0.31 & 0.71 \\
+      3 & 29,571 & 0.050 & 0.365 & 0.131 & 1.66 & 7.21 & 0.23 & 3.18 \\
+      4 & 53,295 & 0.062 & 0.483 & 0.081 & 0.96 & 7.29 & 0.16 & 8.28 \\
+      5 & 92,301 & 0.086 & 0.662 & 0.105 & 0.88 & 7.13 & 0.08 & 5.00 \\
+      6 & 185,266 & 0.120 & 0.891 & 0.102 & 0.72 & 7.10 & 0.04 & 5.32 \\
+      7 & 355,543 & 0.069 & 0.513 & 0.056 & 0.51 & 6.92 & 0.13 & 18.12 \\
+      8 & 742,337 & 0.093 & 0.654 & 0.081 & 0.67 & 7.07 & 0.07 & 8.47 \\
+      9 & 1,624,121 & 0.122 & 0.758 & 0.107 & 0.83 & 7.08 & 0.04 &
+      4.85 \\
+      \hline\hline
+    \end{tabular}
+  \end{center}
+  \caption{\textbf{Coarse grid results for $\ve{b} = 1$ with $M = 2$,
+      $N = 10,000$ and run times reported in seconds.}
+    \textit{RRESSFOM values are the relative figure of merit computed
+      using the infinity norm of the residual. RERRFORM values are the
+      relative figure of merit computed using the infinity norm of the
+      absolute error vector.}}
+  \label{tab:heterogeneous_coarse_grids}
+\end{table}
+
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{7_sec_1_level.pdf}
+    \caption{\textbf{Level 1 solution.}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{cg_2_level.pdf}
+    \caption{\textbf{Level 2 solution.}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{cg_3_level.pdf}
+    \caption{\textbf{Level 3 solution.}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{cg_4_level.pdf}
+    \caption{\textbf{Level 4 solution.}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{cg_5_level.pdf}
+    \caption{\textbf{Level 5 solution.}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{cg_6_level.pdf}
+    \caption{\textbf{Level 6 solution.}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{cg_7_level.pdf}
+    \caption{\textbf{Level 7 solution.}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{cg_8_level.pdf}
+    \caption{\textbf{Level 8 solution.}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{cg_9_level.pdf}
+    \caption{\textbf{Level 9 solution.}}
+  \end{subfigure}
+  \caption{\textbf{Solution of the Poisson problem using the geometric
+      multilevel Monte Carlo method with 1-9 levels and approximately
+      7 seconds of compute time.} \textit{Increasing the number of
+      levels in the computation improves convergence with respect to
+      the relative solution error but convergence with respect to the
+      linear problem residual is worse.}}
+  \label{fig:heterogenous_ml_solutions}
+\end{figure}
 
 %%---------------------------------------------------------------------------%%
 \clearpage
