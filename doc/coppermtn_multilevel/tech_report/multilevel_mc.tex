@@ -85,11 +85,9 @@ systems as a means of reducing the computational complexity of the
 algorithm. To begin, we first introduce the elliptic model problem for
 our numerical experiments and compare the spectral behavior of the
 Monte Carlo method to traditional iterative smoothers that would be
-used with the multigrid method. Next, we present the multilevel Monte
-Carlo method for linear systems using a general algebraic
-formulation. Finally, we present results using the model problem the
-demonstrate the superiority of the multilevel method in terms of time
-to solution using both geometric and algebraic multigrid
+used with the multigrid method. Finally, we present results using the
+model problem the demonstrate the superiority of the multilevel method
+in terms of time to solution using a geometric multigrid
 representations of the linear problem.
 
 %%---------------------------------------------------------------------------%%
@@ -670,91 +668,73 @@ infrastructure developed for those methods within the multilevel Monte
 Carlo scheme presented here without a dramatic increase in
 computational complexity.
 
-%%---------------------------------------------------------------------------%%
-\section{Algebraic Multigrid Results}
-\label{sec:algebraic_results}
-We next solve the same model problem, this time using an algebraic
-multigrid formulation of the Galerkin problem. For these calculations
-we used the ML multigrid library to construct $\ve{A}$, $\ve{P}$, and
-$\ve{R}$ on each level with $\ve{M} \approx 3$
-\cite{ml_manual}. Tables~\ref{tab:ml_k1_results},
-\ref{tab:ml_k5_results}, and \ref{tab:ml_k10_results} give the results
-of these calculations.
-\begin{table}[h!]
+\subsection{Heterogeneous Results}
+We next solve the same linear problem as before using $M=2$ but this
+time with a constant forcing of $\ve{b}=1.0$ such that:
+\begin{equation}
+  \ve{A}\ve{x} = \ve{b}\:.
+  \label{eq:heterogeneous_problem}
+\end{equation}
+We will choose an initial guess of $\ve{0}$ for these calculations as
+the solution is non-trivial. Studies indicate that residual norms are
+controlled by the convergence of the finest level. However, adding
+additional levels provides significant smoothing to the statistical
+error. For example, given a fixed amount of compute time of
+approximately 7 seconds, Eq~(\ref{eq:heterogeneous_problem}) was
+solved using 1 level and 10,000 samples and again using 9 levels and
+1,546,783 total samples ($N=1,000,000$). The 1 level calculation gave
+$||\ve{r}||_\infty = 0.027$ and $||\ve{r}||_2 = 0.230$ while the 1
+level calculation gave $||\ve{r}||_\infty = 0.129$ and $||\ve{r}||_2 =
+0.812$. Based on the residual norm values, it would seem as though the
+1 level result was superior as better convergence was achieved in the
+same amount of compute time. However, the structure of the actual
+solutions would indicate otherwise. Figure~\ref{fig:7_sec_1_level}
+gives the 1 level result and Figure~\ref{fig:7_sec_9_level} gives the
+9 level result, both plotted against an exact solution computed using
+a minimal residual iteration. Clearly, the estimate produced by the 9
+level computation is more representative of the exact solution than
+the single level scheme due to the well-converged results provided
+coarse level estimates.
+\begin{figure}[h!]
   \begin{center}
-    \begin{tabular}{cllll}\hline\hline
-      \multicolumn{1}{c}{\textbf{Levels}} & 
-      \multicolumn{1}{l}{\textbf{Samples}} & 
-      \multicolumn{1}{l}{\textbf{$||\ve{e}||_{\infty}$}} & 
-      \multicolumn{1}{l}{\textbf{Time (s)}} & 
-      \multicolumn{1}{l}{\textbf{RFOM}} \\
-      \hline
-      1 & 10,000 & 0.022 & 119.1 & 1 \\
-      2 & 11,924 & 0.037 & 31.9 & 1.28 \\
-      3 & 12,294 & 0.055 & 7.6 & 2.40 \\
-      4 & 12,365 & 0.051 & 1.8 & 11.76 \\
-      5 & 12,378 & 0.094 & 0.5 & 12.01 \\
-      \hline\hline
-    \end{tabular}
+    \includegraphics[width=4in]{7_sec_1_level.pdf}
   \end{center}
-  \caption{\textbf{Algebraic Multilevel Monte Carlo results for $k =
-      1$ with $M = 3$, $N = 10,000$ and run times reported in
-      seconds.}}
-  \label{tab:ml_k1_results}
-\end{table}
-\begin{table}[h!]
+  \caption{\textbf{Solution of the Poisson problem using the geometric
+      multilevel Monte Carlo method with 1 level and 6.87 seconds of
+      compute time.}}
+  \label{fig:7_sec_1_level}
+\end{figure}
+\begin{figure}[h!]
   \begin{center}
-    \begin{tabular}{cllll}\hline\hline
-      \multicolumn{1}{c}{\textbf{Levels}} & 
-      \multicolumn{1}{l}{\textbf{Samples}} & 
-      \multicolumn{1}{l}{\textbf{$||\ve{e}||_{\infty}$}} & 
-      \multicolumn{1}{l}{\textbf{Time (s)}} & 
-      \multicolumn{1}{l}{\textbf{RFOM}} \\
-      \hline
-      1 & 10,000 & 0.668 & 101.6 & 1 \\
-      2 & 11,924 & 0.834 & 30.8 & 2.12 \\
-      3 & 12,294 & 1.140 & 7.5 & 4.63 \\
-      4 & 12,365 & 0.975 & 1.6 & 29.09 \\
-      5 & 12,378 & 2.240 & 0.4 & 25.10 \\
-      \hline\hline
-    \end{tabular}
+    \includegraphics[width=4in]{7_sec_9_level.pdf}
   \end{center}
-  \caption{\textbf{Algebraic Multilevel Monte Carlo results for $k =
-      5$ with $M = 3$, $N = 10,000$ and run times reported in
-      seconds.}}
-  \label{tab:ml_k5_results}
-\end{table}
-\begin{table}[h!]
+  \caption{\textbf{Solution of the Poisson problem using the geometric
+      multilevel Monte Carlo method with 9 levels and 6.78 seconds of
+      compute time.}}
+  \label{fig:7_sec_9_level}
+\end{figure}
+To show that the 1 level calculation will eventually converge to the
+correct result, Figure~\ref{fig:converged_1_level} shows the solution
+with 1,000,000 samples. This calculation required 665.7 seconds to run
+and gave $||\ve{r}||_\infty = 0.0025$ and $||\ve{r}||_2 = 0.022$.
+\begin{figure}[h!]
   \begin{center}
-    \begin{tabular}{cllll}\hline\hline
-      \multicolumn{1}{c}{\textbf{Levels}} & 
-      \multicolumn{1}{l}{\textbf{Samples}} & 
-      \multicolumn{1}{l}{\textbf{$||\ve{e}||_{\infty}$}} & 
-      \multicolumn{1}{l}{\textbf{Time (s)}} & 
-      \multicolumn{1}{l}{\textbf{RFOM}} \\
-      \hline
-      1 & 10,000 & 1.81 & 98.6 & 1 \\
-      2 & 11,924 & 2.33 & 30.0 & 1.99 \\
-      3 & 12,294 & 3.19 & 7.6 & 4.20 \\
-      4 & 12,365 & 3.31 & 1.8 & 16.29 \\
-      5 & 12,378 & 9.98 & 0.5 & 7.21 \\
-      \hline\hline
-    \end{tabular}
+    \includegraphics[width=4in]{converged_1_level.pdf}
   \end{center}
-  \caption{\textbf{Algebraic Multilevel Monte Carlo results for $k =
-      10$ with $M = 3$, $N = 10,000$ and run times reported in
-      seconds.}}
-  \label{tab:ml_k10_results}
-\end{table}
-In general, the results show similar performance to the geometric
-multigrid method, however, gains in figure of merit were not as
-significant which may be in part due to the simplified selection of
-sample size at each level. In addition, the Dirichlet conditions for
-the model problem were explicitly included in the geometric
-interpolation operators while the level operators generated by the
-algebraic scheme did not. Most importantly, these results indicate
-that Algorithm~\ref{alg:mlamc} can be used with general Galerkin
-formulations of the multigrid problem.
+  \caption{\textbf{Solution of the Poisson problem using the geometric
+      multilevel Monte Carlo method with 1 level and 665.7 seconds of
+      compute time.}}
+  \label{fig:converged_1_level}
+\end{figure}
+
+Clearly, these results indicate that quality of solution from the
+multilevel method may not lie entirely in a residual norm metric as
+they are global in nature. For the cases above we see that the
+multilevel estimator has signficantly better local convergence
+properties for a fixed amount of work when compared to single level
+methods. Therefore, we must determine if this improved local
+convergence is satisfactory to improve the convergence of MCSA or if
+convergence of global metrics is also required of the Monte Carlo method.
 
 %%---------------------------------------------------------------------------%%
 \clearpage
