@@ -25,9 +25,9 @@ urlcolor = blue
 ]{hyperref}
 
 %%---------------------------------------------------------------------------%%
-\author{Stuart R. Slattery, Thomas M. Evans, Steven P. Hamilton
-\\ \href{mailto:slatterysr@ornl.gov}{\texttt{slatterysr@ornl.gov}}
-}
+\author{Stuart R. Slattery, Thomas M. Evans, Steven P. Hamilton, Paul
+  P.H. Wilson
+  \\ \href{mailto:slatterysr@ornl.gov}{\texttt{slatterysr@ornl.gov}} }
 
 \date{\today} \title{A Preconditioned Monte Carlo
   Synthetic-Acceleration Method for the Simplified $P_N$
@@ -48,15 +48,17 @@ neutron scattering in the light water moderator, several difficulties
 arise when applying MCSA to these problems that were not observed in
 previous work where the method was applied to more opaque thermal
 radiaton transport systems. Of most significance, it was discovered
-that simply reducing the spectral radius of the Monte Carlo problem
-below unity is not enough to achieve convergence as outlined in
-previous work. In order to effectively solve the $SP_N$ equations for
-the model problem, an algebraic preconditioning strategy is developed
-for MCSA where we utilize incomplete factorizations as preconditioners
-to achieve convergence. Using the preconditioners, MCSA performance is
-compared with production implementations of the preconditioned GMRES
-and BiCGSTAB methods. Studies indicate that the iterative performance
-of the method is competitive with the preconditioned Krylov methods
+for these problems that simply reducing the spectral radius of the
+Monte Carlo problem below unity is not enough to efficiently achieve
+convergence as reported in previous work. In order to effectively
+solve the $SP_N$ equations for the model problem, an algebraic
+preconditioning strategy is developed for MCSA where we utilize
+incomplete factorizations as preconditioners to achieve
+convergence. Using the preconditioners, MCSA performance is compared
+with production implementations of the preconditioned GMRES and
+BiCGSTAB methods. Our studies indicate that the iterative performance
+of MCSA when used to solve the $SP_N$ equations for light water
+reactor problems is competitive with the preconditioned Krylov methods
 when operator spectrum is properly conditioned.
 
 %%---------------------------------------------------------------------------%%
@@ -68,39 +70,54 @@ handle the intense computational loads required by these models, and
 modern algorithms for solving these problems that leverage this high
 performance hardware. For nuclear reactor analysis, this predictive
 capability can enable tighter design tolerances for improved thermal
-performance and efficiency, higher fuel utilization, and high
-confidence in accident scenario models. Modern high fidelity
-deterministic methods for large scale problems are often variants on
-the discrete ordinates ($S_N$) method \cite{evans_denovo:_2010}. For
-fission reactor neutronics simulations, the $S_N$ method requires
+performance and efficiency, higher fuel utilization and burnup, and
+high confidence in accident scenario models. Modern high fidelity
+deterministic methods for large scale problems where the solution over
+the entire core of a reactor is desired are often variants on the
+discrete ordinates ($S_N$) method \cite{evans_denovo:_2010} or the
+method of characteristics \cite{askew_1972}. For fission reactor
+neutronics simulations, the discrete ordinates method requires
 potentially trillions of unknown angular flux moments to be computed
 to achieve good accuracy for the responses of interest
-\cite{slaybaugh_acceleration_2011}. In the 1960's, Gelbard developed
-an ad-hoc, multidimensional extension of the simple single dimension
-planar $P_N$ equations that created a system of coupled,
-diffusion-like equations known as the simplified $P_N$ ($SP_N$)
-equations (cite gelbard). The reduction in numerical complexity
-compared to current deterministic solution methods using the $S_N$
-approximation could mean significant savings in both compute time and
-memory required and permit larger simulations to be performed on the
-available computing platforms.
+\cite{slaybaugh_acceleration_2011} which in many cases can be
+intractable without sufficient computational hardware. On the other
+side of the spectrum, low-fidelity diffusion solutions are often
+leveraged as an alternative to compute a solution over the entire
+domain a reactor core. In the 1960's, Gelbard developed an ad-hoc,
+multidimensional extension of the simple single dimension planar $P_N$
+equations that created a system of coupled, diffusion-like equations
+known as the simplified $P_N$ ($SP_N$) equations \cite{gelbard_1960}
+which incorporates additional angular information into a set of
+diffusion-like equations. Further work in both aysmptotic analysis and
+algorithmic development proceeded in the following decades to serve as
+a theoretical basis for the method
+\cite{morel_1996,brantley_simplified_2000}. Recent work has expanded
+the discretization to a fully algebraic form ammenable to solution
+with modern linear algebra techniques including Krylov solvers and
+advanced precondtioners including multigrid methods and incomplete
+factorizations \cite{hamilton_2014}. Using these new techniques, the
+reduction in numerical complexity compared to current deterministic
+solution methods using the $SP_N$ approximation could mean significant
+savings in both compute time and memory required and permit larger
+simulations to be performed on the available computing platforms.
 
 Looking towards future computing platforms, as machines begin to
 operate at hundreds of petaflops peak performance and beyond, trends
 toward reduced energy consumption will require incredibly high levels
-of concurrency to achieve the desired computation rates. The end
-result of these hardware changes is that the larger number of
-low-powered processors will be prone to both soft failures such as bit
-errors in floating point operations and hard failures where the data
-owned by that processor cannot be recovered. Because these failures
-are predicted to be common, resilient solver technologies are required
-to overcome these events at the application level. With solutions to
-deterministic transport problems based on Monte Carlo techniques, such
-issues are potentially alleviated by statistical arguments. In the
-case of soft failures, isolated floating point errors in the Monte
-Carlo simulation are absorbed within tally statistics while a hard
-failure is treated as a high variance event where some portion of the
-Monte Carlo histories lost.
+of concurrency to achieve the desired computation rates
+\cite{kogge_using_2011}. The end result of these hardware changes is
+that the larger number of low-powered processors will be prone to both
+soft failures such as bit errors in floating point operations and hard
+failures where the data owned by that processor cannot be recovered
+\cite{u.s._department_of_energy_resilient_2012}. Because these
+failures are predicted to be common, resilient solver technologies are
+are a possible means of overcoming these events at the application
+level. With solutions to deterministic transport problems based on
+Monte Carlo techniques, such issues are potentially alleviated by
+statistical arguments. In the case of soft failures, isolated floating
+point errors in the Monte Carlo simulation are absorbed within tally
+statistics while a hard failure is treated as a high variance event
+where some portion of the Monte Carlo histories lost.
 
 Considering these physics and hardware issues, the goal of this work
 is to research and develop Monte Carlo Synthetic Acceleration methods
@@ -109,7 +126,7 @@ Monte Carlo method to directly accelerate the convergence of
 traditional fixed-point iterative schemes for these problems. We aim
 to address both their benefits and their shortcomings in the context
 of the physics of interest and desire to identify areas in which
-improvements can be made. In previous work \cite{evans_monte_2012}, we
+improvements can be made. In previous work \cite{evans_monte_2014}, we
 applied the Monte Carlo synthetic acceleration (MCSA) method to the
 thermal radiation diffusion equation. For several transient problems
 we observed that MCSA performed competetively with preconditioned
@@ -123,14 +140,15 @@ iteration in the MCSA sequence as well as a new estimator in order to
 study their effects on convergence.
 
 The paper is organized as follows. First, we briefly introduce the
-model $SP_N$ problem and describe the application of the MCSA
-algorithm. Next, we demonstrate that the basic Jacobi preconditioning
-applied in our previous work is unsatisfactory to achieve convergence
-for neutron transport in light water reactors and subsquently develop
-a new preconditioning scheme. We then apply this preconditioning
-scheme to a light water reactor fuel assembly and compare the
-performance of the preconditioned MCSA method to preconditioned Krylov
-methods.
+$SP_N$ equations for eigenvalue problems along with the discretization
+used for this work and the model problem. We then describe the
+application of the MCSA algorithm. Next, we demonstrate that the basic
+Jacobi preconditioning applied in our previous work is unsatisfactory
+to achieve convergence for neutron transport in light water reactors
+and subsquently develop a new preconditioning scheme. We then apply
+this preconditioning scheme to a light water reactor fuel assembly and
+compare the performance of the preconditioned MCSA method to
+preconditioned Krylov methods followed by a summary and conclusion.
 
 %%---------------------------------------------------------------------------%%
 \section{Simplified $P_N$ Approximation}
@@ -172,16 +190,114 @@ the scattering matrices:
   \label{eq:spn_fission_matrix}
 \end{equation}
 To complete the spatial discretization, the gradient operators are
-resolved by a finite volume scheme as in
-\cite{evans_simplified_2013}. It should be noted here that with
-respect to a general MCSA scheme, the introduction of fission in the
-system will only affect the source vector in the linear system for the
-eigenvalue schemes used in this work. The linear operator, and
-therefore overall MCSA performance will be dictated by streaming and
-scattering as defined on the left-hand side.
+resolved by a finite volume scheme as in \cite{hamilton_2014} such
+that the flux and current are continuous at cell boundaries.. It
+should be noted here that with respect to a general MCSA scheme, the
+introduction of fission in the system will only affect the source
+vector in the linear system for the eigenvalue schemes used in this
+work. The linear operator, and therefore overall MCSA performance will
+be dictated by streaming and scattering as defined on the left-hand
+side. We refer the reader to \cite{hamilton_2014} for an extensive
+presentation of the $SP_N$ discretization used in this work.
 
-\subsection{Monte Carlo Synthetic Acceleration}
-\label{subsec:mcsa}
+\subsection{Fuel Assembly Model Problem}
+\label{subsec:fuel_assembly}
+Fuel assembly calculations are a critical piece of nuclear engineering
+infrastructure for reactor core analysis and design. At this level,
+individual fuel pins may be resolved at fine resolution in a variety
+of configurations. As a sophisticated problem of interest to push the
+limits of MCSA, a hot zero-power $17 \times 17$ pin assembly will be
+used with varying energy group structure and $SP_N$ discretization in
+a criticality calculation. A cross section along the vertical axis
+showing homogenized fuel pin materials and the associated grid is
+given by Figure~\ref{fig:problem3_radial_mat} while a cross section of
+the materials configuration along the horizontal axis is given by
+Figure~\ref{fig:problem3_axial_mat}. A detailed view of the assembly
+bottom is given in Figure~\ref{fig:problem3_end}. On the top and
+bottom of the assembly, vacuum conditions are used as well as on the
+top and right boundaries in
+Figure~\ref{fig:problem3_radial_mat}. Reflecting conditions are used
+on the left and bottom boundaries of
+Figure~\ref{fig:problem3_radial_mat}, effectively giving a
+representation of one quarter of the assembly. For the spatial
+discretization, each fuel pin (gray regions in
+Figure~\ref{fig:problem3_radial_mat}) is resolved by a $2 \times 2$
+mesh with materials and cross sections homogenized over this region.
+\begin{figure}[t!]
+  \begin{center}
+    \includegraphics[width=4in]{problem3_radial_mat.png}
+  \end{center}
+  \caption{\textbf{Fuel assembly mesh and geometry cross section.}
+    \textit{Reflecting boundaries are used on the left and lower
+      boundaries to create a complete $17 \times 17$ assembly
+      geometry. Gray regions are homogenized fuel and red regions are
+      homogenized moderator. Each fuel pin is resolved by a $2 \times
+      2$ mesh.}}
+  \label{fig:problem3_radial_mat}
+\end{figure}
+\begin{figure}[h!]
+  \begin{center}
+    \includegraphics[width=6.5in]{problem3_axial_mat.png}
+  \end{center}
+  \caption{\textbf{Fuel assembly geometry cross section.} \textit{The
+      geometry is subdivided along the axial direction into 50 zones
+      spaced to capture material boundaries. Important details include
+      spacer grids along the length of the fuel pins and reactor core
+      structures on the top and bottom of the assembly. Lighter purple
+      material in the center of the assembly is moderator and darker
+      purple/red material is fuel.}}
+  \label{fig:problem3_axial_mat}
+\end{figure}
+\begin{figure}[h!]
+  \begin{center}
+    \includegraphics[width=6.0in]{problem3_end.png}
+  \end{center}
+  \caption{\textbf{Fuel assembly geometry end detail.}
+    \textit{Reactor core structure including spacer grids and plenum
+      has been included. Lighter purple material on the right of the
+      figure is moderator and darker purple/red material is fuel.}}
+  \label{fig:problem3_end}
+\end{figure}
+
+Significant geometric details are contained in the model including
+spacer grids, fuel pins with homogenized cladding and gas gap, core
+plenum, and moderator with boron. Group cross sections and other
+discrete nuclear data are generated as needed by a cross-section
+processing module dependent on the meshing parameters used to
+discretize the geometry and single-dimension pin-cell calculations for
+initial flux spectrum generation. Table~\ref{tab:problem3_parameters}
+gives the primary design parameters for the fuel assembly
+calculations.
+\begin{table}[h!]
+  \begin{center}
+    \begin{tabular}{ll}\hline\hline
+      \multicolumn{1}{l}{\textbf{Parameter}} & 
+      \multicolumn{1}{l}{\textbf{Value}} \\
+      Power Level & 0 MW \\
+      Inlet Temperature & 326.85C \\
+      Fuel Temperature & 600C \\
+      Boron Concentration & 1300 ppm \\
+      Moderator Density & 0.743 g/cc \\
+      Helium Density & \sn{1.79}{-4} g/cc \\
+      Zirconium Density & 6.56 g/cc \\
+      Stainless Steel Density & 8.0 g/cc \\
+      Inconel Density & 8.19 g/cc \\
+      UO2 Density & 10.257 g/cc \\
+      Fuel Pin Radius (w/o clad) & 0.4096 cm \\
+      %%
+      \hline\hline
+    \end{tabular}
+  \end{center}
+  \caption{\textbf{Design parameters for the $17 \times 17$ pin fuel
+      assembly criticality calculation.}}
+  \label{tab:problem3_parameters}
+\end{table}
+
+\clearpage
+
+%%---------------------------------------------------------------------------%%
+\section{Monte Carlo Synthetic Acceleration}
+\label{sec:mcsa}
 In this section we briefly review the Monte Carlo method for linear
 systems and Monte Carlo Synthetic Acceleration. Given a linear
 problem:
@@ -345,9 +461,7 @@ estimate. As outlined by Spanier and Gelbard
 deterministic averaging of events that may potentially occur in the
 Monte Carlo random walk sequence. Okten applied this principle
 directly to discrete Monte Carlo by forming the \textit{expected value
-  estimator}\footnote{The variance for this estimator is discussed in
-  Appendix~\ref{chap:estimator_variance}.} for a random walk of $k$
-events:
+  estimator} for a random walk of $k$ events:
 \begin{equation}
   X_{j}(\nu) = b_j + \sum_{m=0}^k W_m h_{j,i_m}\,
   \label{eq:expected_value_estimator}
@@ -443,7 +557,7 @@ MCSA:
 \end{subequations}
 where the $l$ subscript indicates the MCSA iteration number and $n$
 again indicates the eigenvalue iteration. We refer the reader to
-\cite{evans_monte_2012} for more a more complete definition of the
+\cite{evans_monte_2014} for more a more complete definition of the
 Monte Carlo method for linear systems and MCSA.
 
 \subsection{Preconditioned MCSA}
@@ -562,100 +676,6 @@ selecting a more optimal search direction at each iteration,
 potentially further improving convergence.
 
 %%---------------------------------------------------------------------------%%
-\section{Fuel Assembly Model Problem}
-\label{sec:fuel_assembly}
-Fuel assembly calculations are a critical piece of nuclear engineering
-infrastructure for reactor core analysis and design. At this level,
-individual fuel pins may be resolved at fine resolution in a variety
-of configurations. As a sophisticated problem of interest to push the
-limits of MCSA, a hot zero-power $17 \times 17$ pin assembly will be
-used with varying energy group structure and $SP_N$ discretization in
-a criticality calculation. A cross section along the vertical axis
-showing homogenized fuel pin materials and the associated grid is
-given by Figure~\ref{fig:problem3_radial_mat} while a cross section of
-the materials configuration along the horizontal axis is given by
-Figure~\ref{fig:problem3_axial_mat}. A detailed view of the assembly
-bottom is given in Figure~\ref{fig:problem3_end}. On the top and
-bottom of the assembly, vacuum conditions are used as well as on the
-top and right boundaries in
-Figure~\ref{fig:problem3_radial_mat}. Reflecting conditions are used
-on the left and bottom boundaries of
-Figure~\ref{fig:problem3_radial_mat}, effectively giving a
-representation of one quarter of the assembly. For the spatial
-discretization, each fuel pin (gray regions in
-Figure~\ref{fig:problem3_radial_mat}) is resolved by a $2 \times 2$
-mesh with materials and cross sections homogenized over this region.
-\begin{figure}[t!]
-  \begin{center}
-    \includegraphics[width=4in]{problem3_radial_mat.png}
-  \end{center}
-  \caption{\textbf{Fuel assembly mesh and geometry cross section.}
-    \textit{Reflecting boundaries are used on the left and lower
-      boundaries to create a complete $17 \times 17$ assembly
-      geometry. Gray regions are homogenized fuel and red regions are
-      homogenized moderator. Each fuel pin is resolved by a $2 \times
-      2$ mesh.}}
-  \label{fig:problem3_radial_mat}
-\end{figure}
-\begin{figure}[t!]
-  \begin{center}
-    \includegraphics[width=6.0in]{problem3_axial_mat.png}
-  \end{center}
-  \caption{\textbf{Fuel assembly geometry cross section.} \textit{The
-      geometry is subdivided along the axial direction into 50 zones
-      spaced to capture material boundaries. Important details include
-      spacer grids along the length of the fuel pins and reactor core
-      structures on the top and bottom of the assembly. Lighter purple
-      material in the center of the assembly is moderator and darker
-      purple/red material is fuel.}}
-  \label{fig:problem3_axial_mat}
-\end{figure}
-\begin{figure}[t!]
-  \begin{center}
-    \includegraphics[width=6.0in]{problem3_end.png}
-  \end{center}
-  \caption{\textbf{Fuel assembly geometry end detail.}
-    \textit{Reactor core structure including spacer grids and plenum
-      has been included. Lighter purple material on the right of the
-      figure is moderator and darker purple/red material is fuel.}}
-  \label{fig:problem3_end}
-\end{figure}
-
-Significant geometric details are contained in the model including
-spacer grids, fuel pins with homogenized cladding and gas gap, core
-plenum, and moderator with boron. Group cross sections and other
-discrete nuclear data are generated as needed by a cross-section
-processing module dependent on the meshing parameters used to
-discretize the geometry and single-dimension pin-cell calculations for
-initial flux spectrum generation. Table~\ref{tab:problem3_parameters}
-gives the primary design parameters for the fuel assembly
-calculations.
-\begin{table}[h!]
-  \begin{center}
-    \begin{tabular}{ll}\hline\hline
-      \multicolumn{1}{l}{\textbf{Parameter}} & 
-      \multicolumn{1}{l}{\textbf{Value}} \\
-      Power Level & 0 MW \\
-      Inlet Temperature & 326.85C \\
-      Fuel Temperature & 600C \\
-      Boron Concentration & 1300 ppm \\
-      Moderator Density & 0.743 g/cc \\
-      Helium Density & \sn{1.79}{-4} g/cc \\
-      Zirconium Density & 6.56 g/cc \\
-      Stainless Steel Density & 8.0 g/cc \\
-      Inconel Density & 8.19 g/cc \\
-      UO2 Density & 10.257 g/cc \\
-      Fuel Pin Radius (w/o clad) & 0.4096 cm \\
-      %%
-      \hline\hline
-    \end{tabular}
-  \end{center}
-  \caption{\textbf{Design parameters for the $17 \times 17$ pin fuel
-      assembly criticality calculation.}}
-  \label{tab:problem3_parameters}
-\end{table}
-
-%%---------------------------------------------------------------------------%%
 \section{Results}
 In this section we present solutions to the fuel assembly problem
 using MCSA preconditioning strategies.
@@ -664,7 +684,7 @@ using MCSA preconditioning strategies.
 \label{subsec:jacobi_prec_assembly_calc}
 Previous work in applying MCSA to the thermal radiation diffusion
 equation had success in using Jacobi preconditioning
-\cite{evans_monte_2012} and therefore we apply it here to the $SP_N$
+\cite{evans_monte_2014} and therefore we apply it here to the $SP_N$
 equations given their similar diffusion-like form. A single energy
 group problem was first computed with $SP_1$ discretization,
 effectively giving the one-speed neutron diffusion system for the fuel
@@ -676,7 +696,7 @@ every iteration for the adjoint Neumann-Ulam solve.
 
 \begin{figure}[t!]
   \begin{center}
-    \includegraphics[width=5in]{block_jacobi_res.pdf}
+    \includegraphics[width=3.5in]{block_jacobi_res.pdf}
   \end{center}
   \caption{\textbf{Residual infinity norm vs. iteration for the block
       Jacobi preconditioned MCSA solve during the first eigenvalue
@@ -751,6 +771,7 @@ an hour can be tolerated, dozens of solves are typically required to
 compute the multiplication factor and flux spectrum within the $SP_N$
 eigenvalue scheme for more difficult problems like the fuel assembly,
 making the method unusable.
+
 \begin{figure}[t!]
   \begin{center}
     \includegraphics[width=3.5in]{breakdown_iterations.pdf}
@@ -773,6 +794,16 @@ making the method unusable.
       histories were used for each calculation with 10,000 DOFs in the
       problem.}}
   \label{fig:breakdown_histories}
+\end{figure}
+\begin{figure}[t!]
+  \begin{center}
+    \includegraphics[width=3.5in]{breakdown_time.pdf}
+  \end{center}
+  \caption{\textbf{CPU time per history as a function of spectral
+      radius for the neutron diffusion problem.} \textit{As the
+      spectral radius grows, so do the length of the random
+      walks. Longer random walks require more CPU time to compute.}}
+  \label{fig:breakdown_time}
 \end{figure}
 
 In addition to the significantly larger number of histories required
@@ -797,17 +828,6 @@ sequence to diverge instead of accelerating convergence. We therefore
 require a more expansive set of preconditioning techniques to move the
 eigenvalue spectrum of the $SP_N$ problem into a regime in which MCSA
 is more applicable and in which performance is improved.
-
-\begin{figure}[t!]
-  \begin{center}
-    \includegraphics[width=3.5in]{breakdown_time.pdf}
-  \end{center}
-  \caption{\textbf{CPU time per history as a function of spectral
-      radius for the neutron diffusion problem.} \textit{As the
-      spectral radius grows, so do the length of the random
-      walks. Longer random walks require more CPU time to compute.}}
-  \label{fig:breakdown_time}
-\end{figure}
 
 \subsection{ILUT Preconditioned Results}
 \label{subsec:spn_comparison}
@@ -1031,7 +1051,7 @@ differences are merely the manifestation of a large time constant due
 to the effects of the explicit preconditioning scheme. For transport
 systems where this is not a problem, the literature explicitly shows
 that MCSA can be competitive with these production Krylov methods
-using CPU time as a measure \cite{evans_monte_2012}.
+using CPU time as a measure \cite{evans_monte_2014}.
 
 Based on the performance results in this section, MCSA shows promise
 as a competitive method for solutions to the neutron transport problem
