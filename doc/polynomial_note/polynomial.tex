@@ -129,32 +129,37 @@ the adjoint Monte Carlo approach is to approximate the
 Neumann series applied to the vector \bb.
 However, by applying a history length cutoff it is possible to
 view the Monte Carlo random walk as an approximation of a
-fixed degree polynomial in $\bA$:
+fixed degree polynomial in $\bH$:
 \begin{equation}
-p(\bA) = \sum_{n=0}^{N} c_n \bA^n \:. \label{eq:power_poly}
+p(\bH) = \sum_{n=0}^{N} c_n \bH^n \:, \label{eq:neumann_poly}
 \end{equation}
-Alternatively, through a change of basis, it is possible to write
-any such polynomial in powers of $\bI - \bA$ as
+where in the standard algorithm, $c_n=1$.
+The Neumann series is not the only polynomial that can approximate
+$\bA^{-1}$, however.  By varying the selection of $c_n$, it is
+possible to use other polynomials.  Commonly, polynomials used
+for preconditioning are defined in terms of powers of \bA\ rather
+than powers of \bH, giving the expansion
 \begin{equation}
-p(\bA) = \sum_{n=0}^{N} d_n (\bI - \bA)^n \:. \label{eq:neumann_poly}
+p(\bA) = \sum_{n=0}^{N} \hat{c}_n \bA^n \:. \label{eq:power_poly}
 \end{equation}
-Note that the standard adjoint Monte Carlo algorithm corresponds
-to the use of Eq.~\eqref{eq:neumann_poly} with $d_n=1$.
+Converting between coefficients defined by Eq.~\eqref{eq:power_poly}
+and those defined by Eq.~\eqref{eq:neumann_poly} can be
+accomplished by means of a change of basis.  The impact of the
+choice of the basis will be evaluated in Section~\ref{sec:results}.
+We now consider several candidates for the matrix polynomial.
 
 \subsection{Chebyshev Polynomials}
 \label{subsec:chebyshev}
 
-One possible candidate for a choice in polynomials is the
-Chebyshev polynomials, denoted $T_N(x)$.
-The Chebyshev polynomials have the property
-that out of all monic polynomials of degree $N$,
-$\frac{1}{2^{N-1}} T_N(x)$ is the polynomial whose maximum
-absolute value is minimized over the interval $[-1,1]$.
 One approach to defining a preconditioner, $\bM$, is to
-attempt to minimize the eigenvalues of $\left( \bI - \bA \bM \right)$.
-To accomplish this with $\bM$ as a polynomial of $\bA$, we can
-first map the eigenvalues of $\bA$ into the interval $[-1,1]$
-using the transformation
+attempt to minimize the eigenvalues of $\bI - p(\bA) \bA$.
+The Chebyshev polynomials, denoted $T_m(x)$ have the property
+that out of all monic polynomials of degree $m$,
+$\frac{1}{2^{m-1}} T_m(x)$ is the polynomial whose maximum
+absolute value is minimized over the interval $[-1,1]$.
+Thus, if the spectrum of \bA is real, then an optimal polynomial
+preconditioner can be achieved by mapping the eigenvalues of
+\bA\ into the interval $[-1,1]$ using the transformation
 \begin{equation}
 \ell (\bA) = \alpha \bI + \beta \bA \:,
 \end{equation}
@@ -163,43 +168,36 @@ where $\alpha  \equiv -\dfrac{\lambda_\text{max} + \lambda_\text{min}}
 $\beta \equiv \dfrac{2}{\lambda_\text{max} -  \lambda_\text{min}}$,
 and $\lambda_\text{min}$ and $\lambda_\text{max}$ are the
 minimum and maximum eigenvalues of $\bA$, respectively.
-To see that $\ell(A)$ maps the eigenvalues of $\bA$ to $[-1,1]$,
+To see that $\ell(A)$ maps the eigenvalues of $\bA$ into $[-1,1]$,
 observe that $\ell(x)$ maps $\lambda_\text{min}$ to -1 and
 $\lambda_\text{max}$ to 1.
-Then we can select $\bM$ such that
+Then we can select $p(\bA)$ such that
 \begin{equation}
-\bI - \bA \bM  =
-T_N \left( \ell(\bA) \right) T_N^{-1} \left( \ell(\mathbf{0}) \right) \:, \label{eq:cheby_prec}
+\bI - p(\bA) \bA  = \frac{1}{T_{m+1}(\alpha)}
+T_{m+1} \left( \ell(\bA) \right) \:, \label{eq:cheby_prec}
 \end{equation}
-where $T_N^{-1} \left( \ell(\mathbf{0}) \right)$ forces the leading
+where $\frac{1}{T_m ( \alpha )}$ forces the leading
 term of the right hand side to have a coefficient of 1.
-To determine an explicit representation for $\bM$, we first
+To determine an explicit representation for $p(\bA)$, we first
 use Eq.~\eqref{eq:power_poly} to write
 \begin{equation}
-\bM = \sum_{n=0}^{N-1} c_n \bA^n
+p(\bA) = \sum_{n=0}^{m} c_n \bA^n
 \end{equation}
 and therefore
 \begin{equation}
-\bI - \bA \bM = \bI - \sum_{n=0}^{N-1} c_n \bA^{n+1} \:, \label{eq:poly_prec}
+\bI - p(\bA) \bA = \bI - \sum_{n=0}^{m} c_n \bA^{n+1} \:. \label{eq:poly_prec}
 \end{equation}
-where the summation ends at $N-1$ in order for $\bI - \bA \bM$ to have
-degree $N$.
-One possible explicit representation for the Chebyshev polynomial of degree $N$ is
+One possible explicit representation for the Chebyshev polynomial of degree $m$ is
 \begin{equation}
-T_N(x) = \sum_{n=0}^{\lfloor \frac{N}{2} \rfloor} \left( -1 \right)^n 2^{N - 2n -1} \frac{N}{N-n}
-\begin{pmatrix} N-n \\ n \end{pmatrix} x^{N-2n} \:,
+T_m(x) = \sum_{n=0}^{\lfloor \frac{m}{2} \rfloor} \left( -1 \right)^n 2^{m - 2n -1} \frac{m}{m-n}
+\begin{pmatrix} m-n \\ n \end{pmatrix} x^{m-2n} \:,
 \end{equation}
 and therefore
 \begin{equation}
-T_N \left( \ell(\bA) \right) = \sum_{n=0}^{\lfloor \frac{N}{2} \rfloor} \left( -1 \right)^n 2^{N - 2n -1} \frac{N}{N-n}
-\begin{pmatrix} N-n \\ n \end{pmatrix} \left( \alpha \bI + \beta \bA \right)^{N-2n}
+T_m \left( \ell(\bA) \right) = \sum_{n=0}^{\lfloor \frac{m}{2} \rfloor} \left( -1 \right)^n 2^{m - 2n -1} \frac{m}{m-n}
+\begin{pmatrix} m-n \\ n \end{pmatrix} \left( \alpha \bI + \beta \bA \right)^{m-2n} \:.
 \end{equation}
-and
-\begin{equation}
-T_N \left( \ell(\bA) \right) = \sum_{n=0}^{\lfloor \frac{N}{2} \rfloor} \left( -1 \right)^n 2^{N - 2n -1} \frac{N}{N-n}
-\begin{pmatrix} N-n \\ n \end{pmatrix} \alpha^{N-2n} \bI \:.
-\end{equation}
-Thus an explicit representation for the polynomial preconditioner $\bM$ can
+Thus an explicit representation for the polynomial preconditioner can
 be obtained by equating the right hand sides of Eqs.~\eqref{eq:cheby_prec}
 and \eqref{eq:poly_prec}.  For example, using a Chebyshev polynomial of
 degree two provides a polynomial preconditioner of degree one described by
@@ -219,16 +217,18 @@ c_2 &= - \frac{4 \beta^3}{4 \alpha^3 - 3 \alpha} \:.
 \end{aligned}
 \end{equation}
 
-\subsection{GMRES Polynomial}
-\label{subsec:gmres}
-
 A significant downside to the use of Chebyshev polynomials is the need for
 accurate bounds on the spectrum of $\bA$.  For nonsymmetric matrices,
 this requires not only computing smallest and largest eigenvalues as is
 required in the symmetric case but requires
 bounding the entire spectrum of $\bA$ in an ellipse.  The process for
 computing such bounding ellipses is described in Ref.~\cite{manteuffel_77}.
+
+\subsection{GMRES Polynomial}
+\label{subsec:gmres}
+
 An alternative class of polynomials requiring less spectral information
+than Chebyshev polynomials
 while handling nonsymmetric systems naturally is the polynomials generated
 by GMRES \cite{saad_86}.  The GMRES algorithm computes, at iteration $m$,
 an approximate solution to \eqref{eq:lin_problem}, $\bx^{(m)}$,
@@ -347,6 +347,7 @@ Least Squares QR           & 0.632 & 0.273 & 0.176 & 0.586 \\
 \end{table}
 
 \section{Results}
+\label{sec:results}
 
 As a simple test problem, we choose the ``JPWH 991'' matrix from
 the Harwell-Boeing Collection, available from the Matrix Market.
