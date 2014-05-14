@@ -278,8 +278,8 @@ In Ref.~\cite{liu_14}, the surprising observation was made that solving
 Eq.~\eqref{eq:gmres_min} using the normal equations actually produced
 a more accurate result than using a QR factorization to solve
 Eq.~\eqref{eq:gmres_min} or using Eq.~\eqref{eq:prod_gmres_poly}.
-In our experience, the selection of the preferred method is less clear
-cut.  Figure~\ref{fig:gmres_poly} shows the GMRES polynomial with coefficients
+Our experience, however, differs from this result.
+Figure~\ref{fig:gmres_poly} shows the GMRES polynomial with coefficients
 computed using either Eq.~\eqref{eq:prod_gmres_poly} or by
 Eq.~\eqref{eq:gmres_min} with two different least squares solvers.
 The matrix \bA is a $25 \times 25$ 1-D Laplacian with $0.05$ added
@@ -290,18 +290,18 @@ significantly better than the Hessenberg eigenvalue approach
 (i.e. the magnitude of the polynomials are smaller over the majority
 of the region of interest).  At a polynomial order of 10, the behavior
 is similar to the $m=5$ case except that a slight difference between the
-two least square solutions is now evident.  All methods perform fairly
-well for $m=15$, although the normal equations approach is noticably
-larger over portions of the domain.  Finally, for $m=20$ the
-eigenvalue-based approach appears the best with the least squares QR
-now appearing to suffer.  Table~\ref{tab:gmres_poly} shows the value
+two least square solutions is now evident.
+For orders $15$ and $20$, however, both the eigenvalue-based approach
+and the least squares QR perform very well while the normal equations
+solution begins to rapidly degrade.
+Table~\ref{tab:gmres_poly} shows the value
 of the spectral radius of $\bI - p_m(\bA) \bA$ for each
-of these cases.  Although the eigenvalue-based approach
-appears to perform worse at small polynomial orders, it actually
-produces the smallest spectral radius for all four cases and is the
-only approach to produce a spectral radius that is monotonically decreasing
-with polynomial order.
-The dramatic variability in the different methods for computing the
+of these cases.  Both the eigenvalue approach and the least squares QR
+produce monotonically decreasing spectral radii whereas the spectral
+radius produced by the normal equations increases at high polynomial
+orders.  The least squares QR method seems to produce the most consistent
+behavior over the full range of polynomial orders.
+The significant variability in the different methods for computing the
 coefficients of the GMRES polynomial are indicative of the ill-conditioned
 nature of computations involving polynomial coefficients.
 \begin{figure}
@@ -339,9 +339,9 @@ nature of computations involving polynomial coefficients.
 \cmidrule(r){2-5}
 Method & 5 & 10 & 15 & 20 \\
 \midrule
-Hessenberg Eigenvalues     & 0.569 & 0.231 & 0.109 & 0.088 \\
-Least Squares Normal Eqns. & 0.632 & 0.259 & 0.184 & 0.247 \\
-Least Squares QR           & 0.632 & 0.273 & 0.176 & 0.586 \\
+Hessenberg Eigenvalues     & 1.027 & 0.630 & 0.081 & 0.034 \\
+Least Squares Normal Eqns. & 0.686 & 0.268 & 0.162 & 0.575 \\
+Least Squares QR           & 0.686 & 0.281 & 0.085 & 0.033 \\
 \bottomrule
 \end{tabular}
 \end{table}
