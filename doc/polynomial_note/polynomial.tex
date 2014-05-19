@@ -349,17 +349,6 @@ Least Squares QR           & 0.686 & 0.281 & 0.085 & 0.033 \\
 \section{Results}
 \label{sec:results}
 
-As a simple test problem, we choose the ``JPWH 991'' matrix from
-the Harwell-Boeing Collection, available from the Matrix Market.
-The sparsity pattern of the JPWH matrix is given in Figure~\ref{fig:jpwh_sparsity}.
-\begin{figure}
-\centering
-\includegraphics[width=4.5in]{jpwh_sparsity}
-\caption{Sparsity pattern of JPWH matrix \label{fig:jpwh_sparsity}}
-\end{figure}
-The matrix is nonsymmetric, but its eigenvalues are all real and
-contained in the interval $[-16.3,-0.12]$.  After a diagonal row
-scaling, the eigenvalues are contained in the interval $[0.02,1.71]$.
 All test cases use the diagonally scaled matrix and the right
 hand side of the linear system is taken to be a vector of all ones.
 The stopping criterion is a reduction in the L$_2$ norm of the residual
@@ -376,124 +365,127 @@ convergence or even divergence.  Conversely, for a fixed polynomial order
 it is necessary to track ``enough'' histories to ensure stability, but
 beyond that point there is little benefit to executing additional histories.
 \begin{table}
-\caption{Standard MCSA with Neumann Basis, JPWH Matrix.
-\label{tab:jpwh_standard_neumann}}
+\caption{Forward MCSA with Neumann Polynomial, $1000 \times 1000$ Shifted Laplacian Matrix.
+Values are MCSA iteration counts (timing in milliseconds)
+\label{tab:lap_forward_neumann}}
 \centering
-\begin{tabular}{cccccccccc}
+\begin{tabular}{ccccccc}
 \toprule
-Histories per & \multicolumn{9}{c}{Polynomial Order} \\
-Iteration & 1 & 2 & 4 & 8 & 16 & 32 & 64 & 128 & 256 \\
+Histories per & \multicolumn{6}{c}{Polynomial Order} \\
+Iteration & 1 & 2 & 3 & 4 & 5 & 6 \\
 \midrule
-100 & 234 & 175 & 121 & 183 & - & - & - & - & - \\
-200 & 230 & 173 & 118 & 74 & 164 & - & - & - & - \\
-400 & 227 & 171 & 115 & 71 & 42 & 91 & - & - & - \\
-800 & 227 & 170 & 114 & 70 & 39 & 31 & 47 & 67 & 78 \\
-1600 & 226 & 170 & 113 & 69 & 39 & 22 & 22 & 27 & 27 \\
-3200 & 225 & 169 & 113 & 68 & 38 & 21 & 15 & 17 & 17 \\
-6400 & 225 & 169 & 113 & 68 & 38 & 21 & 12 & 12 & 13 \\
-12800 & 225 & 169 & 113 & 68 & 38 & 21 & 11 & 10 & 10 \\
+250 & - & - & - & - & - & - \\
+500 & - & - & - & - & - & - \\
+1000 & - & - & - & - & - & - \\
+2000 & - & - & - & - & - & - \\
+4000 & - & 765(249) & 605(285) & 947(560) & 396(302) & 560(458) \\
+8000 & 923(325) & 698(413) & 554(485) & 471(560) & 396(530) & 354(561) \\
+16000 & 923(616) & 695(809) & 554(946) & 463(1015) & 396(1068) & 348(1079) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:jpwh_cheby_power} shows the same result,
-but now instead of using $\bI - \bA$ as the basis for the
-polynomial expansion, $\bA$ is used instead.
-Thus, instead of Eq.~\eqref{eq:mc_decomp} defining the
-matrices to be used in the Monte Carlo process, we instead
-have
-\begin{equation}
-\bA^T = \bP \circ \bW \:.
-\end{equation}
-We see that
-for this basis, the majority of cases result in divergence.
-Interestingly, at low polynomial orders and large history
-counts, the behavior is nearly identical to that with
-$\bI - \bA$ as the basis.
 \begin{table}
-\caption{Standard MCSA with Monomial Basis, JPWH Matrix.
-\label{tab:jpwh_standard_power}}
+\caption{Adjoint MCSA with Neumann Polynomial, $1000 \times 1000$ Shifted Laplacian Matrix.
+Values are MCSA iteration counts (timing in milliseconds)
+\label{tab:lap_adjoint_neumann}}
 \centering
-\begin{tabular}{cccccccccc}
+\begin{tabular}{ccccccc}
 \toprule
-Histories per & \multicolumn{9}{c}{Polynomial Order} \\
-Iteration & 1 & 2 & 4 & 8 & 16 & 32 & 64 & 128 & 256 \\
+Histories per & \multicolumn{6}{c}{Polynomial Order} \\
+Iteration & 1 & 2 & 3 & 4 & 5 & 6 \\
 \midrule
-    100 & -     & -     & - & - & - & - & - & - & - \\
-    200 & 330 & -     & - & - & - & - & - & - & - \\
-    400 & 240 & -     & - & - & - & - & - & - & - \\
-    800 & 235 & 290 & - & - & - & - & - & - & - \\
-  1600 & 230 & 182 & - & - & - & - & - & - & - \\
-  3200 & 228 & 177 & - & - & - & - & - & - & - \\
-  6400 & 227 & 174 & - & - & - & - & - & - & - \\
-12800 & 226 & 172 & - & - & - & - & - & - & - \\
+250 & - & 775(100) & - & 651(96) & - & 664(110) \\
+500 & - & 725(122) & - & 502(104) & - & 394(95) \\
+1000 & - & 707(174) & - & 482(179) & - & 366(144) \\
+2000 & 2096(521) & 703(280) & 1991(855) & 471(259) & 2668(1514) & 356(251) \\
+4000 & 1694(821) & 698(494) & 1701(1194) & 467(497) & 864(921) & 350(458) \\
+8000 & 1384(1142) & 697(923) & 1256(1761) & 464(905) & 628(1290) & 350(873) \\
+16000 & 1220(1969) & 695(1796) & 859(2493) & 462(1768) & 588(2384) & 347(1711) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:jpwh_cheby_neumann} shows the performance
-with Chebyshev polynomials rather than the Neumann
-series.  Note that the polynomial order is increased
-linearly in this case rather than exponentially with the
-Neumann series.  In general, using Chebyshev polynomials
-results in a significant reduction in iterations relative to
-the equivalent order Neumann series polynomial.  The
-downside is that significantly more histories must be
-tracked to achieve stability for a given polynomial order.
 \begin{table}
-\caption{Chebyshev MCSA with Neumann Basis, JPWH Matrix.
-\label{tab:jpwh_cheby_neumann}}
+\caption{Forward MCSA with Chebyshev Polynomial, $1000 \times 1000$ Shifted Laplacian Matrix.
+Values are MCSA iteration counts (timing in milliseconds)
+\label{tab:lap_forward_cheby}}
 \centering
-\begin{tabular}{cccccc}
- \toprule
- Histories per & \multicolumn{5}{c}{Polynomial Order} \\
- Iteration & 1 & 2 & 3 & 4 & 5 \\
- \midrule
- 100 & - & - & - & - & - \\
- 200 & 156 & - & - & - & - \\
- 400 & 131 & - & - & - & - \\
- 800 & 126 & 96 & - & - & - \\
- 1600 & 125 & 67 & - & - & - \\
- 3200 & 124 & 65 & 85 & - & - \\
- 6400 & 123 & 64 & 42 & - & - \\
- 12800 & 123 & 63 & 40 & 87 & - \\
- 25600 & 123 & 63 & 40 & 33 & - \\
- 51200 & 123 & 63 & 39 & 28 & 100 \\
- 102400 & 122 & 63 & 39 & 28 & 33 \\
- 204800 & 122 & 63 & 39 & 27 & 22 \\
+\begin{tabular}{ccccccc}
+\toprule
+Histories per & \multicolumn{6}{c}{Polynomial Order} \\
+Iteration & 1 & 2 & 3 & 4 & 5 & 6 \\
+\midrule
+250 & - & - & - & - & - & - \\
+500 & - & - & - & - & - & - \\
+1000 & - & - & - & - & - & - \\
+2000 & - & - & - & - & - & - \\
+4000 & - & - & - & - & - & - \\
+8000 & - & - & - & - & - & - \\
+16000 & 556(369) & - & - & - & - & - \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:jpwh_cheby_power} shows the result of
-again using Chebyshev polynomials, but now using
-$\bA$ as the basis for the polynomial expansion.
-As with the Neumann series polynomial, using
-$\bA$ as a basis performs considerably worse than
-using $\bI - \bA$ in that considerably more histories
-are required to achieve stability for a given polynomial
-order.
 \begin{table}
-\caption{Chebyshev MCSA with Monomial Basis, JPWH Matrix.
-\label{tab:jpwh_cheby_power}}
+\caption{Adjoint MCSA with Chebyshev Polynomial, $1000 \times 1000$ Shifted Laplacian Matrix.
+Values are MCSA iteration counts (timing in milliseconds)
+\label{tab:lap_adjoint_cheby}}
 \centering
-\begin{tabular}{cccccc}
- \toprule
- Histories per & \multicolumn{5}{c}{Polynomial Order} \\
- Iteration & 1 & 2 & 3 & 4 & 5 \\
- \midrule
- 100 & - & - & - & - & - \\
- 200 & - & - & - & - & - \\
- 400 & - & - & - & - & - \\
- 800 & - & - & - & - & - \\
- 1600 & 178 & - & - & - & - \\
- 3200 & 130 & - & - & - & - \\
- 6400 & 127 & - & - & - & - \\
- 12800 & 125 & - & - & - & - \\
- 25600 & 124 & 80 & - & - & - \\
- 51200 & 123 & 67 & - & - & - \\
- 102400 & 123 & 65 & - & - & - \\
- 204800 & 123 & 64 & - & - & - \\
+\begin{tabular}{ccccccc}
+\toprule
+Histories per & \multicolumn{6}{c}{Polynomial Order} \\
+Iteration & 1 & 2 & 3 & 4 & 5 & 6 \\
+\midrule
+250 & - & - & - & - & - & - \\
+500 & - & - & - & - & - & - \\
+1000 & - & - & - & - & - & - \\
+2000 & - & 325(130) & - & - & - & - \\
+4000 & - & 294(210) & - & - & - & - \\
+8000 & - & 288(380) & 201(335) & - & - & - \\
+16000 & - & 285(736) & 175(554) & - & - & - \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}
+\caption{Forward MCSA with GMRES Polynomial, $1000 \times 1000$ Shifted Laplacian Matrix.
+Values are MCSA iteration counts (timing in milliseconds)
+\label{tab:lap_forward_gmres}}
+\centering
+\begin{tabular}{ccccccc}
+\toprule
+Histories per & \multicolumn{6}{c}{Polynomial Order} \\
+Iteration & 1 & 2 & 3 & 4 & 5 & 6 \\
+\midrule
+250 & - & - & - & - & - & - \\
+500 & - & - & - & - & - & - \\
+1000 & 923(89) & - & - & - & - & - \\
+2000 & 923(127) & 547(110) & - & - & - & - \\
+4000 & 923(195) & 547(204) & - & - & - & - \\
+8000 & 923(330) & 547(322) & 357(312) & - & - & - \\
+16000 & 923(607) & 547(640) & 357(607) & 246(536) & - & - \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}
+\caption{Adjoint MCSA with GMRES Polynomial, $1000 \times 1000$ Shifted Laplacian Matrix.
+Values are MCSA iteration counts (timing in milliseconds)
+\label{tab:lap_adjoint_gmres}}
+\centering
+\begin{tabular}{ccccccc}
+\toprule
+Histories per & \multicolumn{6}{c}{Polynomial Order} \\
+Iteration & 1 & 2 & 3 & 4 & 5 & 6 \\
+\midrule
+250 & 1153(136) & 2572(337) & - & - & - & - \\
+500 & 1003(151) & 616(105) & 462(87) & - & - & - \\
+1000 & 946(226) & 566(142) & 385(110) & 496(161) & - & - \\
+2000 & 933(306) & 557(222) & 368(175) & 260(146) & - & - \\
+4000 & 928(519) & 554(412) & 362(311) & 254(259) & 203(236) & - \\
+8000 & 924(971) & 549(731) & 362(585) & 251(490) & 184(423) & - \\
+16000 & 923(1816) & 548(1426) & 360(1135) & 247(965) & 179(797) & 146(744) \\
 \bottomrule
 \end{tabular}
 \end{table}
