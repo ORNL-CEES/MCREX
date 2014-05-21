@@ -3,6 +3,7 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{graphicx}
+\usepackage{tabularx}
 \usepackage[margin=1in]{geometry}
 \usepackage[labelfont=bf,labelsep=period]{caption}
 \usepackage{booktabs}
@@ -10,7 +11,7 @@
 \usepackage{subcaption}
 
 \title{Monte Carlo as Approximate Polynomial Preconditioning within MCSA}
-\author{Steven Hamilton and Tom Evans and Stuart Slattery}
+\author{Steven Hamilton}
 
 \newcommand{\bx}{\ensuremath{\mathbf{x}}}
 \newcommand{\by}{\ensuremath{\mathbf{y}}}
@@ -29,6 +30,7 @@
 \newcommand{\calK}{\ensuremath{\mathcal{K}}}
 
 \DeclareMathOperator*{\argmin}{arg\,min}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
 
 \begin{document}
 \maketitle
@@ -49,14 +51,17 @@ The original MCSA algorithm can be written as
 \bx^{k+1} &= \bx^{k+1/2} + \bM^{-1}\br^{k+1/2} \:,
 \end{aligned}
 \end{equation}
-where $\bM^{-1}$ denotes performing an approximate linear solve using the
-adjoint Monte Carlo process and $k$ is the iteration index.
+where $\bM^{-1}$ denotes performing an approximate linear solve using a
+Monte Carlo process and $k$ is the iteration index.
 Thus, MCSA consists of a single unpreconditioned
 Richardson iteration followed by a single preconditioned Richardson iteration.
 This iteration scheme has been observed to exhibit far better convergence
-behavior than the original sequential Monte Carlo scheme proposed by Halton \cite{halton_94}.
+behavior than the original sequential Monte Carlo scheme proposed by Halton
+\cite{halton_94}.
 
-The adjoint Monte Carlo process works by approximating the Neumann
+Both forward (direct) and adjoint Monte Carlo processes have been considered
+\cite{slattery_13,evans_13}.
+Both approaches work by approximating the Neumann
 series of the inverse of \bA:
 \begin{equation}
 \bA^{-1} = \sum_{n=0}^{\infty} ( \bI - \bA )^n
@@ -72,54 +77,54 @@ Clearly
 Eqs.~\eqref{eq:neumann_inv} and \eqref{eq:neumann_soln} are only
 valid if the spectral radius of
 the iteration matrix, $\rho(\bH)$, is less than unity.
-The Monte Carlo process is conducted by decomposing the transpose of
+
+The forward Monte Carlo process is conducted by decomposing the transpose of
 \bH\ into an element-wise
 (Hadamard) product of a probability matrix and a weight matrix, i.e.
 \begin{equation}
-\bH^T = \bP \circ \bW \:. \label{eq:mc_decomp}
+\bH = \bP \circ \bW \:. \label{eq:forward_mc_decomp}
 \end{equation}
-The usual approach is to define rows of \bP\ as normalized rows of $\bH^T$
+The usual approach is to define rows of \bP\ as normalized rows of \bH\
 (normalized columns of \bH), i.e.
 \begin{equation}
 \bP_{ij} =
-\frac{\vert \bH_{ji} \vert}{\displaystyle \sum_{i=1}^{N} \vert \bH_{ij} \vert} \:.
+\frac{\vert \bH_{ij} \vert}{\displaystyle \sum_{j=1}^{N} \vert \bH_{ij} \vert} \:.
 \end{equation}
 With this definition for \bP, the weight matrix is given by
 \begin{equation}
-\bW_{ij} = \frac{\bH_{ji}}{\bP_{ij}}. \label{eq:wgt_mat}
+\bW_{ij} = \frac{\bH_{ij}}{\bP_{ij}}. \label{eq:wgt_mat}
 \end{equation}
 Note that both \bP\ and \bW\ should have the same sparsity pattern
 as $\bH^T$ and so Eq.~\eqref{eq:wgt_mat} is only taken over the indices corresponding
 to nonzero entries in $\bH^T$.
+A similar process is conducted in the adjoint Monte Carlo process,
+except rather than Eq.~\eqref{eq:forward_mc_decomp}, the {\em transpose}
+of \bH\ is decomposed, i.e.
+\begin{equation}
+\bH^T = \bP \circ \bW \:. \label{eq:adjoint_mc_decomp}
+\end{equation}
 The solution to a system of equations is approximated by following
-a number of particle histories (although we are considering arbitrary
-linear systems here, the nomenclature of tracking ``particles'' is
-carried over from the particle transport community)
-and averaging the contributions
-to the solution over all conducted histories.  Each history is started
-in a state determined by normalizing \bb to produce a probability
-distribution:
-\begin{equation}
-\bp_i^\text{start} =
-\frac{\vert \bb_i \vert}{\displaystyle \sum_{i=1}^{N} \vert \bb_i \vert} \:.
-\end{equation}
-The initial weight of a history is therefore given by
-\begin{equation}
-\bw_i^\text{start} = \frac{\bb_i}{\bp_i^\text{start}} \:.
-\end{equation}
-The history proceeds by allowing the particle to transition
-to a new state by sampling from the discrete probability distribution
-defined by the row of \bP\ corresponding to the current state.
-The weight of the particle is updated by multiplying by the
-entry in \bW\ corresponding to the given transition.
-Each history provides a contribution to the solution vector proportional
-to the current weight of the particle.  Either collision or
-expected value tallies are possible, see [cite Slattery] for details
-about these tally methods.
-A given history can either be terminated via a weight cutoff (i.e.
-when the weight of a particle drops below a prescribed fraction
-of its initial weight) or by a history length cutoff (i.e. after
-a certain number of transitions have taken place).
+a number of histories and averaging the contributions
+to the solution over all conducted histories.  Histories can be terminated
+when the weight decreases by a prescribed fraction (denoted a weight cutoff)
+or, alternatively, a history can be terminated after a fixed number of
+transitions have taken place (denoted a history length cutoff).
+
+The primary difference
+between the forward and adjoint methods is that in the forward method
+a contribution is made to the element of the solution vector where the
+history originated based on the value of the right hand side in the state
+where the history currently resides.  In the adjoint method, however,
+a contribution is made to the element of the solution vector where the
+history currently resides based on the value of the right hand side
+where the history originated.  In the forward method, therefore, it is
+necessary to start at least one history in every state in order to
+estimate every element of the solution vector whereas in the adjoint
+method an estimate of all entries in the solution vector can be
+obtained with far fewer than one history per state.
+Further details about the Monte Carlo process, including selection
+of starting probabilities and different solution tally approaches,
+can be found in Ref.~\cite{slattery_13}.
 
 \section{Monte Carlo as Approximate Polynomial Preconditioning}
 \label{sec:polynomial_prec}
@@ -129,23 +134,27 @@ the adjoint Monte Carlo approach is to approximate the
 Neumann series applied to the vector \bb.
 However, by applying a history length cutoff it is possible to
 view the Monte Carlo random walk as an approximation of a
-fixed degree polynomial in $\bH$:
+fixed degree polynomial:
 \begin{equation}
-p(\bH) = \sum_{n=0}^{N} c_n \bH^n \:, \label{eq:neumann_poly}
+p(\bA) = \sum_{n=0}^{m} c_n \left( \bI - \bA \right)^n \:, \label{eq:neumann_poly}
 \end{equation}
 where in the standard algorithm, $c_n=1$.
 The Neumann series is not the only polynomial that can approximate
 $\bA^{-1}$, however.  By varying the selection of $c_n$, it is
 possible to use other polynomials.  Commonly, polynomials used
 for preconditioning are defined in terms of powers of \bA\ rather
-than powers of \bH, giving the expansion
+than powers of $\bI-\bA$, giving the expansion
 \begin{equation}
-p(\bA) = \sum_{n=0}^{N} \hat{c}_n \bA^n \:. \label{eq:power_poly}
+p(\bA) = \sum_{n=0}^{m} \hat{c}_n \bA^n \:. \label{eq:power_poly}
 \end{equation}
 Converting between coefficients defined by Eq.~\eqref{eq:power_poly}
 and those defined by Eq.~\eqref{eq:neumann_poly} can be
-accomplished by means of a change of basis.  The impact of the
-choice of the basis will be evaluated in Section~\ref{sec:results}.
+accomplished by means of a change of basis.  It should be denoted
+that using $\bI - \bA$ as a basis is generally preferred over using
+\bA\ itself.  The reason for this is that if a diagonal scaling
+is first applied to \bA, then $\bI-\bA$ will have all zeros
+on the main diagonal which eliminates Monte Carlo events in which
+a history does not change states.
 We now consider several candidates for the matrix polynomial.
 
 \subsection{Chebyshev Polynomials}
@@ -221,17 +230,17 @@ A significant downside to the use of Chebyshev polynomials is the need for
 accurate bounds on the spectrum of $\bA$.  For nonsymmetric matrices,
 this requires not only computing smallest and largest eigenvalues as is
 required in the symmetric case but requires
-bounding the entire spectrum of $\bA$ in an ellipse.  The process for
+bounding the entire spectrum of $\bA$ in an ellipse.  A process for
 computing such bounding ellipses is described in Ref.~\cite{manteuffel_77}.
 
 \subsection{GMRES Polynomial}
-\label{subsec:gmres}
+\label{subsec:gmres_poly}
 
 An alternative class of polynomials requiring less spectral information
 than Chebyshev polynomials
 while handling nonsymmetric systems naturally is the polynomials generated
 by GMRES \cite{saad_86}.  The GMRES algorithm computes, at iteration $m$,
-an approximate solution to \eqref{eq:lin_problem}, $\bx^{(m)}$,
+an approximate solution to Eq.~\eqref{eq:lin_problem}, $\bx^{(m)}$,
 such that the $L_2$ norm of the residual
 is minimized over the $(m+1)$-dimensional Krylov subspace given by
 \begin{equation}
@@ -239,10 +248,13 @@ is minimized over the $(m+1)$-dimensional Krylov subspace given by
 \end{equation}
 From this definition it is clear that GMRES is constructing (implicitly)
 a polynomial of degree $m$, $p_m(\bA)$, such that $p_m(\bA) \approx \bA^{-1}$.
-Use of the the GMRES polynomial as a preconditioner to fixed point iterations
-(so-called hybrid GMRES methods)
-was studied in Refs.~\cite{nachtigal_92,joubert_94} among several others
-and as a preconditioner to {GMRES} itself in Ref.~\cite{liu_14}.
+Use of the the GMRES polynomial has been studied as a preconditioner
+to fixed point iterations (so-called hybrid GMRES methods)
+\cite{elman_86,nachtigal_92,joubert_94}
+and as a preconditioner to {GMRES} itself \cite{liu_14}.
+Additionally, using the GMRES/Arnoldi process to obtain information about
+the matrix for use in a subsequent iterative process has also been
+studied \cite{elman_86_2,saylor_90,saylor_91}.
 
 In the context of hybrid GMRES methods, the coefficients of the GMRES polynomial
 are generally not computed explicitly, rather the polynomial is applied
@@ -269,7 +281,7 @@ By choosing the ``na\"ive'' basis for the Krylov subspace,
 \begin{equation}
 \bK_{m+1} = \left[ \bb, \bA \bb, \ldots, \bA^m \bb \right] \:,
 \end{equation}
-the coeffcients of the GMRES polynomial are given by the solution to
+the coefficients of the GMRES polynomial are given by the solution to
 the least squares problem
 \begin{equation}
 \min_{\bc} \Vert \bA \bK_{m+1} \bc - \bb \Vert_2 \:. \label{eq:gmres_min}
@@ -282,7 +294,7 @@ Our experience, however, differs from this result.
 Figure~\ref{fig:gmres_poly} shows the GMRES polynomial with coefficients
 computed using either Eq.~\eqref{eq:prod_gmres_poly} or by
 Eq.~\eqref{eq:gmres_min} with two different least squares solvers.
-The matrix \bA is a $25 \times 25$ 1-D Laplacian with $0.05$ added
+The matrix \bA\ is a $25 \times 25$ 1-D Laplacian with $0.05$ added
 to each diagonal entry and the initial vector is taken to be a
 normally-distributed random vector.  At a polynomial order of 5,
 the two least squares methods are equivalent and appear to perform
@@ -328,7 +340,6 @@ nature of computations involving polynomial coefficients.
  indicate the polynomials evaluated at the eigenvalues of \bA.}
 \label{fig:gmres_poly}
 \end{figure}
-
 \begin{table}
 \centering
 \caption{Spectral Radius of $\left( \bI - p_m(\bA) \bA \right)$.}
@@ -346,17 +357,28 @@ Least Squares QR           & 0.686 & 0.281 & 0.085 & 0.033 \\
 \end{tabular}
 \end{table}
 
+A significant advantage of GMRES polynomials over Chebyshev is that
+GMRES polynomials handle nonsymmetric matrices with potentially complex
+eigenvalue naturally, whereas computing the coefficients of
+Chebyshev polynomials requires the costly task of bounding the spectrum
+of \bA\ in an ellipse.  Additionally, accurate knowledge of the bounding eigenvalues
+of \bA\ are required to compute the Chebyshev coefficients of any order
+(which may incur a cost of tens or hundreds of matrix-vector products),
+while the computation of GMRES polynomial coefficients requires only
+$m$ matrix-vector products for an order $m$ polynomial.
+
 \section{Results}
 \label{sec:results}
 
-All test cases use the diagonally scaled matrix and the right
-hand side of the linear system is taken to be a vector of all ones.
-The stopping criterion is a reduction in the L$_2$ norm of the residual
+Tables~\ref{tab:lap_forward_neumann} and \ref{tab:lap_adjoint_neumann}
+show the behavior of
+the standard MCSA algorithm (with forward and adjoint Monte Carlo, respectively)
+applied to a $1000 \times 1000$ shifted Laplacian matrix with a shift
+of $0.01$.  The right hand side is given by $\bb_i = \sin \left( \pi \frac{i-1}{N-1} \right)$
+and the stopping criterion is a reduction in the L$_2$ norm of the residual
 by six orders of magnitude.
-
-Table~\ref{tab:jpwh_standard_neumann} shows the behavior of
-the standard MCSA algorithm applied to the JPWH matrix for a range
-of different polynomial orders and Monte Carlo histories per iteration.
+The effect of varying the polynomial order and the number of Monte Carlo
+histories per iteration is shown.
 As expected, increasing the polynomial order generally leads to a decrease
 in the number of iterations required for convergence.
 For a fixed number of histories, however, there is a threshold beyond
@@ -364,14 +386,21 @@ which an increase in the polynomial order actually leads to very slow
 convergence or even divergence.  Conversely, for a fixed polynomial order
 it is necessary to track ``enough'' histories to ensure stability, but
 beyond that point there is little benefit to executing additional histories.
+Comparing the results for the forward and adjoint methods, the adjoint method
+generally requires fewer histories to achieve a stable result.  When both
+methods converge, however, the forward method generally achieves convergence
+in fewer MCSA iterations.  At low history counts, the adjoint method displays
+greater stability for even order polynomials than for add orders, the reason
+for this behavior is not clear.
 \begin{table}
 \caption{Forward MCSA with Neumann Polynomial, $1000 \times 1000$ Shifted Laplacian Matrix.
 Values are MCSA iteration counts (timing in milliseconds)
 \label{tab:lap_forward_neumann}}
 \centering
-\begin{tabular}{ccccccc}
+\begin{tabularx}{0.8\textwidth}{c *{6}{Y}}
 \toprule
 Histories per & \multicolumn{6}{c}{Polynomial Order} \\
+\cmidrule(lr){2-7}
 Iteration & 1 & 2 & 3 & 4 & 5 & 6 \\
 \midrule
 250 & - & - & - & - & - & - \\
@@ -382,17 +411,17 @@ Iteration & 1 & 2 & 3 & 4 & 5 & 6 \\
 8000 & 923(325) & 698(413) & 554(485) & 471(560) & 396(530) & 354(561) \\
 16000 & 923(616) & 695(809) & 554(946) & 463(1015) & 396(1068) & 348(1079) \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
-
 \begin{table}
 \caption{Adjoint MCSA with Neumann Polynomial, $1000 \times 1000$ Shifted Laplacian Matrix.
 Values are MCSA iteration counts (timing in milliseconds)
 \label{tab:lap_adjoint_neumann}}
 \centering
-\begin{tabular}{ccccccc}
+\begin{tabularx}{0.8\textwidth}{c *{6}{Y}}
 \toprule
 Histories per & \multicolumn{6}{c}{Polynomial Order} \\
+\cmidrule(lr){2-7}
 Iteration & 1 & 2 & 3 & 4 & 5 & 6 \\
 \midrule
 250 & - & 775(100) & - & 651(96) & - & 664(110) \\
@@ -403,17 +432,29 @@ Iteration & 1 & 2 & 3 & 4 & 5 & 6 \\
 8000 & 1384(1142) & 697(923) & 1256(1761) & 464(905) & 628(1290) & 350(873) \\
 16000 & 1220(1969) & 695(1796) & 859(2493) & 462(1768) & 588(2384) & 347(1711) \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
+Tables~\ref{tab:lap_forward_cheby} and \ref{tab:lap_adjoint_cheby}
+show the same problem using Chebyshev polynomials instead of the Neumann
+series polynomial.  Stability seems to be a much greater concern when using
+Chebyshev polynomials, as significantly more histories must be executed to
+achieve convergence as compared to the corresponding Neumann series results.
+One possible explanation for this behavior is that the Chebyshev coefficients
+increase exponentially in magnitude, making approximation of higher order terms
+far more difficult.
+When convergence is achieved, however, significantly smaller iteration counts
+are observed.  As with the Neumann series polynomial, greater stability is
+achieved when using the adjoint method.
 \begin{table}
 \caption{Forward MCSA with Chebyshev Polynomial, $1000 \times 1000$ Shifted Laplacian Matrix.
 Values are MCSA iteration counts (timing in milliseconds)
 \label{tab:lap_forward_cheby}}
 \centering
-\begin{tabular}{ccccccc}
+\begin{tabularx}{0.8\textwidth}{c *{6}{Y}}
 \toprule
 Histories per & \multicolumn{6}{c}{Polynomial Order} \\
+\cmidrule(lr){2-7}
 Iteration & 1 & 2 & 3 & 4 & 5 & 6 \\
 \midrule
 250 & - & - & - & - & - & - \\
@@ -421,41 +462,51 @@ Iteration & 1 & 2 & 3 & 4 & 5 & 6 \\
 1000 & - & - & - & - & - & - \\
 2000 & - & - & - & - & - & - \\
 4000 & - & - & - & - & - & - \\
-8000 & - & - & - & - & - & - \\
-16000 & 556(369) & - & - & - & - & - \\
+8000 & 556(198) & - & - & - & - & - \\
+16000 & 556(363) & - & - & - & - & - \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
-
 \begin{table}
 \caption{Adjoint MCSA with Chebyshev Polynomial, $1000 \times 1000$ Shifted Laplacian Matrix.
 Values are MCSA iteration counts (timing in milliseconds)
 \label{tab:lap_adjoint_cheby}}
 \centering
-\begin{tabular}{ccccccc}
+\begin{tabularx}{0.8\textwidth}{c *{6}{Y}}
 \toprule
 Histories per & \multicolumn{6}{c}{Polynomial Order} \\
+\cmidrule(lr){2-7}
 Iteration & 1 & 2 & 3 & 4 & 5 & 6 \\
 \midrule
 250 & - & - & - & - & - & - \\
 500 & - & - & - & - & - & - \\
 1000 & - & - & - & - & - & - \\
-2000 & - & 325(130) & - & - & - & - \\
-4000 & - & 294(210) & - & - & - & - \\
-8000 & - & 288(380) & 201(335) & - & - & - \\
-16000 & - & 285(736) & 175(554) & - & - & - \\
+2000 & - & 328(134) & - & - & - & - \\
+4000 & - & 296(210) & - & - & - & - \\
+8000 & - & 288(380) & 262(423) & - & - & - \\
+16000 & 1132(1866) & 283(721) & 175(550) & - & - & - \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
+Tables~\ref{tab:lap_forward_gmres} and \ref{tab:lap_adjoint_gmres}
+again show the results of MCSA applied to the same problem,
+now using the GMRES polynomial (computing using the least squares
+QR solution described in Section~\ref{subsec:gmres_poly} with a random
+initial vector).  The GMRES polynomial seems to offer a favorable
+middle ground between the Neumann series and Chebyshev polynomials:
+iteration counts for a given polynomial order are smaller than with
+the Neumann series and yet far fewer histories are required to achieve
+stability than with the Chebyshev polynomial.
 \begin{table}
 \caption{Forward MCSA with GMRES Polynomial, $1000 \times 1000$ Shifted Laplacian Matrix.
 Values are MCSA iteration counts (timing in milliseconds)
 \label{tab:lap_forward_gmres}}
 \centering
-\begin{tabular}{ccccccc}
+\begin{tabularx}{0.8\textwidth}{c *{6}{Y}}
 \toprule
 Histories per & \multicolumn{6}{c}{Polynomial Order} \\
+\cmidrule(lr){2-7}
 Iteration & 1 & 2 & 3 & 4 & 5 & 6 \\
 \midrule
 250 & - & - & - & - & - & - \\
@@ -466,17 +517,17 @@ Iteration & 1 & 2 & 3 & 4 & 5 & 6 \\
 8000 & 923(330) & 547(322) & 357(312) & - & - & - \\
 16000 & 923(607) & 547(640) & 357(607) & 246(536) & - & - \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
-
 \begin{table}
 \caption{Adjoint MCSA with GMRES Polynomial, $1000 \times 1000$ Shifted Laplacian Matrix.
 Values are MCSA iteration counts (timing in milliseconds)
 \label{tab:lap_adjoint_gmres}}
 \centering
-\begin{tabular}{ccccccc}
+\begin{tabularx}{0.8\textwidth}{c *{6}{Y}}
 \toprule
 Histories per & \multicolumn{6}{c}{Polynomial Order} \\
+\cmidrule(lr){2-7}
 Iteration & 1 & 2 & 3 & 4 & 5 & 6 \\
 \midrule
 250 & 1153(136) & 2572(337) & - & - & - & - \\
@@ -487,7 +538,7 @@ Iteration & 1 & 2 & 3 & 4 & 5 & 6 \\
 8000 & 924(971) & 549(731) & 362(585) & 251(490) & 184(423) & - \\
 16000 & 923(1816) & 548(1426) & 360(1135) & 247(965) & 179(797) & 146(744) \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \bibliographystyle{plain}
