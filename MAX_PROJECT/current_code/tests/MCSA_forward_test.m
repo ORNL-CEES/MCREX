@@ -26,7 +26,7 @@ fp.rhs=rhs;
 fp.precond='diag';
 %% MCSA forward method resolution
 
-[sol, rel_err, var, iterations]=MCSA_forward(fp, P, cdf, rich_it, n_walks, max_step, eps);
+[sol, rel_err, var, NWALKS, iterations]=MCSA_forward(fp, P, cdf, rich_it, n_walks, max_step, eps);
 
 conf=0.05;
 

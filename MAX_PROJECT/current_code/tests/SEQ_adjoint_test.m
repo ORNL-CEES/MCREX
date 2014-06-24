@@ -26,7 +26,7 @@ fp.rhs=rhs;
 fp.precond='diag';
 %% Monte Carlo Adjoint Method resolution
 
-[sol, rel_error, var, iterations]=SEQ_adjoint(fp, dist, P, cdf, rich_it, n_walks, max_step, eps);
+[sol, rel_error, var, NWALKS, iterations]=SEQ_adjoint(fp, dist, P, cdf, rich_it, n_walks, max_step, eps);
 
 conf=0.05;
 
