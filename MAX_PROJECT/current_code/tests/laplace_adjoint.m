@@ -5,7 +5,7 @@ addpath('../utils')
 %poolobj=parpool('local');
 
 shape = 'S'; % Other possible shapes include L,S,N,C,D,A,H,B
-n=10;
+n=32;
 
 % creation of te grid
 G=gridgen(shape, n);
@@ -29,10 +29,11 @@ spy_matrices(fixed_point);
 %% Building of the iteration matrix
 
 eps=10^(-3);
-n_walks=(10^2)*(n-2)^2;
+n_walks=(10^1)*(n-2)^2;
 max_step=20;
-rich_it=10;%maximal number of Richardson iteration
+rich_it=200;%maximal number of Richardson iteration
 dist='MAO';
+p=2;
 
 if ~ strcmp(precond, 'alternating')
     [Pb, cdfb, P, cdf]=prob_adjoint(fixed_point.H, fixed_point.rhs, dist);
@@ -42,7 +43,7 @@ else
     [Pb.Pb2, cdfb.cdfb2, P.P2, cdf.cdf2]=prob_adjoint(fixed_point.H2, fixed_point.rhs2, dist);
 end
 
-[sol, rel_err, var, VAR, iterations, time]=system_solver(scheme, method, fixed_point, dist, P, cdf, rich_it, n_walks, max_step, eps);
+[sol, rel_err, var, NWALKS, iterations, time]=system_solver(scheme, method, fixed_point, dist, P, cdf, rich_it, n_walks, max_step, eps);
 
 %delete(poolobj)
 

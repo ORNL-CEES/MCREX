@@ -15,7 +15,7 @@ reac=0;
 [u, D, rhs]=laplace(shape, G, reac);
 
 %algebraic splitting: 'diag', 'gs', 'triblock', 'trisplit', 'alternating'
-precond='triblock';
+precond='diag';
 
 %Sequential Monte Carlo or Monte Carlo Synthetic Acceleration
 %possible choices: 'SEQ', 'MCSA'
@@ -29,10 +29,11 @@ spy_matrices(fixed_point);
 %% Building of the transition probability matrix
 
 eps=10^(-3);
-n_walks=1000;
+n_walks=10;
 max_step=20;
 rich_it=50;%maximal number of Richardson iteration
 dist='MAO';
+p=1;
 
 if ~ strcmp(precond, 'alternating')
     [P, cdf]=prob_forward(fixed_point.H, dist);
@@ -41,7 +42,7 @@ else
     [P.P1, cdf.cdf1]=prob_forward(fixed_point.H1, dist);
     [P.P2, cdf.cdf2]=prob_forward(fixed_point.H2, dist);
 end
-[sol, rel_err, var, VAR, iterations, time]=system_solver(scheme, method, fixed_point, dist, P, cdf, rich_it, n_walks, max_step, eps);
+[sol, rel_err, var, NWALKS, iterations, time]=system_solver(scheme, method, fixed_point, dist, P, cdf, rich_it, n_walks, max_step, eps);
 
 %delete(poolobj)
 
