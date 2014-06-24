@@ -25,7 +25,7 @@ def prolongateCC( u_c ):
 def restrictCC( u_f ):
     fine_size = len(u_f)
     coarse_size = fine_size / 2
-    u_c = numpy.zeros( fine_size )
+    u_c = numpy.zeros( coarse_size )
     for i in xrange(coarse_size):
         u_c[i] = 0.5*(u_f[2*i] + u_f[2*i+1])
     return u_c
