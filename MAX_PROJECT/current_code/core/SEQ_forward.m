@@ -28,9 +28,9 @@ if ~ strcmp(fp.precond, 'alternating')
        X=[];
        r=rhs-B*sol;
        [dx, dvar, X]=MC_forward(X, H, r, P, cdf, n_walks, max_step);
-       while max(dvar)>( norm(dx)/100 )
+       while norm(dvar)>( norm(dx)/100 )
            dnwalks=n_walks;
-           [dx, dvar, X]=MC_adjoint(X, H, r, P, cdf, Pb, cdfb, dnwalks, max_step);
+           [dx, dvar, X]=MC_forward(X, H, r, P, cdf, Pb, cdfb, dnwalks, max_step);
        end
        NWALKS=[NWALKS size(X,1)];       
        sol=sol+dx;
