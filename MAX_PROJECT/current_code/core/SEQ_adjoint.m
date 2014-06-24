@@ -78,7 +78,7 @@ else
             [dx, dvar]=MC_adjoint(H1, r, P1, cdf1, Pb, cdfb, n_walks, max_step);
             while max(dvar)>( norm(dx)/100 )
                 dnwalks=n_walks;
-                [dx, dvar, X]=MC_adjoint(X, H, r, P, cdf, Pb, cdfb, dnwalks, max_step);
+                [dx, dvar, X]=MC_adjoint(X, H1, r, P1, cdf1, Pb, cdfb, dnwalks, max_step);
             end
             NWALKS=[NWALKS size(X,1)];
             sol=sol+dx;
@@ -90,7 +90,7 @@ else
             [dx, dvar]=MC_adjoint(H1, r, P2, cdf2, Pb, cdfb, n_walks, max_step);
             while max(dvar)>( norm(dx)/100 )
                 dnwalks=n_walks;
-                [dx, dvar, X]=MC_adjoint(X, H, r, P, cdf, Pb, cdfb, dnwalks, max_step);
+                [dx, dvar, X]=MC_adjoint(X, H2, r, P2, cdf2, Pb, cdfb, dnwalks, max_step);
             end  
             NWALKS=[NWALKS size(X,1)];
             sol=sol+dx;  

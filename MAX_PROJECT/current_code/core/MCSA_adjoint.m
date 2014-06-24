@@ -28,7 +28,7 @@ if ~ strcmp(fp.precond, 'alternating')
         sol=H*sol+rhs; 
         r=rhs-B*sol;
         [Pb, cdfb]=prob_adjoint_rhs(r, dist);
-        [dx, dvar, X]=MC_adjoint(H, r, P, cdf, Pb, cdfb, n_walks, max_step);
+        [dx, dvar, X]=MC_adjoint(X, H, r, P, cdf, Pb, cdfb, n_walks, max_step);
         while max(dvar)>( norm(dx)/100 )
             dnwalks=n_walks;
             [dx, dvar, X]=MC_adjoint(X, H, r, P, cdf, Pb, cdfb, dnwalks, max_step);
@@ -81,10 +81,10 @@ else
             sol=H1*sol+rhs1; 
             r=rhs1-B1*sol;
             [Pb, cdfb]=prob_adjoint_rhs(r, dist);
-            [dx, dvar, X]=MC_adjoint(H1, r, P.P1, cdf.cdf1, Pb, cdfb, n_walks, max_step);
+            [dx, dvar, X]=MC_adjoint(X, H1, r, P.P1, cdf.cdf1, Pb, cdfb, n_walks, max_step);
             while max(dvar)>( norm(dx)/100 )
                 dnwalks=n_walks;
-                [dx, dvar, X]=MC_adjoint(X, H, r, P, cdf, Pb, cdfb, dnwalks, max_step);
+                [dx, dvar, X]=MC_adjoint(X, H1, r, P.P1, cdf.cdf1, Pb, cdfb, dnwalks, max_step);
             end
             NWALKS=[NWALKS size(X,1)];
             sol=sol+dx;
@@ -94,10 +94,10 @@ else
             sol=H2*sol+rhs2; 
             r=rhs2-B2*sol;
             [Pb, cdfb]=prob_adjoint_rhs(r, dist);
-            [dx, dvar, X]=MC_adjoint(H2, r, P.P2, cdf.cdf2, Pb, cdfb, n_walks, max_step);
+            [dx, dvar, X]=MC_adjoint(X, H2, r, P.P2, cdf.cdf2, Pb, cdfb, n_walks, max_step);
             while max(dvar)>( norm(dx)/100 )
                 dnwalks=n_walks;
-                [dx, dvar, X]=MC_adjoint(X, H, r, P, cdf, Pb, cdfb, dnwalks, max_step);
+                [dx, dvar, X]=MC_adjoint(X, H2, r, P.P2, cdf.cdf2, Pb, cdfb, dnwalks, max_step);
             end
             NWALKS=[NWALKS size(X,1)];
             sol=sol+dx;
