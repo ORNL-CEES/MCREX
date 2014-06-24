@@ -42,10 +42,12 @@ def makeProbabilityMatrix( H ):
         row_sum = 0
         for j in xrange(grid_size):
             row_sum = row_sum + abs(H[j][i])
+        p_sum = 0
         for j in xrange(grid_size):
             P[i][j] = abs(H[j][i])/row_sum
+            p_sum = p_sum + P[i][j]
         for j in xrange(grid_size):
-            P[i][j] = P[i][j] / P[i][grid_size-1]
+            P[i][j] = P[i][j] / p_sum
     return P
 
 ##---------------------------------------------------------------------------##
@@ -69,7 +71,8 @@ def makeWeightMatrix( H, P ):
     W = numpy.zeros((grid_size,grid_size))
     for i in xrange(grid_size):
         for j in xrange(grid_size):
-            W[i][j] = H[i][j] / P[i][j]
+            if P[i][j] > 0.0:
+                W[i][j] = H[j][i] / P[i][j]
     return W
 
 ##---------------------------------------------------------------------------##
