@@ -83,6 +83,20 @@ def makeMonteCarloHCW( A ):
     return (H, C, W)
 
 ##---------------------------------------------------------------------------##
+## Given a forcing term create the source cdf and starting weight.
+##---------------------------------------------------------------------------##
+def makeSourceCDF( b ):
+    size = len(b)
+    source_c = numpy.zeros( size )
+    source_c[0] = abs(b[0])
+    for i in xrange(1,size):
+        source_c[i] = source_c[i-1] + abs(b[i])
+    starting_weight = source_c[size-1]
+    for i in xrange(size):
+        source_c[i] = source_c[i] / starting_weight
+    return (source_c, starting_weight)
+
+##---------------------------------------------------------------------------##
 ## end mc_data.py
 ##---------------------------------------------------------------------------##
 
