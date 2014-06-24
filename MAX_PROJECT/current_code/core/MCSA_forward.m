@@ -1,7 +1,8 @@
-function [sol, rel_err, var, VAR, count]=MCSA_forward(fp, P, cdf, rich_it, n_walks, max_step, eps)
+function [sol, rel_err, var, NWALKS, count]=MCSA_forward(fp, P, cdf, rich_it, n_walks, max_step, eps)
 
 u=fp.u;
 VAR=[];
+NWALKS=[];
 
 if ~ strcmp(fp.precond, 'alternating')
     
@@ -23,9 +24,15 @@ if ~ strcmp(fp.precond, 'alternating')
     rel_error=norm(u-sol,2)/norm(u,2);
     count=1;
     while(rel_error>eps && count<=rich_it)
+       X=[];
        sol=H*sol+rhs; 
        r=rhs-B*sol;
-       [dx, dvar]=MC_forward(H, r, P, cdf, n_walks, max_step);
+       [dx, dvar, X]=MC_forward(X, H, r, P, cdf, n_walks, max_step);
+       while max(dvar)>( norm(dx)/100 )
+           dnwalks=n_walks;
+           [dx, dvar, X]=MC_adjoint(X, H, r, P, cdf, Pb, cdfb, dnwalks, max_step);
+       end
+       NWALKS=[NWALKS size(X,1)];       
        sol=sol+dx;
        rel_error=norm(u-sol,2)/norm(u,2);
        VAR=[VAR dvar];
@@ -69,17 +76,33 @@ else
     rel_error=norm(u-sol,2)/norm(u,2);
     count=1;
     while(rel_error>eps && count<=rich_it)
-       sol=H1*sol+rhs1; 
-       r=rhs1-B1*sol;
-       [dx, dvar]=MC_forward(H1, r, P.P1, cdf.cdf1, n_walks, max_step);
-       sol=sol+dx;
-       VAR1=[VAR1 dvar];
-       sol=H2*sol+rhs2;
-       r=rhs2-B2*sol;
-       [dx, dvar]=MC_forward(H2, r, P.P2, cdf.cdf2, n_walks, max_step);
-       sol=sol+dx;  
-       VAR2=[VAR2 dvar];
-       rel_error=norm(u-sol,2)/norm(u,2);
+       X=[];
+       if mod(count,2)==1
+           sol=H1*sol+rhs1; 
+           r=rhs1-B1*sol;
+           [dx, dvar, X]=MC_forward(X, H1, r, P.P1, cdf.cdf1, n_walks, max_step);
+           while max(dvar)>( norm(dx)/100 )
+               dnwalks=n_walks;
+               [dx, dvar, X]=MC_adjoint(X, H, r, P, cdf, Pb, cdfb, dnwalks, max_step);
+           end
+           NWALKS=[NWALKS size(X,1)];
+           sol=sol+dx;
+           VAR1=[VAR1 dvar];
+           rel_error=norm(u-sol,2)/norm(u,2);
+       else
+           sol=H2*sol+rhs2;
+           r=rhs2-B2*sol;
+           [dx, dvar, X]=MC_forward(X, H2, r, P.P2, cdf.cdf2, n_walks, max_step);
+           while max(dvar)>( norm(dx)/100 )
+               dnwalks=n_walks;
+               [dx, dvar, X]=MC_adjoint(X, H, r, P, cdf, Pb, cdfb, dnwalks, max_step);
+           end
+           NWALKS=[NWALKS size(X,1)];
+           sol=sol+dx;  
+           VAR2=[VAR2 dvar];
+           rel_error=norm(u-sol,2)/norm(u,2);
+       end
+       
        count=count+1;
     end
     count=count-1;

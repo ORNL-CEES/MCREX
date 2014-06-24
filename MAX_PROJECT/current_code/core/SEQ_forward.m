@@ -1,6 +1,7 @@
-function [sol, rel_err, var, VAR, count]=SEQ_forward(fp, P, cdf, rich_it, n_walks, max_step, eps)
+function [sol, rel_err, var, NWALKS, count]=SEQ_forward(fp, P, cdf, rich_it, n_walks, max_step, eps)
 
 VAR=[];
+NWALKS=[];
 
 if ~ strcmp(fp.precond, 'alternating')
     
@@ -24,8 +25,14 @@ if ~ strcmp(fp.precond, 'alternating')
     count=1;
     
     while(rel_error>eps && count<=rich_it)
+       X=[];
        r=rhs-B*sol;
-       [dx, dvar]=MC_forward(H, r, P, cdf, n_walks, max_step);
+       [dx, dvar, X]=MC_forward(X, H, r, P, cdf, n_walks, max_step);
+       while max(dvar)>( norm(dx)/100 )
+           dnwalks=n_walks;
+           [dx, dvar, X]=MC_adjoint(X, H, r, P, cdf, Pb, cdfb, dnwalks, max_step);
+       end
+       NWALKS=[NWALKS size(X,1)];       
        sol=sol+dx;
        rel_error=norm(u-sol,2)/norm(u,2);
        VAR=[VAR abs(dvar)];
@@ -62,15 +69,31 @@ else
     var=zeros(size(H1,1),1);
 
     while(rel_error>eps && count<=rich_it) 
-        r=rhs1-B1*sol;
-        [dx, dvar]=MC_forward(H1, r, P.P1, cdf.cdf1, n_walks, max_step);
-        sol=sol+dx;
-        var=var+abs(dvar);
-        r=rhs2-B2*sol;
-        [dx, dvar]=MC_forward(H2, r, P.P2, cdf.cdf2, n_walks, max_step);
-        sol=sol+dx;
-        var=var+abs(dvar);
-        rel_error=norm(u-sol,2)/norm(u,2);
+        X=[];
+        if mod(count,2)==1
+            r=rhs1-B1*sol;
+            [dx, dvar, X]=MC_forward(X, H1, r, P.P1, cdf.cdf1, n_walks, max_step);
+            while max(dvar)>( norm(dx)/100 )
+                dnwalks=n_walks;
+                [dx, dvar, X]=MC_adjoint(X, H, r, P, cdf, Pb, cdfb, dnwalks, max_step);
+            end
+            NWALKS=[NWALKS size(X,1)];        
+            sol=sol+dx;
+            var=var+abs(dvar);
+            rel_error=norm(u-sol,2)/norm(u,2);
+        else
+            r=rhs2-B2*sol;
+            [dx, dvar, X]=MC_forward(X, H2, r, P.P2, cdf.cdf2, n_walks, max_step);
+            while max(dvar)>( norm(dx)/100 )
+                dnwalks=n_walks;
+                [dx, dvar, X]=MC_adjoint(X, H, r, P, cdf, Pb, cdfb, dnwalks, max_step);
+            end
+            NWALKS=[NWALKS size(X,1)];
+            sol=sol+dx;
+            var=var+abs(dvar);
+            rel_error=norm(u-sol,2)/norm(u,2);
+        end
+        
         count=count+1;
     end
     count=count-1;
