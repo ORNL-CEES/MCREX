@@ -3,6 +3,7 @@
 ## Tools for performing Monte Carlo calculations.
 ##---------------------------------------------------------------------------##
 
+import math
 import random
 import mc_data
 import numpy
@@ -30,15 +31,16 @@ def sampleMatrixCDF( state, rand, C ):
 ##---------------------------------------------------------------------------##
 ## Process a history.
 ##---------------------------------------------------------------------------##
-def doOneHistory( source_c, starting_weight, C, W, x, w_f ):
+def doOneHistory( b, source_c, starting_weight, C, W, x, sigma, w_f ):
     state = sampleSourceCDF( random.random(), source_c )
-    weight = starting_weight
+    weight = starting_weight*numpy.sign(b[state])
     while weight > w_f:
         x[state] = x[state] + weight
         new_state = sampleMatrixCDF( state, random.random(), C )
         weight = weight * W[state][new_state]
         state = new_state
-    return x
+    sigma[state] = x[state]*x[state]
+    return (x, sigma)
 
 ##---------------------------------------------------------------------------##
 ## Solve a linear problem using Monte Carlo
@@ -48,11 +50,14 @@ def monteCarloSolve( A, b, w_c, np ):
     source_c, starting_weight = mc_data.makeSourceCDF( b )
     w_f = w_c * starting_weight
     x = numpy.zeros( len(b) )
+    sigma = numpy.zeros( len(b) )
     for i in xrange(np):
-        x = doOneHistory( source_c, starting_weight, C, W, x, w_f )
+        x, sigma = doOneHistory( b, source_c, starting_weight, C, W, x, sigma, w_f )
     for i in xrange(len(x)):
+        sigma[i] = sigma[i] / np
         x[i] = x[i] / np
-    return x
+        sigma[i] = (sigma[i] - x[i]*x[i])
+    return (x, sigma)
 
 ##---------------------------------------------------------------------------##
 ## end mc_tools.py
