@@ -7,16 +7,16 @@ import numpy
 ##---------------------------------------------------------------------------##
 ## Make a Poisson operator with cell centered differences.
 ##---------------------------------------------------------------------------##
-def makePoissonOperator( grid_size ):
+def makePoissonOperator( grid_size, h, D ):
     A = numpy.zeros((grid_size,grid_size))
-    A[0][0] = 1.0
-    A[0][1] = -1.0/3.0
+    A[0][0] = 3.0/(h*h) + D
+    A[0][1] = -1.0/(h*h)
     for i in xrange(1,grid_size-1):
-        A[i][i-1] = -1.0/2.0
-        A[i][i] = 1.0
-        A[i][i+1] = -1.0/2.0
-        A[grid_size-1][grid_size-2] = -1.0/3.0
-        A[grid_size-1][grid_size-1] = 1.0
+        A[i][i-1] = -1.0/(h*h)
+        A[i][i] = 2.0/(h*h) + D
+        A[i][i+1] = -1.0/(h*h)
+    A[grid_size-1][grid_size-2] = -1.0/(h*h)
+    A[grid_size-1][grid_size-1] = 3.0/(h*h) + D
     return A
 
 ##---------------------------------------------------------------------------##
