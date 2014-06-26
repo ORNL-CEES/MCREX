@@ -79,7 +79,7 @@ def monteCarloSolve( A, b, w_c, np ):
         x, sigma = doOneHistory( b, source_c, starting_weight, C, W, x, sigma, w_f )
     for i in xrange(len(x)):
         x[i] = x[i] / np
-        sigma[i] = (sigma[i] / np - x[i])/np
+        sigma[i] = (sigma[i] / np - x[i]*x[i])/np
     return (x, sigma)
 
 ##---------------------------------------------------------------------------##
@@ -95,7 +95,7 @@ def multilevelMonteCarloSolve( A, b, w_c, np ):
         x, sigma = doOneMultilevelHistory( b, source_c, starting_weight, C, W, x, sigma, w_f )
     for i in xrange(len(x)):
         x[i] = x[i] / np
-        sigma[i] = (sigma[i] / np - x[i])/np
+        sigma[i] = (sigma[i] / np - x[i]*x[i])/np
     return (x, sigma)
 
 ##---------------------------------------------------------------------------##

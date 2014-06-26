@@ -3,7 +3,42 @@
 ## Tools for multilevel Monte Carlo calculations.
 ##---------------------------------------------------------------------------##
 
+import array_tools
 import numpy
+
+##---------------------------------------------------------------------------##
+## Build a prolongation operator to a given matrix.
+##---------------------------------------------------------------------------##
+def buildP( A ):
+    num_rows = len(A)
+    num_cols = num_rows / 2
+    P = numpy.zeros( (num_rows,num_cols) )
+    for i in xrange( num_cols ):
+        P[2*i][i] = 1.0
+        P[2*i+1][i] = 1.0
+    return P
+
+##---------------------------------------------------------------------------##
+## Build a restriction operator from a given matrix.
+##---------------------------------------------------------------------------##
+def buildR( A ):
+    num_cols = len(A)
+    num_rows = num_cols / 2
+    R = numpy.zeros( (num_rows,num_cols) )
+    for j in xrange( num_rows ):
+        R[j][2*j] = 0.5
+        R[j][2*j+1] = 0.5
+    return R
+
+##---------------------------------------------------------------------------##
+## Build a coarse level operator from a fine level operator.
+##---------------------------------------------------------------------------##
+def buildRAP( A ):
+    P = buildP( A )
+    R = buildR( A )
+    AP = array_tools.mmMultiply( A, P )
+    RAP = array_tools.mmMultiply( R, AP )
+    return RAP
 
 ##---------------------------------------------------------------------------##
 ## Prolongate a result from a cell-centered coarse grid to a
