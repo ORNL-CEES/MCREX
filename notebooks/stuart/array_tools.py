@@ -108,6 +108,18 @@ def updateVector( x, y ):
     return x
 
 ##---------------------------------------------------------------------------##
+## Compute the transpose of a matrix.
+##---------------------------------------------------------------------------##
+def matrixTranspose(A):
+    num_rows = len(A)
+    num_cols = len(A[0])
+    A_T = numpy.zeros((num_cols,num_rows))
+    for i in xrange(num_rows):
+        for j in xrange(num_cols):
+            A_T[j][i] = A[i][j]
+    return A_T
+
+##---------------------------------------------------------------------------##
 ## end array_tools.py
 ##---------------------------------------------------------------------------##
 

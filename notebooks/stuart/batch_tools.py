@@ -4,6 +4,7 @@
 ##---------------------------------------------------------------------------##
 
 import numpy
+import array_tools
 
 ##---------------------------------------------------------------------------##
 ## Given a set of individual sample results, compute the
@@ -30,11 +31,7 @@ def computeMRB( A, x_sample, f, num_batch ):
         W[i][i-1] = 1
         W[i][i] = -1
     W[num_batch-1][num_batch-2] = 1
-
-    W_T = numpy.zeros( (num_batch-1,num_batch))
-    for i in xrange(num_batch-1):
-        for j in xrange(num_batch):
-            W_T[i][j] = W[j][i]
+    W_T = array_tools.matrixTranspose(W)
 
     # Make the least-squares problem operator.
     V_T = []
@@ -43,10 +40,7 @@ def computeMRB( A, x_sample, f, num_batch ):
         V_T.append( Ax_b )
     Z_T = numpy.dot(W_T,V_T)
             
-    V = numpy.zeros( (grid_size,num_batch) )
-    for i in xrange(grid_size):
-        for j in xrange(num_batch):
-            V[i][j] = V_T[j][i]
+    V = array_tools.matrixTranspose(V_T)
     Z = numpy.dot(V,W)
 
     ZTZ = numpy.dot(Z_T,Z)
@@ -58,8 +52,12 @@ def computeMRB( A, x_sample, f, num_batch ):
 
     ZTb = numpy.dot(Z_T,b)
 
-    # Solve the least-squares problem and back out the coefficients
-    beta = numpy.linalg.solve(ZTZ,ZTb)
+    # Solve the least-squares problem with QR factorization and back
+    # out the coefficients
+    Q,R = numpy.linalg.qr(ZTZ)
+    Q_T = array_tools.matrixTranspose(Q)
+    P = numpy.dot(Q_T,ZTb)
+    beta = numpy.dot( numpy.linalg.inv(R), P )
     alpha = numpy.dot(W,beta)
     alpha[num_batch-1] = alpha[num_batch-1] + 1
 

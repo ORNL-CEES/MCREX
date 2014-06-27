@@ -9,6 +9,7 @@ import mc_data
 import numpy
 import multilevel_tools
 import array_tools
+import batch_tools
 
 ##---------------------------------------------------------------------------##
 ## Given a random number, get an initial state by sampling the source CDF.
@@ -127,6 +128,26 @@ def solveMCSA( A, x, b, tol, max_iter, w_c, np ):
         x = array_tools.updateVector(x,r)
         r = array_tools.computeResidual(A,x,b)
         delta, sigma = monteCarloSolve( A, r, w_c, np )
+        x = array_tools.updateVector(x,delta)
+        r = array_tools.computeResidual(A,x,b)
+        r_norm = numpy.linalg.norm(r,2)
+        iter = iter + 1
+        print iter, ":", r_norm / b_norm
+    return x
+
+##---------------------------------------------------------------------------##
+## Solve a linear problem with MCSA and batch minimization
+##---------------------------------------------------------------------------##
+def solveMRBMCSA( A, x, b, tol, max_iter, w_c, np, num_batch ):
+    r = array_tools.computeResidual(A,x,b)
+    r_norm = numpy.linalg.norm(r,2)
+    b_norm = numpy.linalg.norm(b,2)
+    iter = 0
+    while ( r_norm/b_norm > tol ) and ( iter < max_iter ):
+        x = array_tools.updateVector(x,r)
+        r = array_tools.computeResidual(A,x,b)
+        delta_sample, sigma = batchMonteCarloSolve( A, r, w_c, np )
+        delta = batch_tools.computeMRB( A, delta_sample, r, num_batch)
         x = array_tools.updateVector(x,delta)
         r = array_tools.computeResidual(A,x,b)
         r_norm = numpy.linalg.norm(r,2)
