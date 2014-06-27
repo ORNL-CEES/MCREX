@@ -112,8 +112,10 @@ Monte Carlo}
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Linear Least Squares: Method of Elimination}
 
-  Build the basis, $\ve{V} \in \mathbb{R}^{J \times B}$ (with $\ve{A}
-  \in \mathbb{R}^{J \times J}$ and $\ve{x} \in \mathbb{R}^{J}$):
+  Reduce the order of the least squares problem to dramatically
+  improve conditioning. Build the basis, $\ve{V} \in \mathbb{R}^{J
+    \times B}$ (with $\ve{A} \in \mathbb{R}^{J \times J}$ and $\ve{x}
+  \in \mathbb{R}^{J}$):
   \[
   \ve{V} = 
   \begin{bmatrix}
@@ -280,12 +282,13 @@ $B$ & \textbf{10} & 4.3214E+00 & 6.1069E-01 & 2.3996E-01 & 1.0337E-01 & 5.7924E-
   \item Need enough batches to capture solution structure to get good
     performance.
   \item Better performance with larger numbers of batches
-  \item Need to store a solution vector for every batch: MRBMC(N)
+  \item Need to store a basis vector for every batch: MRBMC(N)
+  \item Need to do an extra matrix-vector multiplication
   \item Improvement in residual observed to typically coincide with
     improvement in error - variance reduction
+  \item Preliminary calculations show reduction in iteration count for
+    MCSA
   \end{itemize}
-
-  Next: Implement with MCSA
 
 \end{frame}
 
