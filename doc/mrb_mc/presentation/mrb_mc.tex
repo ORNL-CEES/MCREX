@@ -187,32 +187,97 @@ Monte Carlo}
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\begin{frame}{Numerical Experiments: Case 1 - Solution}
+\begin{frame}{Numerical Experiments: Case 1}
+
+  \[
+  f_i = 1.0\ \forall\ i \in [0,100]
+  \]
+
+  {\tiny
+    \begin{table}[htpb!]
+      \begin{center}
+        \begin{tabular}{cccccccc}\hline\hline
+          \multicolumn{1}{c}{} & \multicolumn{1}{c}{}&
+          \multicolumn{1}{c}{}& \multicolumn{1}{c}{}&
+          \multicolumn{1}{c}{$D$} & \multicolumn{1}{c}{}&
+          \multicolumn{1}{c}{}& \multicolumn{1}{c}{} \\
+          & & \textbf{0} & \textbf{0.01} & \textbf{0.1} & \textbf{1} & \textbf{10} & \textbf{100} \\
+          & \textbf{1} & 8.4834E+00 & 1.8970E+00 & 7.0310E-01 & 3.9193E-01 & 3.2879E-01 &
+          2.7241E-01 \\
+          & \textbf{2} & 8.4778E+00 & 1.8954E+00 & 6.9072E-01 & 3.9192E-01 & 3.2399E-01 &
+          2.7199E-01 \\
+          & \textbf{5} & 8.2309E+00 & 1.8789E+00 & 6.6844E-01 & 3.7606E-01 & 3.1277E-01 &
+          2.6687E-01 \\
+          $B$ & \textbf{10} & 7.6602E+00 & 1.7883E+00 & 6.4907E-01 & 3.6300E-01 & 3.0760E-01 &
+          2.5714E-01 \\
+          & \textbf{25} & 6.5961E+00 & 1.6245E+00 & 5.6745E-01 & 3.3102E-01 & 2.9362E-01 &
+          2.4874E-01 \\
+          & \textbf{50} & 5.4466E+00 & 1.1605E+00 & 4.3782E-01 & 2.7181E-01 & 2.5802E-01 &
+          1.9530E-01 \\
+          & \textbf{100} & 1.4047E-02 & 9.3756E-03 & 1.0033E-02 & 7.6760E-03 & 4.5450E-03 &
+          5.9411E-04 \\
+          \hline\hline
+        \end{tabular}
+      \end{center}
+    \end{table}
+  }
 
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\begin{frame}{Numerical Experiments: Case 1 - Residual}
+\begin{frame}{Numerical Experiments: Case 2}
+
+  \[
+  f_i = 0.0\ \forall\ i \in [0,60],\ 
+  f_i = 1.0\ \forall\ i \in (40,60),\ 
+  f_i = 0.0\ \forall\ i \in [60,100]
+  \]
+
+  {\tiny
+    \begin{table}[htpb!]
+      \begin{center}
+        \begin{tabular}{cccccccc}\hline\hline
+          \multicolumn{1}{c}{} & \multicolumn{1}{c}{}&
+          \multicolumn{1}{c}{}& \multicolumn{1}{c}{}&
+          \multicolumn{1}{c}{$D$} & \multicolumn{1}{c}{}&
+          \multicolumn{1}{c}{}& \multicolumn{1}{c}{} \\
+          & & \textbf{0} & \textbf{0.01} & \textbf{0.1} & \textbf{1} &
+          \textbf{10} & \textbf{100} \\
+& \textbf{1} & 4.8790E+00 & 1.1028E+00 & 3.4098E-01 & 1.7219E-01 & 1.1424E-01 &
+1.2893E-01 \\
+& \textbf{2} & 4.8510E+00 & 1.1020E+00 & 3.3968E-01 & 1.5212E-01 & 1.1119E-01 &
+1.2861E-01 \\
+& \textbf{5} & 4.5341E+00 & 8.4308E-01 & 3.0910E-01 & 1.5648E-01 & 6.7866E-02 &
+1.2861E-01 \\
+$B$ & \textbf{10} & 4.3214E+00 & 6.1069E-01 & 2.3996E-01 & 1.0337E-01 & 5.7924E-02 &
+1.0099E-01 \\
+& \textbf{25} & 3.7743E+00 & 4.7162E-01 & 8.5319E-02 & 4.0885E-02 & 4.1795E-03 &
+3.5761E-04 \\
+& \textbf{50} & 2.3465E+00 & 3.1158E-01 & 6.7653E-03 & 5.6435E-03 & 4.1795E-03 &
+3.5761E-04 \\
+& \textbf{100} & 3.1621E-03 & 4.2125E-03 & 5.5546E-03 & 5.6435E-03 & 4.1795E-03 &
+3.5761E-04 \\
+          \hline\hline
+        \end{tabular}
+      \end{center}
+    \end{table}
+  }
 
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\begin{frame}{Numerical Experiments: Case 1 - Error}
+\begin{frame}{Summary}
 
-\end{frame}
-
-%%---------------------------------------------------------------------------%%
-\begin{frame}{Numerical Experiments: Case 2 - Solution}
-
-\end{frame}
-
-%%---------------------------------------------------------------------------%%
-\begin{frame}{Numerical Experiments: Case 2 - Residual}
-
-\end{frame}
-
-%%---------------------------------------------------------------------------%%
-\begin{frame}{Numerical Experiments: Case 2 - Error}
+  \begin{itemize}
+  \item Extremely effective for problems with a local residual (RHS)
+  \item Not as effective for problems with a diffuse global residual (RHS)
+  \item Need enough batches to capture solution structure to get good
+    performance.
+  \item Better performance with larger numbers of batches
+  \item Need to store a solution vector for every batch: MRBMC(N)
+  \item Improvement in residual observed to typically coincide with
+    improvement in error - variance reduction
+  \end{itemize}
 
 \end{frame}
 
