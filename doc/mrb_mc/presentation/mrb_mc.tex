@@ -1,0 +1,189 @@
+\documentclass{beamer}
+\usetheme{Warsaw}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{longtable}
+\usepackage{listings}
+\usepackage{color}
+%% The amssymb package provides various useful mathematical symbols
+\usepackage{amssymb}
+%% The amsthm package provides extended theorem environments
+\usepackage{amsthm} 
+\usepackage{amsmath} 
+\usepackage{tmadd,tmath}
+\usepackage[mathcal]{euscript} 
+\usepackage{color}
+\usepackage{textcomp}
+\usepackage{algorithm,algorithmic}
+\definecolor{listinggray}{gray}{0.9}
+\definecolor{lbcolor}{rgb}{0.9,0.9,0.9}
+\lstset{
+  backgroundcolor=\color{lbcolor},
+  tabsize=4,
+  rulecolor=,
+  language=c++,
+  basicstyle=\scriptsize,
+  upquote=true,
+  aboveskip={1.5\baselineskip},
+  columns=fixed,
+  showstringspaces=false,
+  extendedchars=true,
+  breaklines=true,
+  prebreak =
+  \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+  frame=single,
+  showtabs=false,
+  showspaces=false,
+  showstringspaces=false,
+  identifierstyle=\ttfamily,
+  keywordstyle=\color[rgb]{0,0,1},
+  commentstyle=\color[rgb]{0.133,0.545,0.133},
+  stringstyle=\color[rgb]{0.627,0.126,0.941},
+}
+
+%% colors
+\setbeamercolor{boxheadcolor}{fg=white,bg=black}
+\setbeamercolor{boxbodycolor}{fg=black,bg=white}
+
+%% slide numbers
+
+%%---------------------------------------------------------------------------%%
+\author[Stuart Slattery]{Stuart Slattery\\
+  \bigskip
+  \href{mailto:slatterysr@ornl.gov}{\texttt{slatterysr@ornl.gov}} \\
+  \bigskip
+  Oak Ridge National Laboratory}
+
+\date{\today} 
+\title[MRB Monte Carlo \hspace{1mm}
+  \insertframenumber/\inserttotalframenumber]{Minimized Residual Batch
+Monte Carlo}
+\begin{document}
+\maketitle
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Batched Mean Calculation}
+
+  Consider the mean calculation for a Monte Carlo tally with
+  observations $\hat{\ve{x}}$ with $N$ samples for linear problem
+  $\ve{A}\ve{x}=\ve{f}$:
+  \[
+  \ve{x} = \frac{1}{N} \sum_{m=1}^N \hat{\ve{x}}_m
+  \]
+
+  We could alternatively arrive at the same value with $B$ batches of
+  samples and $N_B$ sample per batch:
+  \[
+  \ve{x} = \frac{1}{B} \sum_{b=1}^B \frac{1}{N_B} \sum_{m=1}^{N_B}
+  \hat{\ve{x}}_{b,m}
+  \]
+
+  This can also be written in terms of the batch result:
+  \[
+  \ve{x}_b=\frac{1}{N_B} \sum_{m=1}^{N_B} \hat{\ve{x}}_{b,m}
+  \]
+  \[
+  \ve{x} = \frac{1}{B}\sum_{b=1}^B \ve{x}_b
+  \]
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Batch Residual Minimization}
+
+  Batch combination is then simply:
+  \[
+  \ve{x} = \sum_{b=1}^B \alpha_b \ve{x}_b
+  \]
+  with $\alpha_b = 1/B$ the typical case. \textbf{Maybe there are
+    better choices for $\alpha_b$.} Solve a linearly constrained
+  optimization problem:
+  \[
+  minimize\ ||\ve{f} - \ve{A}\sum_{b=1}^B \alpha_b \ve{x}_b||_2
+  \]
+  such that:
+  \[
+  \sum_{b=1}^B \alpha_b = 1
+  \]
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Linear Least Squares: Method of Elimination}
+
+  Build the basis, $\ve{V} \in \mathbb{R}^{J \times B}$ (with $\ve{A}
+  \in \mathbb{R}^{J \times J}$ and $\ve{x} \in \mathbb{R}^{J}$):
+  \[
+  \ve{V} = 
+  \begin{bmatrix}
+    (\ve{A}\ve{x}_0)_0 & (\ve{A}\ve{x}_1)_0 & \cdots & (\ve{A}\ve{x}_B)_0 \\
+    (\ve{A}\ve{x}_0)_1 & (\ve{A}\ve{x}_1)_1 & \cdots & (\ve{A}\ve{x}_B)_1 \\
+    (\ve{A}\ve{x}_0)_2 & (\ve{A}\ve{x}_1)_2 & \cdots & (\ve{A}\ve{x}_B)_2 \\
+    \vdots             & \vdots            & \ddots & \vdots \\
+    (\ve{A}\ve{x}_0)_J & (\ve{A}\ve{x}_1)_J & \cdots & (\ve{A}\ve{x}_B)_J \\
+  \end{bmatrix}
+  \]
+  Incorporate the linear constraint through substitution:
+  \[
+  \ve{x} = \ve{x}_B + \sum_{b=1}^{B-1} \beta_b (\ve{x}_{b+1} - \ve{x}_b)
+  \]
+  
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Linear Least Squares: Method of Elimination}
+
+  Build the modified basis $\ve{Z} = \ve{V}\ve{W}$ with $\ve{W} \in
+  \mathbb{R}^{B \times B-1}$:
+  \[
+  \ve{W} =
+  \begin{bmatrix}
+    -1 &    & & & & \\
+     1 & -1 & & & & \\
+       &  1 & -1 & & & \\
+       &    & \ddots   & \ddots &  & \\
+     & & & & 1 & -1 \\
+    & & & & & 1 \\
+  \end{bmatrix}
+  \]
+  Solve the normal equations for $\boldsymbol{\beta} \in
+  \mathbb{R}^{B-1 \times 1}$ (e.g. QR factorization)
+  \[
+  \ve{Z}^T \ve{Z} \boldsymbol{\beta} = \ve{Z}^T ( \ve{f} - \ve{A}\ve{x}_B
+  )
+  \]
+  Then extract the coefficients $\boldsymbol{\alpha} =
+  \ve{W}\boldsymbol{\beta}$ with:
+  \[
+  \boldsymbol{\alpha} =
+  \begin{bmatrix}
+    \alpha_1 & \alpha_2 & \cdots & \alpha_{B-1} & 1 + \alpha_{B}
+  \end{bmatrix}^T
+  \]
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Numerical Experiments}
+
+  Model problem with 1-D cell-centered finite difference:
+  \[
+  \nabla^2 \ve{x} - D \ve{x} = \ve{f}
+  \]
+
+  Things we can vary:
+  \begin{itemize}
+    \item $D$
+    \item $\ve{f}$
+    \item Grid size, $J$
+    \item Total number of samples, $N$
+    \item Number of batches, $B$
+    \item Samples per batch, $N_B = N/B$
+  \end{itemize}
+  
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\end{document}
