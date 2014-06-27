@@ -39,7 +39,7 @@ def doOneHistory( b, source_c, starting_weight, C, W, x, sigma, w_f ):
     tally = numpy.zeros(size)
     state = sampleSourceCDF( random.random(), source_c )
     weight = starting_weight*numpy.sign(b[state])
-    while weight > w_f:
+    while abs(weight) > w_f:
         tally[state] = tally[state] + weight
         new_state = sampleMatrixCDF( state, random.random(), C )
         weight = weight * W[state][new_state]

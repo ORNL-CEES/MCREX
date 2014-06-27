@@ -24,6 +24,10 @@ def computeMRB( A, x_sample, f, num_batch ):
                 batch_idx = sample_per_batch*i + k
                 x_batch[i][j] = x_batch[i][j] + batch_norm*x_sample[batch_idx][j]
 
+    # If there was a single batch return the result.
+    if ( 1 == num_batch ):
+        return x_batch[0]
+
     # Make the elimination matrix, W, and its transpose
     W = numpy.zeros( (num_batch,num_batch-1) )
     W[0][0] = -1
@@ -39,20 +43,17 @@ def computeMRB( A, x_sample, f, num_batch ):
         Ax_b = numpy.dot(A,x_batch[i])
         V_T.append( Ax_b )
     Z_T = numpy.dot(W_T,V_T)
-            
     V = array_tools.matrixTranspose(V_T)
     Z = numpy.dot(V,W)
-
     ZTZ = numpy.dot(Z_T,Z)
 
     # Make the least-squares problem RHS
     b = numpy.zeros(grid_size)
     for i in xrange(grid_size):
         b[i] = f[i] - V[i][num_batch-1]
-
     ZTb = numpy.dot(Z_T,b)
 
-    # Solve the least-squares problem with QR factorization and back
+    # Solve the least-squares problem with QR decomposition and back
     # out the coefficients
     Q,R = numpy.linalg.qr(ZTZ)
     Q_T = array_tools.matrixTranspose(Q)
