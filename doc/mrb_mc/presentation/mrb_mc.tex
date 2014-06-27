@@ -182,13 +182,16 @@ Monte Carlo}
     \item Samples per batch, $N_B = N/B$
   \end{itemize}
   
-  Fix $J=100$ $N_p=1000$ for now.
+  \bigskip
+
+  Fix $J=100$ and $N_p=1000$ for now.
 
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Numerical Experiments: Case 1}
 
+  Uniform right-hand-side
   \[
   f_i = 1.0\ \forall\ i \in [0,100]
   \]
@@ -196,6 +199,7 @@ Monte Carlo}
   {\tiny
     \begin{table}[htpb!]
       \begin{center}
+        \caption{$||\ve{r}||_2 / ||\ve{f}||_2$}
         \begin{tabular}{cccccccc}\hline\hline
           \multicolumn{1}{c}{} & \multicolumn{1}{c}{}&
           \multicolumn{1}{c}{}& \multicolumn{1}{c}{}&
@@ -227,6 +231,7 @@ Monte Carlo}
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Numerical Experiments: Case 2}
 
+  Step function right-hand-side
   \[
   f_i = 0.0\ \forall\ i \in [0,60],\ 
   f_i = 1.0\ \forall\ i \in (40,60),\ 
@@ -236,6 +241,7 @@ Monte Carlo}
   {\tiny
     \begin{table}[htpb!]
       \begin{center}
+        \caption{$||\ve{r}||_2 / ||\ve{f}||_2$}
         \begin{tabular}{cccccccc}\hline\hline
           \multicolumn{1}{c}{} & \multicolumn{1}{c}{}&
           \multicolumn{1}{c}{}& \multicolumn{1}{c}{}&
@@ -269,8 +275,8 @@ $B$ & \textbf{10} & 4.3214E+00 & 6.1069E-01 & 2.3996E-01 & 1.0337E-01 & 5.7924E-
 \begin{frame}{Summary}
 
   \begin{itemize}
-  \item Extremely effective for problems with a local residual (RHS)
-  \item Not as effective for problems with a diffuse global residual (RHS)
+  \item Extremely effective for problems with a local RHS (residual)
+  \item Not as effective for problems with a diffuse global RHS
   \item Need enough batches to capture solution structure to get good
     performance.
   \item Better performance with larger numbers of batches
