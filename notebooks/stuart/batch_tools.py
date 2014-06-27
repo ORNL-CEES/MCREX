@@ -11,15 +11,17 @@ import numpy
 ## ---------------------------------------------------------------------------##
 def computeMRB( A, x_sample, f, num_batch ):
 
-    # Combine the results into initial batches.
+    # Combine individual sample results into batches.
     grid_size = len(x_sample[0])
     num_sample = len(x_sample)
     sample_per_batch = num_sample / num_batch
     x_batch = numpy.zeros( (num_batch,grid_size) )
+    batch_norm = 1.0 / sample_per_batch
     for i in xrange(num_batch):
         for j in xrange(grid_size):
             for k in xrange(sample_per_batch):
-                x_batch[i][j] = x_batch[i][j] + x_sample[sample_per_batch*i+k][j]
+                batch_idx = sample_per_batch*i + k
+                x_batch[i][j] = x_batch[i][j] + batch_norm*x_sample[batch_idx][j]
 
     # Make the elimination matrix, W, and its transpose
     W = numpy.zeros( (num_batch,num_batch-1) )

@@ -99,6 +99,22 @@ def multilevelMonteCarloSolve( A, b, w_c, np ):
     return (x, sigma)
 
 ##---------------------------------------------------------------------------##
+## Solve a linear problem using Monte Carlo and return the result in batches.
+##---------------------------------------------------------------------------##
+def batchMonteCarloSolve( A, b, w_c, np ):
+    H, C, W = mc_data.makeMonteCarloHCW( A )
+    source_c, starting_weight = mc_data.makeSourceCDF( b )
+    w_f = w_c * starting_weight
+    x = []
+    tally = numpy.zeros( len(b) )
+    sigma = numpy.zeros( len(b) )
+    for i in xrange(np):
+        dummy = numpy.zeros( len(b) )
+        tally, sigma = doOneHistory( b, source_c, starting_weight, C, W, dummy, sigma, w_f )
+        x.append(tally)
+    return (x, sigma)
+
+##---------------------------------------------------------------------------##
 ## end mc_tools.py
 ##---------------------------------------------------------------------------##
 
