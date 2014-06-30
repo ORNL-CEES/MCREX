@@ -156,6 +156,38 @@ def solveMRBMCSA( A, x, b, tol, max_iter, w_c, np, num_batch ):
     return x
     
 ##---------------------------------------------------------------------------##
+## Process a history for a polynomial with the expected value estimator.
+##---------------------------------------------------------------------------##
+def doOnePolyHistory( A, b, source_c, starting_weight, C, W, x, rank ):
+    size = len(x[0])
+    state = sampleSourceCDF( random.random(), source_c )
+    weight = starting_weight*numpy.sign(b[state])
+    for q in xrange(1,rank):
+        for j in xrange(size):
+            x[q][j] = x[q][j] + A[j][state]*weight
+        new_state = sampleMatrixCDF( state, random.random(), C )
+        weight = weight * W[state][new_state]
+        state = new_state
+    return x
+
+##---------------------------------------------------------------------------##
+## Stochastically construct a matrix polynomial b + Ab + (A^2)b + ... 
+##---------------------------------------------------------------------------##
+def monteCarloMatrixPolynomial( A, b, np, rank ):
+    P = mc_data.makeProbabilityMatrix( A )
+    C = mc_data.makeCDFMatrix( P )
+    W = mc_data.makeWeightMatrix( A, P )
+    source_c, starting_weight = mc_data.makeSourceCDF( b )
+    x = numpy.zeros( (rank,len(b)) )
+    x[0] = b
+    for i in xrange(np):
+        x = doOnePolyHistory( A, b, source_c, starting_weight, C, W, x, rank )
+    for q in xrange(rank):
+        for i in xrange(len(x[0])):
+            x[q][i] = x[q][i] / np
+    return x
+
+##---------------------------------------------------------------------------##
 ## end mc_tools.py
 ##---------------------------------------------------------------------------##
 

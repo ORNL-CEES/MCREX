@@ -1,0 +1,233 @@
+\documentclass{beamer}
+\usetheme{Warsaw}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{longtable}
+\usepackage{listings}
+\usepackage{color}
+%% The amssymb package provides various useful mathematical symbols
+\usepackage{amssymb}
+%% The amsthm package provides extended theorem environments
+\usepackage{amsthm} 
+\usepackage{amsmath} 
+\usepackage{tmadd,tmath}
+\usepackage[mathcal]{euscript} 
+\usepackage{color}
+\usepackage{textcomp}
+\usepackage{algorithm,algorithmic}
+\definecolor{listinggray}{gray}{0.9}
+\definecolor{lbcolor}{rgb}{0.9,0.9,0.9}
+\lstset{
+  backgroundcolor=\color{lbcolor},
+  tabsize=4,
+  rulecolor=,
+  language=c++,
+  basicstyle=\scriptsize,
+  upquote=true,
+  aboveskip={1.5\baselineskip},
+  columns=fixed,
+  showstringspaces=false,
+  extendedchars=true,
+  breaklines=true,
+  prebreak =
+  \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+  frame=single,
+  showtabs=false,
+  showspaces=false,
+  showstringspaces=false,
+  identifierstyle=\ttfamily,
+  keywordstyle=\color[rgb]{0,0,1},
+  commentstyle=\color[rgb]{0.133,0.545,0.133},
+  stringstyle=\color[rgb]{0.627,0.126,0.941},
+}
+
+%% colors
+\setbeamercolor{boxheadcolor}{fg=white,bg=black}
+\setbeamercolor{boxbodycolor}{fg=black,bg=white}
+
+%% slide numbers
+
+%%---------------------------------------------------------------------------%%
+\author[Stuart Slattery]{Stuart Slattery\\
+  \bigskip
+  \href{mailto:slatterysr@ornl.gov}{\texttt{slatterysr@ornl.gov}} \\
+  \bigskip
+  Oak Ridge National Laboratory}
+
+\date{\today} 
+\title[Krylov Monte Carlo \hspace{1mm}
+  \insertframenumber/\inserttotalframenumber]{Stochastic Krylov
+  Subspace Approximation}
+\begin{document}
+\maketitle
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Projection Methods}
+
+  \medskip \medskip
+  \begin{beamerboxesrounded}[upper=boxheadcolor,lower=boxbodycolor,shadow=true]
+    {Search Subspace $\mathcal{K}$} Extract the solution to
+    $\ve{A}\ve{x}=\ve{b}$ from the search subspace:
+    \[
+    \tilde{\ve{x}} = \ve{x}_0 +
+    \boldsymbol{\delta},\ \boldsymbol{\delta} \in \mathcal{K}
+    \]
+  \end{beamerboxesrounded}
+
+  \medskip \medskip
+  \begin{beamerboxesrounded}[upper=boxheadcolor,lower=boxbodycolor,shadow=true]
+    {Constraint Subspace $\mathcal{L}$} Constrain the extraction with
+    the constraint subspace by asserting orthogonality with the
+    residual ($\ve{r} = \ve{b}-\ve{A}\ve{x}$):
+    \[
+    \langle \tilde{\ve{r}},\ve{w} \rangle = 0,\ \forall \ve{w} \in
+    \mathcal{L}
+    \]  
+  \end{beamerboxesrounded}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{The Orthogonality Constraint}
+
+  \[
+  \tilde{\ve{r}} = \ve{r}_0 - \ve{A}\boldsymbol{\delta}
+  \]
+
+  \begin{figure}[htpb!]
+    \begin{center}
+      \scalebox{1.1}{ \input{orthogonal_residual.pdftex_t} }
+    \end{center}
+    \caption{\textbf{Orthogonality constraint of the new residual with
+        respect to $\mathcal{L}$.}}
+  \end{figure}
+
+  \begin{beamerboxesrounded}[upper=boxheadcolor,lower=boxbodycolor,shadow=true]
+    {Minimization Property}
+
+    The residual of the system is \textit{minimized} with respect to
+    the constraints
+    \[
+    ||\tilde{\ve{r}}||_2 \leq ||\ve{r}_0||_2,\ \forall \ve{r}_0 \in
+    \mathbb{R}^N
+    \]
+  \end{beamerboxesrounded}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Monte Carlo Polynomials}
+
+  The Krylov subspace looks a lot like our Monte Carlo process which
+  estimates successive matrix-vector products:
+  \[
+  \ve{x} = \sum_k \ve{H}^k\ve{b} = \ve{b} + \ve{H}{b} + \ve{H}^2{b} +
+  \dots + \ve{H}^k{b}
+  \]
+  Better yet, we are just constructing a general matrix polynomial:
+  \[
+  \ve{x} = \sum_k \alpha_k \ve{v}_k
+  \]
+  with $\ve{v}_k = \ve{H}^k\ve{b}$ and all $\alpha_k=1$. Each step of
+  the random walk estimates a component of the polynomial basis:
+  \[
+  \ve{b} \rightarrow \ve{H}{b} \rightarrow \ve{H}^2{b} \rightarrow
+  \dots \rightarrow \ve{H}^k{b}
+  \]
+  
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Stochastic Krylov Subspace Approximation}
+
+  \begin{beamerboxesrounded}[upper=boxheadcolor,lower=boxbodycolor,shadow=true]
+    {Krylov Subspace}
+    
+    \[
+    \mathcal{K}_m(\ve{A},\ve{r}_0) = span\{\ve{r}_0, \ve{A}\ve{r}_0,
+    \ve{A}^2\ve{r}_0, \dots, \ve{A}^{m-1}\ve{r}_0\}
+    \]
+    For GMRES: $\mathcal{L} = \ve{A} \mathcal{K}_m(\ve{A},\ve{r}_0)$
+  \end{beamerboxesrounded}
+
+  We typically extract a correction from this subspace:
+  \[
+  \boldsymbol{\delta} = \sum_k \alpha_k^m \ve{A}^k \ve{r}_0
+  \]
+  which is just a polynomial in $\ve{A}$. Use the Monte Carlo process
+  to stochastically construct $\mathcal{K}_m$. Apply linearly
+  constrained least squares to extract $\boldsymbol{\delta}$ via
+  orthogonality:
+  \[
+  minimize\ ||\ve{b} - \ve{A}(\ve{x_0}+\boldsymbol{\delta})||_2
+  \]
+  such that:
+  \[
+  \sum_{b=1}^B \alpha_b = 1
+  \]
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}[fragile]{The Algorithm}
+
+  \begin{algorithm}[H]
+    \caption{Krylov Method}
+    \begin{algorithmic}[1]
+      \WHILE{$||(\ve{r})||/||(\ve{b})|| > \epsilon$}
+      \STATE $\ve{r} = \ve{b} - \ve{A}\ve{x}$
+      \STATE $\ve{V}$ = monteCarloPolynomial($\ve{A}$,$\ve{r}$,$N_p$,$m$)
+      \STATE $\boldsymbol{\alpha}$ = constrainedLeastSquaresSolve($\ve{A}$,$\ve{x}$,$\ve{b}$,$\ve{V}$)
+      \STATE $\boldsymbol{\delta} = \sum_k \alpha_k^m \ve{v}_k$
+      \STATE $\ve{x} = \ve{x} + \boldsymbol{\delta}$
+      \ENDWHILE
+    \end{algorithmic}
+  \end{algorithm}
+
+  \begin{itemize}
+  \item Expect most of the work to happen in polynomial construction
+    in order to get good statistics
+  \item Finding $\boldsymbol{\alpha}$ should be cheap except for dot
+    products
+  \item Parallel Monte Carlo strategies including threading and domain
+    decomposition apply to polynomial construction
+  \end{itemize}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Deterministic Results}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Monte Carlo Results}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Summary}
+
+  \begin{itemize}
+  \item Stochastic computation of Krylov subspace - replace sequence
+    of matrix-vector multiplies with a random walk of fixed length
+    ($\mathcal{K}$ is defined stochastically)
+  \item Petrov-Galerkin condition applied (correction extraction from
+    $\mathcal{L}$ is defined deterministically
+  \item Works for $\rho(\ve{H}) > 1$!
+  \item Left/right preconditioning is now tractable given row-wise
+    access to preconditioning matrix entries
+  \item If Krylov subspace is computed exactly there are some nice
+    optimality properties
+  \item The bigger the subspace the better the convergence behavior
+    (to a point)
+  \item Right now subspace approximation is slow to converge with only
+    diagonal preconditioning - more histories gives better convergence
+  \end{itemize}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\end{document}

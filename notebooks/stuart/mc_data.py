@@ -5,7 +5,7 @@
 import numpy
 
 ##---------------------------------------------------------------------------##
-## Make an iteration matrix H = I-A for a given operator
+## Make an iteration matrix H = I-A for a given operator for the adjoint
 ##---------------------------------------------------------------------------##
 def makeIterationMatrix( A ):
     grid_size = len(A)
@@ -48,8 +48,8 @@ def makeCDFMatrix( P ):
     return C
 
 ##---------------------------------------------------------------------------##
-## Make a weight matrix from an iteration matrix and a probability
-## matrix.
+## Make an adjoint weight matrix from an iteration matrix and an
+## adjoint probability matrix.
 ## ---------------------------------------------------------------------------##
 def makeWeightMatrix( H, P ):
     grid_size = len(H)

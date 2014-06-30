@@ -72,11 +72,12 @@ def computeMRB( A, x_sample, f, num_batch ):
     return x_bmr
 
 ##---------------------------------------------------------------------------##
-## Given a set of basis vectors, find their linear combination that
-## minimizes the linear problem residual by solving an linearly
-## constrained linear least squares problem.
+## Given a set of basis vectors from which to extract a correction,
+## find their linear combination that minimizes the linear problem
+## residual by solving an linearly constrained linear least squares
+## problem.
 ## ---------------------------------------------------------------------------##
-def computeConstrainedLeastSquares( A, basis, f ):
+def computeConstrainedLeastSquares( A, basis, f, x_0 ):
 
     num_basis = len(basis)
     grid_size = len(basis[0])
@@ -106,8 +107,9 @@ def computeConstrainedLeastSquares( A, basis, f ):
 
     # Make the least-squares problem RHS
     b = numpy.zeros(grid_size)
+    Ax_0 = numpy.dot(A,x_0)
     for i in xrange(grid_size):
-        b[i] = f[i] - V[i][num_basis-1]
+        b[i] = f[i] - V[i][num_basis-1] - Ax_0[i]
     ZTb = numpy.dot(Z_T,b)
 
     # Solve the least-squares problem with QR decomposition and back
@@ -133,7 +135,7 @@ def computeConstrainedLeastSquares( A, basis, f ):
 ## minimizes the linear problem residual by solving an unconstrained
 ## linear least squares problem.
 ## ---------------------------------------------------------------------------##
-def computeLeastSquares( A, basis, f ):
+def computeLeastSquares( A, basis, f, x_0 ):
 
     num_basis = len(basis)
     grid_size = len(basis[0])
@@ -152,8 +154,9 @@ def computeLeastSquares( A, basis, f ):
 
     # Make the least-squares problem RHS
     b = numpy.zeros(grid_size)
+    Ax_0 = numpy.dot(A,x_0)
     for i in xrange(grid_size):
-        b[i] = f[i] - V[i][num_basis-1]
+        b[i] = f[i] - V[i][num_basis-1] - Ax_0[i]
     VTb = numpy.dot(V_T,b)
 
     # Solve the least-squares problem with QR decomposition and back
