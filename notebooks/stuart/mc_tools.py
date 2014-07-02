@@ -101,8 +101,9 @@ def multilevelMonteCarloSolve( A, b, w_c, np ):
     return (x, sigma)
 
 ##---------------------------------------------------------------------------##
-## Solve a linear problem using Monte Carlo and return the result in batches.
-##---------------------------------------------------------------------------##
+## Solve a linear problem using Monte Carlo and return the result in
+## batches.
+## ---------------------------------------------------------------------------##
 def batchMonteCarloSolve( A, b, w_c, np ):
     H, C, W = mc_data.makeMonteCarloHCW( A )
     source_c, starting_weight = mc_data.makeSourceCDF( b )
