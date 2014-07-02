@@ -85,6 +85,31 @@ def makeSourceCDF( b ):
     return (source_c, starting_weight)
 
 ##---------------------------------------------------------------------------##
+## Given a forcing term, create the probability vector and weight vector.
+##---------------------------------------------------------------------------##
+def makeSourcePW( b ):
+    size = len(b)
+    p = numpy.zeros(size)
+    w = numpy.zeros(size)
+    b_norm = numpy.linalg.norm(b,1)
+    for i in xrange(size):
+        p[i] = abs(b[i])/b_norm
+        w[i] = b[i] / p[i]
+    return p, w, b_norm
+
+##---------------------------------------------------------------------------##
+## Given a source probability vector, build a source CDF
+##---------------------------------------------------------------------------##
+def makeSourceC( p ):
+    size = len(p)
+    psum = sum(p)
+    c = numpy.zeros(size)
+    c[0] = p[0]/psum
+    for i in xrange(1,size):
+        c[i] = p[i]/psum + c[i-1]
+    return c
+    
+##---------------------------------------------------------------------------##
 ## end mc_data.py
 ##---------------------------------------------------------------------------##
 

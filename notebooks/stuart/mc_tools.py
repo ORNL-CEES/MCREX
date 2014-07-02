@@ -154,7 +154,7 @@ def solveMRBMCSA( A, x, b, tol, max_iter, w_c, np, num_batch ):
         iter = iter + 1
         print iter, ":", r_norm / b_norm
     return x
-    
+
 ##---------------------------------------------------------------------------##
 ## Process a history for a polynomial with the expected value estimator.
 ##---------------------------------------------------------------------------##
