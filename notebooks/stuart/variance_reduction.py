@@ -15,16 +15,15 @@ import array_tools
 ## survival weight constant, compute the upper and lower bounds of the
 ## weight windows and the survival weights.
 ## ---------------------------------------------------------------------------##
-def computeWeightWindows( I, c_u, c_s ):
+def computeWeightWindows( I, R, c_u ):
     size = len(I)
-    R = numpy.linalg.norm(I,1)
     w_l = numpy.zeros( size )
     w_u = numpy.zeros( size )
     w_s = numpy.zeros( size )
     for i in xrange(size):
         w_l[i] = 2.0 * R / (abs(I[i])*(c_u + 1 ) )
         w_u[i] = c_u * w_l[i]
-        w_s[i] = c_s * w_l[i]
+        w_s[i] = (w_l[i] + w_u[i]) / 2.0
     return (w_l,w_u,w_s)
 
 ##---------------------------------------------------------------------------##
@@ -41,9 +40,8 @@ def roulette( w, w_s ):
 ## in the center of the weight window. Return the number of new
 ## samples and their weight.
 ## ---------------------------------------------------------------------------##
-def split( w, w_l, w_u ):
-    w_mid = (w_u - w_l) / 2.0
-    n_split = int(math.floor( w / w_mid ))
+def split( w, w_l, w_u, w_s ):
+    n_split = int(math.floor( w / w_s ))
     w_split = w / n_split
     if ( w_split < w_l or w_split > w_u ):
         print "ERROR: Split weight outside of bounds!"
@@ -116,13 +114,14 @@ def doOneHistory( b, source_c, starting_weight, C, W, x, sigma, w_f, w_l, w_u, w
 ##---------------------------------------------------------------------------##
 ## Solve a linear problem using nonanalog Monte Carlo
 ##---------------------------------------------------------------------------##
-def monteCarloSolve( A, b, w_c, np, I, c_u, c_s ):
+def monteCarloSolve( A, b, w_c, np, I, R, c_u ):
     H, C, W = mc_data.makeMonteCarloHCW( A )
     source_c, starting_weight = mc_data.makeSourceCDF( b )
     w_f = w_c * starting_weight
-    w_l,w_u,w_s = computeWeightWindows( I, c_u, c_s )
+    w_l,w_u,w_s = computeWeightWindows( I, R, c_u )
     x = numpy.zeros( len(b) )
     sigma = numpy.zeros( len(b) )
+
     for i in xrange(np):
         x, sigma = doOneHistory( b, source_c, starting_weight, C, W, x, sigma, w_f, w_l, w_u, w_s )
     for i in xrange(len(x)):
@@ -131,9 +130,24 @@ def monteCarloSolve( A, b, w_c, np, I, c_u, c_s ):
     return (x, sigma)
 
 ##---------------------------------------------------------------------------##
+## FW-Cadis solve
+##---------------------------------------------------------------------------##
+def fwcadis( A, b, w_c, np, c_u ):
+    x_f = numpy.linalg.solve(A,b)
+    A_T = array_tools.matrixTranspose( A )
+    d = numpy.zeros(len(x_f))
+    for i in xrange(len(x_f)):
+        d[i] = 1.0 / x_f[i]
+    y = numpy.linalg.solve(A_T,d)
+    R = numpy.dot(y,b)
+    print y
+    x, sigma = monteCarloSolve( A, b, w_c, np, y, R, c_u )
+    return (x,sigma)
+
+##---------------------------------------------------------------------------##
 ## Solve a linear problem with MCSA
 ##---------------------------------------------------------------------------##
-def solveMCSA( A, x, b, tol, max_iter, w_c, np, c_u, c_s ):
+def solveMCSA( A, x, b, tol, max_iter, w_c, np, c_u ):
     r = array_tools.computeResidual(A,x,b)
     r_norm = numpy.linalg.norm(r,2)
     b_norm = numpy.linalg.norm(b,2)
@@ -141,7 +155,8 @@ def solveMCSA( A, x, b, tol, max_iter, w_c, np, c_u, c_s ):
     while ( r_norm/b_norm > tol ) and ( iter < max_iter ):
         x = array_tools.updateVector(x,r)
         r = array_tools.computeResidual(A,x,b)
-        delta, sigma = monteCarloSolve( A, r, w_c, np, r, c_u, c_s )
+        response = numpy.linalg.norm(r,1)
+        delta, sigma = monteCarloSolve( A, r, w_c, np, r, response, c_u )
         x = array_tools.updateVector(x,delta)
         r = array_tools.computeResidual(A,x,b)
         r_norm = numpy.linalg.norm(r,2)
