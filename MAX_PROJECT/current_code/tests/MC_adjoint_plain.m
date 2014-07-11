@@ -1,9 +1,9 @@
 addpath('../core')
 addpath('../utils')
 
-dimen=500;
+dimen=50;
 A=4*diag(ones(dimen,1)) - diag(ones(dimen-1,1),1) - diag(ones(dimen-1,1),-1);
-rhs=[1:500]';
+rhs=[1:50]';
 u=A\rhs;
 
 Prec=diag(diag(A));
@@ -12,20 +12,22 @@ H=eye(size(A))-Prec\A;
 rhs=Prec\rhs;
 
 eps=10^(-3);
-dist='MAO';
+dist1=1;
+dist2=1;
 
-[Pb, cdfb, P, cdf]=prob_adjoint(H, rhs, dist);
+[Pb, cdfb, P, cdf]=prob_adjoint2(H, rhs, dist1, dist2);
 %%
 rel_errs=[];
 NWALKS=[];
 VAR=[];
 SOL=[];
 
-for i=1:6
+for i=1:2
+    X=[];
     n_walks=10^i;
     NWALKS=[NWALKS n_walks];
     max_step=100;
-    [u_approx, var]=MC_adjoint(H,rhs,P,cdf,Pb,cdfb, n_walks, max_step);
+    [u_approx, var, X, tally]=MC_adjoint(X,H,rhs,P,cdf,Pb,cdfb, n_walks, max_step);
     rel_error=sqrt(sum((u-u_approx).^2))/sqrt(sum((u).^2));
     rel_errs=[rel_errs, rel_error];
     SOL=[SOL u_approx];
@@ -60,5 +62,5 @@ plot(u_approx+var*norminv(1-conf/2, 0,1), 'g*')
 plot(u, 'r*')
 
 
-%save(strcat('../results/MC_adjoint_plain/MC_adjoint_plain_', dist));
-   save(strcat('MC_adjoint_plain_', dist)); 
+save(strcat('../results/MC_adjoint_plain/MC_adjoint_plain_p1=', num2str(dist1), '_p2=', num2str(dist2)));
+%   save(strcat('MC_adjoint_plain_', dist)); 

@@ -1,0 +1,636 @@
+ifiss
+This is IFISS version 3.3: released 30 October 2013
+For help, type "helpme".
+unsteadyflowdemo
+
+Driven cavity unsteady flow  ... 
+running STABTR to 100 time units ... 
+Working in batch mode from data file T-NS3_batch.m
+
+specification of reference unsteady Navier-Stokes problem.
+
+choose specific example (default is step)
+     2  Flow over a backward facing step
+     3  Lid driven cavity
+     5  Flow around a square obstruction
+     3
+
+cavity type leaky/tight/regularised 1/2/3 (regularised)
+     3
+
+
+
+Grid generation for cavity domain.
+grid parameter: 3 for underlying 8x8 grid (default is 16x16)
+     6
+
+uniform/stretched grid (1/2) (default is uniform)
+     2
+
+computed stretch ratio is     1.0977 
+Q1-Q1/Q1-P0/Q2-Q1/Q2-P1: 1/2/3/4? (default Q1-P0)
+     3
+
+setting up Q2-Q1 matrices...  done
+system matrices saved in square_stokes_nobc.mat ...
+Unsteady flow in a square domain ...
+viscosity parameter (default 1/200)
+    0.0020
+
+Discrete Saddle-Point DAE system ...
+target time? (default 100)
+   100
+
+accuracy tolerance? (default 1e-4)
+   5.0000e-05
+
+averaging frequency? (default 10)
+    10
+
+plot vorticity evolution? 1/0
+     1
+
+Solving DAE system using stabilized TR ...
+
+AxBhandle = 
+
+    @defaultAxB
+
+
+  initial nonlinear residual is 2.569596e-03 
+             boundary change is 5.188603e-08 
+setting up Q2 convection matrix...  done.
+
+   step  timestep       time        divresidual 
+     2   1.000e-09     2.000e-09    2.606e-26   
+     3   3.976e-05     3.977e-05    7.871e-26   
+     4   1.303e-03     1.343e-03    6.696e-22   
+     5   2.350e-03     3.693e-03    1.767e-20   
+     6   2.743e-03     6.436e-03    6.651e-19   
+     7   3.614e-03     1.005e-02    2.741e-19   
+     8   5.012e-03     1.506e-02    4.441e-19   
+     9   6.336e-03     2.140e-02    1.246e-18   
+    10   7.727e-03     2.912e-02    2.681e-18   --- Averaging
+    11   9.349e-03     3.461e-02    4.098e-07   
+    12   1.064e-02     4.525e-02    1.833e-17   
+    13   1.194e-02     5.719e-02    4.742e-18   
+    14   1.449e-02     7.168e-02    1.850e-17   
+    15   1.677e-02     8.845e-02    6.054e-17   
+    16   1.921e-02     1.077e-01    1.582e-17   
+    17   2.161e-02     1.293e-01    4.332e-17   
+    18   2.437e-02     1.536e-01    5.434e-17   
+    19   2.658e-02     1.802e-01    1.403e-17   
+    20   2.932e-02     2.096e-01    3.636e-17   --- Averaging
+    21   3.145e-02     2.263e-01    1.084e-06   
+    22   3.220e-02     2.585e-01    6.348e-17   
+    23   3.799e-02     2.965e-01    9.771e-17   
+    24   3.609e-02     3.326e-01    4.174e-16   
+    25   4.064e-02     3.733e-01    2.221e-17   
+    26   4.579e-02     4.190e-01    4.053e-17   
+    27   4.830e-02     4.673e-01    3.671e-17   
+    28   5.478e-02     5.221e-01    3.241e-17   
+    29   5.831e-02     5.804e-01    3.651e-17   
+    30   6.595e-02     6.464e-01    3.716e-17   --- Averaging
+    31   7.064e-02     6.841e-01    8.405e-08   
+    32   8.063e-02     7.647e-01    1.062e-16   
+    33   8.919e-02     8.539e-01    1.125e-16   
+    34   9.710e-02     9.510e-01    7.716e-17   
+    35   1.061e-01     1.057e+00    3.743e-16   
+    36   1.138e-01     1.171e+00    9.695e-17   
+    37   1.197e-01     1.291e+00    2.879e-16   
+    38   1.240e-01     1.415e+00    1.702e-16   
+    39   1.271e-01     1.542e+00    7.552e-17   
+    40   1.294e-01     1.671e+00    2.418e-16   --- Averaging
+    41   1.312e-01     1.738e+00    1.615e-11   
+    42   1.346e-01     1.872e+00    1.283e-16   
+    43   1.368e-01     2.009e+00    1.322e-16   
+    44   1.362e-01     2.145e+00    2.629e-16   
+    45   1.380e-01     2.283e+00    1.369e-16   
+    46   1.402e-01     2.423e+00    1.482e-16   
+    47   1.405e-01     2.564e+00    2.182e-16   
+    48   1.415e-01     2.705e+00    5.534e-16   
+    49   1.449e-01     2.850e+00    6.905e-17   
+    50   1.477e-01     2.998e+00    3.622e-16   --- Averaging
+    51   1.475e-01     3.072e+00    3.913e-16   
+    52   1.501e-01     3.222e+00    3.117e-16   
+    53   1.518e-01     3.373e+00    2.566e-16   
+    54   1.544e-01     3.528e+00    3.313e-16   
+    55   1.586e-01     3.686e+00    3.342e-16   
+    56   1.596e-01     3.846e+00    6.518e-16   
+    57   1.588e-01     4.005e+00    1.575e-16   
+    58   1.595e-01     4.164e+00    9.519e-17   
+    59   1.635e-01     4.328e+00    1.686e-16   
+    60   1.693e-01     4.497e+00    9.872e-16   --- Averaging
+    61   1.742e-01     4.587e+00    1.004e-15   
+    62   1.794e-01     4.766e+00    1.735e-16   
+    63   1.814e-01     4.947e+00    1.296e-16   
+    64   1.796e-01     5.127e+00    2.828e-16   
+    65   1.804e-01     5.307e+00    8.265e-17   
+    66   1.842e-01     5.492e+00    1.715e-16   
+    67   1.900e-01     5.682e+00    5.020e-16   
+    68   1.961e-01     5.878e+00    1.299e-15   
+    69   2.019e-01     6.080e+00    3.398e-16   
+    70   2.069e-01     6.287e+00    6.887e-16   --- Averaging
+    71   2.109e-01     6.394e+00    1.489e-15   
+    72   2.165e-01     6.611e+00    1.029e-16   
+    73   2.188e-01     6.829e+00    2.582e-16   
+    74   2.201e-01     7.049e+00    3.693e-16   
+    75   2.246e-01     7.274e+00    3.519e-16   
+    76   2.313e-01     7.505e+00    1.432e-16   
+    77   2.389e-01     7.744e+00    7.539e-17   
+    78   2.466e-01     7.991e+00    1.625e-16   
+    79   2.537e-01     8.245e+00    7.823e-17   
+    80   2.606e-01     8.505e+00    2.165e-15   --- Averaging
+    81   2.677e-01     8.643e+00    1.086e-15   
+    82   2.761e-01     8.919e+00    9.283e-17   
+    83   2.824e-01     9.201e+00    5.001e-17   
+    84   2.860e-01     9.487e+00    1.262e-16   
+    85   2.918e-01     9.779e+00    3.720e-16   
+    86   3.000e-01     1.008e+01    5.511e-16   
+    87   3.117e-01     1.039e+01    1.200e-16   
+    88   3.248e-01     1.072e+01    9.015e-17   
+    89   3.361e-01     1.105e+01    2.587e-16   
+    90   3.451e-01     1.140e+01    1.382e-15   --- Averaging
+    91   3.529e-01     1.158e+01    7.412e-16   
+    92   3.631e-01     1.194e+01    6.611e-17   
+    93   3.747e-01     1.232e+01    1.934e-16   
+    94   3.835e-01     1.270e+01    7.219e-17   
+    95   3.958e-01     1.309e+01    1.188e-16   
+    96   4.095e-01     1.350e+01    1.207e-16   
+    97   4.258e-01     1.393e+01    4.231e-16   
+    98   4.425e-01     1.437e+01    9.048e-17   
+    99   4.546e-01     1.483e+01    8.506e-16   
+   100   4.630e-01     1.529e+01    1.039e-16   --- Averaging
+   101   4.709e-01     1.553e+01    1.977e-16   
+   102   4.829e-01     1.601e+01    6.653e-17   
+   103   5.002e-01     1.651e+01    9.668e-17   
+   104   5.179e-01     1.703e+01    1.744e-16   
+   105   5.415e-01     1.757e+01    3.542e-16   
+   106   5.661e-01     1.814e+01    4.366e-16   
+   107   5.915e-01     1.873e+01    7.588e-16   
+   108   6.177e-01     1.935e+01    7.573e-17   
+   109   6.407e-01     1.999e+01    3.436e-16   
+   110   6.598e-01     2.065e+01    6.889e-16   --- Averaging
+   111   6.805e-01     2.100e+01    3.895e-16   
+   112   7.056e-01     2.170e+01    1.228e-16   
+   113   7.426e-01     2.245e+01    4.738e-17   
+   114   7.772e-01     2.322e+01    3.089e-16   
+   115   8.216e-01     2.405e+01    1.096e-16   
+   116   8.758e-01     2.492e+01    2.195e-16   
+   117   9.333e-01     2.585e+01    1.032e-16   
+   118   9.878e-01     2.684e+01    1.177e-16   
+   119   1.038e+00     2.788e+01    3.132e-16   
+   120   1.090e+00     2.897e+01    8.199e-16   --- Averaging
+   121   1.151e+00     2.958e+01    3.112e-16   
+   122   1.229e+00     3.080e+01    1.826e-16   
+   123   1.300e+00     3.211e+01    7.305e-17   
+   124   1.393e+00     3.350e+01    1.536e-16   
+   125   1.497e+00     3.500e+01    3.266e-16   
+   126   1.575e+00     3.657e+01    3.083e-16   
+   127   1.629e+00     3.820e+01    1.342e-16   
+   128   1.661e+00     3.986e+01    4.477e-17   
+   129   1.711e+00     4.157e+01    1.745e-16   
+   130   1.788e+00     4.336e+01    9.289e-17   --- Averaging
+   131   1.834e+00     4.430e+01    6.572e-17   
+   132   1.959e+00     4.626e+01    3.861e-17   
+   133   2.072e+00     4.833e+01    9.180e-17   
+   134   2.201e+00     5.053e+01    4.160e-17   
+   135   2.288e+00     5.282e+01    8.769e-17   
+   136   2.443e+00     5.526e+01    3.954e-17   
+   137   2.552e+00     5.781e+01    3.889e-17   
+   138   2.587e+00     6.040e+01    9.931e-17   
+   139   2.750e+00     6.315e+01    5.783e-17   
+   140   2.900e+00     6.605e+01    4.342e-17   --- Averaging
+   141   3.059e+00     6.766e+01    3.892e-17   
+   142   3.410e+00     7.107e+01    3.724e-17   
+   143   3.754e+00     7.483e+01    6.094e-17   
+   144   3.969e+00     7.879e+01    3.553e-17   
+   145   4.460e+00     8.325e+01    8.845e-17   
+   146   4.621e+00     8.787e+01    7.476e-17   
+   147   5.166e+00     9.304e+01    2.046e-16   
+   148   5.718e+00     9.876e+01    3.661e-17   
+   149   1.241e+00     1.000e+02    3.898e-17   
+finished in  150 steps!
+Integration took  3.963e+01 seconds
+
+use new (enter figno) or existing (0) figure, default is 0
+    13
+
+150 timesteps
+
+running flow field animation ... 
+   step   mean_vorticity
+     1      1.600e-08 
+     2      1.600e-08 
+     3      3.200e-08 
+     4      6.361e-04 
+     5      2.135e-02 
+     6      5.801e-02 
+     7      9.973e-02 
+     8      1.530e-01 
+     9      2.237e-01 
+    10      3.082e-01 
+    11      3.572e-01 
+    12      4.681e-01 
+    13      5.824e-01 
+    14      6.969e-01 
+    15      8.187e-01 
+    16      9.393e-01 
+    17      1.055e+00 
+    18      1.161e+00 
+    19      1.256e+00 
+    20      1.336e+00 
+    21      1.372e+00 
+    22      1.434e+00 
+    23      1.479e+00 
+    24      1.518e+00 
+    25      1.543e+00 
+    26      1.562e+00 
+    27      1.576e+00 
+    28      1.585e+00 
+    29      1.591e+00 
+    30      1.595e+00 
+    31      1.597e+00 
+    32      1.598e+00 
+    33      1.599e+00 
+    34      1.600e+00 
+    35      1.600e+00 
+    36      1.600e+00 
+    37      1.600e+00 
+    38      1.600e+00 
+    39      1.600e+00 
+    40      1.600e+00 
+    41      1.600e+00 
+    42      1.600e+00 
+    43      1.600e+00 
+    44      1.600e+00 
+    45      1.600e+00 
+    46      1.600e+00 
+    47      1.600e+00 
+    48      1.600e+00 
+    49      1.600e+00 
+    50      1.600e+00 
+    51      1.600e+00 
+    52      1.600e+00 
+    53      1.600e+00 
+    54      1.600e+00 
+    55      1.600e+00 
+    56      1.600e+00 
+    57      1.600e+00 
+    58      1.600e+00 
+    59      1.600e+00 
+    60      1.600e+00 
+    61      1.600e+00 
+    62      1.600e+00 
+    63      1.600e+00 
+    64      1.600e+00 
+    65      1.600e+00 
+    66      1.600e+00 
+    67      1.600e+00 
+    68      1.600e+00 
+    69      1.600e+00 
+    70      1.600e+00 
+    71      1.600e+00 
+    72      1.600e+00 
+    73      1.600e+00 
+    74      1.600e+00 
+    75      1.600e+00 
+    76      1.600e+00 
+    77      1.600e+00 
+    78      1.600e+00 
+    79      1.600e+00 
+    80      1.600e+00 
+    81      1.600e+00 
+    82      1.600e+00 
+    83      1.600e+00 
+    84      1.600e+00 
+    85      1.600e+00 
+    86      1.600e+00 
+    87      1.600e+00 
+    88      1.600e+00 
+    89      1.600e+00 
+    90      1.600e+00 
+    91      1.600e+00 
+    92      1.600e+00 
+    93      1.600e+00 
+    94      1.600e+00 
+    95      1.600e+00 
+    96      1.600e+00 
+    97      1.600e+00 
+    98      1.600e+00 
+    99      1.600e+00 
+   100      1.600e+00 
+   101      1.600e+00 
+   102      1.600e+00 
+   103      1.600e+00 
+   104      1.600e+00 
+   105      1.600e+00 
+   106      1.600e+00 
+   107      1.600e+00 
+   108      1.600e+00 
+   109      1.600e+00 
+   110      1.600e+00 
+   111      1.600e+00 
+   112      1.600e+00 
+   113      1.600e+00 
+   114      1.600e+00 
+   115      1.600e+00 
+   116      1.600e+00 
+   117      1.600e+00 
+   118      1.600e+00 
+   119      1.600e+00 
+   120      1.600e+00 
+   121      1.600e+00 
+   122      1.600e+00 
+   123      1.600e+00 
+   124      1.600e+00 
+   125      1.600e+00 
+   126      1.600e+00 
+   127      1.600e+00 
+   128      1.600e+00 
+   129      1.600e+00 
+   130      1.600e+00 
+   131      1.600e+00 
+   132      1.600e+00 
+   133      1.600e+00 
+   134      1.600e+00 
+   135      1.600e+00 
+   136      1.600e+00 
+   137      1.600e+00 
+   138      1.600e+00 
+   139      1.600e+00 
+   140      1.600e+00 
+   141      1.600e+00 
+   142      1.600e+00 
+   143      1.600e+00 
+   144      1.600e+00 
+   145      1.600e+00 
+   146      1.600e+00 
+   147      1.600e+00 
+   148      1.600e+00 
+   149      1.600e+00 
+   150      1.600e+00 
+
+All done
+step 150 : time is 1.000e+02
+minimum w is -20.9744 and maximum w is 24.7219
+
+To generate snapshots of stationary streamlines run 
+ <strong>square_unsteadyflowref</strong> plots square domain data at snapshot times
+    square_unsteadyflowref(qmethod,mv,sol,tt,A,By,Bx,G,xy,xyp,x,y,bound,snaptime);
+    input
+           qmethod    mixed method 
+           ev         mv/ev  Q2/Q1 element mapping matrix
+           sol        flow solution vector
+           tt         snapshot time vector
+           A          vector diffusion matrix
+           By         velocity  y-derivative matrix    
+           Bx         velocity x-derivative matrix    
+           G          veclocity mass matrix
+           xy         velocity nodal coordinate vector  
+           xyp        pressure nodal coordinate vector  
+           x          vector of x-axis interpolation points
+           y          vector of y-axis interpolation points
+           bound      boundary vertex vector
+           snaptime   vector of snapshot time step levels
+ 
+  calls function xxstreambc.m to set boundary values
+    IFISS function: DJS; 3 May 2012.
+  Copyright (c) 2012 D.J. Silvester, H.C. Elman, A. Ramage 
+
+To generate a streamline movie run 
+ <strong>square_flowmovie</strong> generates flow movie on square  domain
+    square_flowmovie(qmethod,U,time,By,Bx,A,xy,x,y,bound,.1,998,0);
+    input
+           qmethod    mixed method 
+           U        velocity solution vector
+           time         solution time vector  
+           By         velocity  y-derivative matrix    
+           Bx         velocity x-derivative matrix    
+           A          vector diffusion matrix
+           xy         velocity nodal coordinate vector   
+           x          vector of x-axis interpolation points
+           y          vector of y-axis interpolation points
+           bound      boundary vertex vector
+           ftime      controls speed of animation
+           fign       figure number
+           avi        0/1 switch to generate .avi file
+ 
+  pressure solution is assumed to be essentially zero at outflow 
+  so streamfunction satisfies zero Neumann condition there
+  calls function xxstreambc.m to set boundary values
+    IFISS function: DJS; 27 April 2012.
+  Copyright (c) 2009 D.J. Silvester, H.C. Elman, A. Ramage 
+
+computing divergence of discrete velocity solution ...  done
+estimated velocity divergence error:  1.658987e-03 
+
+CHECK OUT the time step history 
+
+   Plotting flow field snapshots ... 
+   step   time    mean_vorticity    min_phi  max_phi
+    60    4.328    1.600e+00       -0.09944  2.632e-08
+    90   11.052    1.600e+00       -0.14568  4.348e-05
+   150  100.000    1.600e+00       -0.21618  2.981e-03
+   All done
+
+CHECK OUT the snapshots of the flow evolution 
+
+x-section analysis | y = 6.5226e-16 
+x-section flow volume is -4.4237e-04 
+
+CHECK OUT the final time solution mid-plane X-section 
+
+
+CHECK the iterative solver convergence ...
+Working in batch mode from data file snapshot_flowx1_batch.m
+
+Iterative solution of a SNAPSHOT linear system
+Solution data available for 100 seconds
+Approximate time for the SNAPSHOT? (default is the end)
+    10
+
+
+Time step number 86
+Constructing system at time 9.77901 seconds
+    current timestep is 0.291793 seconds
+enclosed flow (cavity) problem ...
+stopping tolerance? (default 1e-8)
+   1.0000e-06
+
+maximum number of iterations? (default 100)
+    30
+
+preconditioner:
+   0  none
+   2  modified pressure convection-diffusion (Fp)
+   3  least-squares commutator
+   4  corrected pressure convection-diffusion (Fp*)
+   5  boundary-adjusted least-squares commutator (LSC*)
+default is Fp*
+     4
+
+ideal / AMG iterated  preconditioning? 1/2 (default ideal)
+     2
+
+setting up modified Q1 pressure preconditioning matrices... 
+singular matrices are used here
+AMG grid coarsening ...  15 grid levels constructed.
+AMG fine level smoothing strategy? PDJ/ILU 1/2  (default ILU)
+     2
+
+ILU smoothing on finest level..
+AMG iterated PCD* preconditioning ...
+fixing singularity in pressure matrix... done 
+AMG grid coarsening ...  9 grid levels constructed.
+AMG setup of Ap done.
+ILU smoothing on finest level..
+
+GMRES iteration ...
+convergence in  30 iterations
+
+    k  log10(||r_k||/||r_0||)   
+    0           0.0000 
+    1          -0.0087 
+    2          -0.1295 
+    3          -0.3974 
+    4          -0.7017 
+    5          -0.9894 
+    6          -1.2591 
+    7          -1.5132 
+    8          -1.7490 
+    9          -1.9778 
+   10          -2.1862 
+   11          -2.3631 
+   12          -2.5189 
+   13          -2.6733 
+   14          -2.8376 
+   15          -3.0133 
+   16          -3.1911 
+   17          -3.3760 
+   18          -3.5890 
+   19          -3.8161 
+   20          -4.0369 
+   21          -4.2609 
+   22          -4.4700 
+   23          -4.6870 
+   24          -4.9112 
+   25          -5.0942 
+   26          -5.2902 
+   27          -5.4826 
+   28          -5.6777 
+   29          -5.8617 
+   30          -6.0362 
+Bingo!
+
+  4.2024e-01 seconds
+
+
+use new (enter figno) or existing (0) figure, default is 0
+     1
+
+colour (b,g,r,c,m,y,k): enter 1--7 (default 1)
+     1
+
+Working in batch mode from data file snapshot_flowx2_batch.m
+
+Iterative solution of a SNAPSHOT linear system
+Solution data available for 100 seconds
+Approximate time for the SNAPSHOT? (default is the end)
+    10
+
+
+Time step number 86
+Constructing system at time 9.77901 seconds
+    current timestep is 0.291793 seconds
+enclosed flow (cavity) problem ...
+stopping tolerance? (default 1e-8)
+   1.0000e-06
+
+maximum number of iterations? (default 100)
+    50
+
+preconditioner:
+   0  none
+   2  modified pressure convection-diffusion (Fp)
+   3  least-squares commutator
+   4  corrected pressure convection-diffusion (Fp*)
+   5  boundary-adjusted least-squares commutator (LSC*)
+default is Fp*
+     4
+
+ideal / AMG iterated  preconditioning? 1/2 (default ideal)
+     2
+
+setting up modified Q1 pressure preconditioning matrices... 
+singular matrices are used here
+AMG grid coarsening ...  15 grid levels constructed.
+AMG fine level smoothing strategy? PDJ/ILU 1/2  (default ILU)
+     1
+
+point damped Jacobi smoothing on finest level ..
+AMG iterated PCD* preconditioning ...
+fixing singularity in pressure matrix... done 
+AMG grid coarsening ...  9 grid levels constructed.
+AMG setup of Ap done.
+point damped Jacobi smoothing on finest level ..
+
+GMRES iteration ...
+convergence in  38 iterations
+
+    k  log10(||r_k||/||r_0||)   
+    0           0.0000 
+    1          -0.0088 
+    2          -0.1378 
+    3          -0.4194 
+    4          -0.6834 
+    5          -0.9699 
+    6          -1.2343 
+    7          -1.4275 
+    8          -1.6272 
+    9          -1.8167 
+   10          -2.0020 
+   11          -2.1856 
+   12          -2.3234 
+   13          -2.4562 
+   14          -2.5694 
+   15          -2.6818 
+   16          -2.7907 
+   17          -2.9007 
+   18          -3.0352 
+   19          -3.1609 
+   20          -3.2915 
+   21          -3.3890 
+   22          -3.4884 
+   23          -3.5651 
+   24          -3.6685 
+   25          -3.7738 
+   26          -3.8951 
+   27          -4.0332 
+   28          -4.1661 
+   29          -4.3335 
+   30          -4.4835 
+   31          -4.6685 
+   32          -4.8482 
+   33          -5.0553 
+   34          -5.2680 
+   35          -5.4823 
+   36          -5.6872 
+   37          -5.8856 
+   38          -6.0796 
+Bingo!
+
+  6.1532e-01 seconds
+
+
+use new (enter figno) or existing (0) figure, default is 0
+     0
+
+figure number (default is current active figure)
+     1
+
+colour (b,g,r,c,m,y,k): enter 1--7 (default 1)
+     7
+
+End of unsteady NS flow demo. Voila!
+diary off

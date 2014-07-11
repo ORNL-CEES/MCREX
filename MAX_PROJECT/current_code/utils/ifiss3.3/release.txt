@@ -1,0 +1,35 @@
+These notes are associated with the release of IFISS 3.3.
+There are two major new features:
+o  A new directory /pde_control/ for solving Poisson (PDE) 
+   optimization problems. Type "helpme_poissoncontrol" for details. 
+o  A high-level driver it_navier_testproblem is included in the 
+   /navier-flow/ directory. This driver may be run (as an alternative 
+   to navier_testproblem) if one wants to test the performance of an 
+   iterative solver at every nonlinear step when solving a steady 
+   flow problem. 
+
+There are three important code updates:
+o  The plotting of the Q2 element error estimates
+   (diffusion, Stokes and Navier-Stokes) has been updated. This 
+   means that error estimates computed using IFISS 3.3 look different 
+   to those computed in IFISS 3.2. 
+   The error estimates themselves are unchanged.
+o  The singular (sparse) direct solves associated with solving 
+   enclosed cavity flow problems (Stokes, Navier-Stokes and Boussinesq) 
+   have been removed. Thus there should no longer be any warning 
+   messages of  "near-singular" matrices when solving such problems. 
+   The singularity is removed by explicitly adding the constraint that 
+   the mean value of pressure is zero, as a Lagrange multiplier. A 
+   consequence is that the sparse direct solver is less efficient (the 
+   frontwidth is much larger) so IFISS 3.3 solution times are longer 
+   when solving a driven cavity flow problem: this is only apparent when 
+   using a fine grid.
+o  More effective preconditioning strategies have been developed for
+   steady and unsteady Navier-Stokes flow problems. These solvers are 
+   included as additional options in the drivers it_solve, 
+   snapshot_solveflow and snapshot_solvebouss.
+    
+
+David Silvester
+3 November 2013.
+ 

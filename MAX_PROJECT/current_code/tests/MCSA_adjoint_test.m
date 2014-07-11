@@ -1,32 +1,54 @@
 addpath('../core')
 addpath('../utils')
 
-dimen=50;
-A=4*diag(ones(dimen,1)) - diag(ones(dimen-1,1),1) - diag(ones(dimen-1,1),-1);
-rhs=[1:50]';
-u=A\rhs;
+% 'jpwh_991'; 'fs_680_1'; 'ifiss_convdiff'; 'shifted_laplacian_1d'; 'thermal_eq_diff'
+matrix='thermal_eq_diff';
+
+addpath(strcat('../utils/model_problems/', matrix))
+
+if strcmp(matrix, 'simple')
+    dimen=50;
+    A=4*diag(ones(dimen,1)) - diag(ones(dimen-1,1),1) - diag(ones(dimen-1,1),-1);
+    rhs=ones(dimen,1);
+    u=A\rhs;
+    
+else
+     [A, dimen, ~, ~] = mmread('A.mtx');
+     rhs=mmread('b.mtx');
+     u=mmread('x.mtx');
+end
 
 Prec=diag(diag(A));
 
 H=eye(size(A))-Prec\A;
 rhs=Prec\rhs;
 
-dist='MAO';
+%% Numerical setting
 
+numer.eps=10^(-3);
+numer.rich_it=300;
+
+%% Statistical setting
+stat.nwalks=600;
+stat.max_step=20;
+stat.adapt=1;
+stat.varcut=0.1;
+dist=1;
+
+%% Definition of initial and transitional probabilities
 [Pb, cdfb, P, cdf]=prob_adjoint(H, rhs, dist);
 
-eps=10^(-3);
-n_walks=1000;
-max_step=20;
-rich_it=10;
+%% Preconditioning setting
 
-fp.u=u;
-fp.H=H;
+fp.u=u; %reference solution
+fp.H=H; %iteration matrix
 fp.rhs=rhs;
 fp.precond='diag';
 %% Monte Carlo Adjoint Method resolution
 
-[sol, rel_error, var, NWALKS, iterations]=MCSA_adjoint(fp, dist, P, cdf, rich_it, n_walks, max_step, eps);
+start=cputime;
+[sol, rel_residual, var, VAR, DX, NWALKS, iterations]=MCSA_adjoint(fp, dist, P, cdf, numer, stat);
+finish=cputime;
 
 conf=0.05;
 
@@ -36,4 +58,7 @@ plot(sol-var*norminv(1-conf/2, 0, 1), 'g*');
 plot(sol+var*norminv(1-conf/2, 0, 1), 'g*');
 plot(u,'r*');
 
-save(strcat('../results/MCSA_adjoint/MCSA_adjoint_test_', dist))
+hold off
+bar(NWALKS);
+
+save(strcat('../results/MCSA_adjoint/MCSA_adjoint_test_', matrix, '_p=', num2str(dist)))

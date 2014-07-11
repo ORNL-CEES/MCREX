@@ -19,21 +19,27 @@ precond='diag';
 
 %Sequential Monte Carlo or Monte Carlo Synthetic Acceleration
 %possible choices: 'SEQ', 'MCSA'
-scheme='SEQ';
+scheme='MCSA';
 method='adjoint';
 
 [fixed_point]=iteration_matrix(precond, D, u, rhs, G);
 
 spy_matrices(fixed_point);
 
-%% Building of the iteration matrix
+%% Numerical setting
 
-eps=10^(-3);
-n_walks=(10^1)*(n-2)^2;
-max_step=20;
-rich_it=200;%maximal number of Richardson iteration
-dist='MAO';
-p=2;
+numer.eps=10^(-3);
+numer.rich_it=300;%maximal number of Richardson iterations
+
+%% Statistical setting
+
+stat.nwalks=size(u,1);
+stat.max_step=20;
+stat.varcut=0.1;
+stat.adapt=1;
+dist=1;
+
+%% Definition of initial and transitional prbabilities
 
 if ~ strcmp(precond, 'alternating')
     [Pb, cdfb, P, cdf]=prob_adjoint(fixed_point.H, fixed_point.rhs, dist);
@@ -43,11 +49,15 @@ else
     [Pb.Pb2, cdfb.cdfb2, P.P2, cdf.cdf2]=prob_adjoint(fixed_point.H2, fixed_point.rhs2, dist);
 end
 
-[sol, rel_err, var, NWALKS, iterations, time]=system_solver(scheme, method, fixed_point, dist, P, cdf, rich_it, n_walks, max_step, eps);
+%% Solver call
+
+[sol, rel_residual, var, VAR, DX, NWALKS, iterations, time]=system_solver(scheme, method, fixed_point, dist, P, cdf, numer, stat);
 
 %delete(poolobj)
 
-conf=0.025;
+%% Post-processing rendering
+
+conf=0.025;% error of type 1
 
 plot_sol(G, u, 'ex');
 plot_sol(G, sol, scheme);
@@ -72,6 +82,9 @@ for i=1:size(u,1)
     amplitude=amplitude+2*var(i)*norminv(1-conf/2, 0, 1);
 end
 amplitude=amplitude/norm(u,2);
+
+hold off
+bar(NWALKS)
 
 if reac==0
     if strcmp(scheme, 'SEQ')

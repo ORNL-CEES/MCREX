@@ -1,31 +1,53 @@
 addpath('../core')
 addpath('../utils')
 
-dimen=50;
-A=4*diag(ones(dimen,1)) - diag(ones(dimen-1,1),1) - diag(ones(dimen-1,1),-1);
-rhs=[1:50]';
-u=A\rhs;
+% 'jpwh_991'; 'fs_680_1', 'ifiss_convdiff'; 'shifted_laplacian_1d'; 'thermal_eq_diff'
+matrix='fs_680_1';
+
+addpath(strcat('../utils/model_problems/', matrix))
+
+if strcmp(matrix, 'simple')
+    dimen=50;
+    A=4*diag(ones(dimen,1)) - diag(ones(dimen-1,1),1) - diag(ones(dimen-1,1),-1);
+    rhs=ones(dimen,1);
+    u=A\rhs;
+    
+else
+     [A, dimen, ~, ~] = mmread('A.mtx');
+     rhs=mmread('b.mtx');
+     u=mmread('x.mtx');
+end
 
 Prec=diag(diag(A));
 
 H=eye(size(A))-Prec\A;
 rhs=Prec\rhs;
 
-eps=10^(-3);
-n_walks=1000;
-max_step=20;
-rich_it=10;
-dist='MAO';
+%% Numerical setting
 
+numer.eps=10^(-3);
+numer.rich_it=300;
+
+%% Statistical setting
+
+stat.nwalks=2;
+stat.max_step=20;
+stat.adapt=1;
+stat.varcut=0.5;
+dist=1;
+
+%% Definition of the transitional probability
 [P, cdf]=prob_forward(H, dist);
 
-fp.u=u;
-fp.H=H;
+%% Preconditioning setting
+
+fp.u=u; %reference solution
+fp.H=H; %iteration matrix
 fp.rhs=rhs;
 fp.precond='diag';
 %% SEQ forward method resolution
 
-[sol, rel_err, var, NWALKS, iterations]=SEQ_forward(fp, P, cdf, rich_it, n_walks, max_step, eps);
+[sol, rel_residual, var, VAR, DX, NWALKS, iterations]=SEQ_forward(fp, P, cdf, numer, stat);
 
 conf=0.05;
 var=var*norminv(1-conf/2, 0, 1);
@@ -43,4 +65,4 @@ plot(sol+var, 'g*');
 plot(sol-var, 'g*');
 plot(u, 'r*');
 
-save(strcat('../results/SEQ_forward/SEQ_forward_test', dist));
+save(strcat('../results/SEQ_forward/SEQ_forward_test_', matrix, '_p=', num2str(dist)));

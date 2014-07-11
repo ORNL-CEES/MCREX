@@ -5,7 +5,7 @@ addpath('../utils')
 %poolobj=parpool('local');
 
 shape = 'S'; % Other possible shapes include L,S,N,C,D,A,H,B
-n=14;
+n=32;
 
 % creation of te grid
 G=gridgen(shape, n);
@@ -26,14 +26,20 @@ method='forward';
 
 spy_matrices(fixed_point);
 
-%% Building of the transition probability matrix
+%% Numerical setting
 
-eps=10^(-3);
-n_walks=10;
-max_step=20;
-rich_it=50;%maximal number of Richardson iteration
-dist='MAO';
-p=1;
+numer.eps=10^(-3);
+numer.rich_it=300;%maximal number of Richardson iterations
+
+%% Statistical setting
+
+stat.nwalks=2;
+stat.max_step=20;
+stat.varcut=0.5;
+stat.adapt=1;
+dist=1;
+
+%% Definition of the transitional probability
 
 if ~ strcmp(precond, 'alternating')
     [P, cdf]=prob_forward(fixed_point.H, dist);
@@ -42,11 +48,14 @@ else
     [P.P1, cdf.cdf1]=prob_forward(fixed_point.H1, dist);
     [P.P2, cdf.cdf2]=prob_forward(fixed_point.H2, dist);
 end
-[sol, rel_err, var, NWALKS, iterations, time]=system_solver(scheme, method, fixed_point, dist, P, cdf, rich_it, n_walks, max_step, eps);
+
+%% Solver call
+
+[sol, rel_residual, var, VAR, DX, NWALKS, iterations, time]=system_solver(scheme, method, fixed_point, dist, P, cdf, numer, stat);
 
 %delete(poolobj)
 
-conf=0.025;
+conf=0.025; % error of type 1
 
 plot_sol(G, u, 'ex');
 plot_sol(G, sol, scheme);
@@ -71,6 +80,10 @@ for i=1:size(u,1)
     amplitude=amplitude+2*var(i)*norminv(1-conf/2, 0, 1);
 end
 amplitude=amplitude/norm(u,2);
+
+hold off
+bar(NWALKS)
+
 
 if reac==0
     if strcmp(scheme, 'SEQ')

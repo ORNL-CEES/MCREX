@@ -13,7 +13,7 @@ Prec=diag(diag(A));
 
 H=eye(size(A))-Prec\A;
 rhs=Prec\rhs;
-dist='MAO';
+dist=0;
 
 [P, cdf]=prob_forward(H, dist);
 
@@ -72,5 +72,5 @@ plot(u_approx(:,end)+var(:,end)*norminv(1-conf/2, 0,1), 'g*')
 plot(u, 'r*')
 
 
-%save(strcat('../results/MC_forward_plain/MC_forward_plain_', dist))
-save(strcat('MC_forward_plain_', dist))
+save(strcat('../results/MC_forward_plain/MC_forward_plain_p=', num2str(dist)))
+%save(strcat('MC_forward_plain_', dist))

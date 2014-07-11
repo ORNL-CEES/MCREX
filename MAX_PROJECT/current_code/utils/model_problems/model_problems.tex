@@ -1,0 +1,119 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\title{Test Matrices for Monte Carlo Synthetic Acceleration}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+This document is intended to define a standard suite of linear
+systems that can be used as test cases for Monte Carlo and
+MCSA solvers.  The suite of matrices is intended to span a 
+range of different matrix properties and problem difficulty.
+This is intended to avoid potential pitfalls when performing
+numerical experiments involving drawing conclusions based on
+observations that may be specific to a particular linear system.
+
+\section{Shifted 1-D Laplacian}
+
+The most basic test matrix we propose is essentially a shifted
+1-D discrete (negative) Laplacian operator.  In order to achieve a matrix
+that is strongly diagonally dominant, we introduce a shift of
+$2.0$ added to the main diagonal, resulting in the matrix
+\begin{equation}
+ \mathbf{A} = \begin{bmatrix} 4 & -1 \\ -1 & \ddots & \ddots \\ 
+     & \ddots & \ddots & -1 \\  & & -1 & 4 \end{bmatrix} \:,
+\end{equation}
+which can be generated in MATLAB with the command
+\begin{verbatim}
+  A = 4*eye(N) - diag(ones(N-1),1) - diag(ones(N-1),-1);
+\end{verbatim}
+where $N$ is the size of the matrix.
+The right hand side is taken to be
+\begin{equation}
+ \mathbf{b}_i = i, \quad i=0,\ldots,N-1 \:.
+\end{equation}
+A matrix of any size can be generated in this way and will have
+similar numerical properties, but the sample matrices
+provided here take $N=50$.
+The spectral radius of $\mathbf{I - D^{-1}A}$ is equal to approximately
+$0.499$.
+
+\section{2-D Laplacian}
+
+The second test problem is a finite difference discretization of the 2-D
+Laplacian with homogeneous Dirichlet boundaries.  This matrix can be
+generated in MATLAB by the command
+\begin{verbatim}
+  A = delsq(numgrid('S',M));
+\end{verbatim}
+where $M$ is the number of grid points in each direction.
+As a right hand size, we take a sinusoid distribution in both the
+$x$ and $y$ directions, i.e.
+\begin{equation}
+ \mathbf{b}(x_i,y_j) = \sin \left( \frac{\pi x_i}{M-1} \right) \;
+                       \sin \left( \frac{\pi y_j}{M-1} \right), \quad i=0,\ldots,M-1 \:,
+\end{equation}
+where $x_i=\frac{i}{M}$ and $y_j=\frac{j}{M}$.  As with the previous example,
+any size problem can be selected; however, for this matrix the problem becomes
+more difficult as $M$ is increased.  We choose a value of $M=32$, for which
+the size of the resulting matrix is 900 (the unknowns on Dirichlet boundaries
+are eliminated from the matrix) and spectral radius of the iteration
+matrix for this problem is approximately $0.9949$.
+
+\section{IFISS Convection-Diffusion}
+
+The next test problem is a finite element discretization of a 
+2-D convection-diffusion problem using the MATLAB IFISS package.
+Continuous bilinear elements on quadrilaterals (Q1 elements) are used.
+A $32 \times 32$ mesh is used on the unit square with a viscosity of
+$\nu=0.1$.  Streamline upwind Petrov--Galerkin (SUPG) stabilization
+is used in the construction of the matrix.  Homogeneous Dirichlet
+boundary conditions are applied on the top, bottom, and left sides of
+the domain and a nonhomogeneous Dirichlet boundary with a constant value
+of 1 is applied on the right side.  A constant forcing term with a value
+of 1 is present throughout the domain.  The dimension of the resulting
+matrix is 1089 and the spectral radius of $\mathbf{I - D^{-1}A}$
+is 0.9835.
+
+\section{JPWH Matrix}
+
+The next test problem is the matrix ``JPWH\_991'' matrix available from
+the Matrix Market.  This matrix
+is described as a ``computer random simulation of a circuit physics model.''
+We select the right hand side to be the constant vector of all ones.  The
+matrix has dimension 991 and the
+spectral radius of $\mathbf{I - D^{-1}A}$ is 0.9797.
+
+\section{FS 680 1}
+
+As another matrix market example we choose the matrix ``FS\_680\_1,''
+which is described as a mixed kinetics diffusion problem from radiation chemistry.
+The dimension of the problem is 680 and the spectral radius of the iteration matrix
+is $0.9697$.  The primary reason for including this matrix is that approximately
+half of the columns of the matrix are columns of the identity matrix.  This
+results in the iteration matrix having a large number of zero columns and
+therefore the transpose of the iteration matrix having a large number of 
+zero rows.  This poses no problem for forward Monte Carlo calculations but
+seems to result in very poor convergence behavior for the adjoint Monte Carlo
+approach.  This is in contrast to typical behavior where the performance of
+the adjoint Monte Carlo is typically significantly better than the forward
+method.
+
+\section{Marshak Wave}
+
+The final test problem (so far) that we propose is from a Marshak wave problem
+in thermal radiation diffusion.  The problem selected is a single time step
+from a time dependent calculation.  An initial guess is provided which is the
+solution at the previous time step.  The interesting feature for this problem
+is that the solution only changes in the immediate vicinity of the wave front
+and therefore the residual is very large within a small portion of the problem
+domain and nearly zero everywhere else.  This presents a significant advantage
+for the adjoint Monte Carlo method, which preferentially starts Monte Carlo
+histories in locations where the residual is large.
+
+\end{document}
