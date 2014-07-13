@@ -1,8 +1,8 @@
-function [Pb, cdfb, P, cdf]=prob_adjoint(A, b, dist)
+function [Pb, cdfb, P, cdf]=prob_adjoint(A, b, p)
 
 display('Building of transition matrix');
 
-    if strcmp(dist, 'UM')
+    if (p == 0)
         
         Pb=zeros(size(A,1),1);
         for i=1:size(Pb,1)
@@ -16,14 +16,13 @@ display('Building of transition matrix');
                 P(i,j)=(A(i,j)~=0)/(length(find(A(i,:))));
             end
         end
-
         
+    else
 
-     elseif strcmp(dist, 'MAO')
         %initial probability distribution
         Pb=zeros(size(A,1),1);
         for i=1:size(A,1)
-            Pb(i)=(abs(b(i)))/(sum(abs(b)));
+            Pb(i)=(abs(b(i)).^p)/(sum(abs(b)).^p);
         end
 
 
@@ -31,13 +30,12 @@ display('Building of transition matrix');
         for i=1:size(P,1)
             for j=1:size(P,2)
                 if sum(abs(A(:,i)))>0
-                    P(i,j)=abs(A(j,i))/(sum(abs(A(:,i))));
+                    P(i,j)=abs(A(j,i)).^p/(sum(abs(A(:,i)).^p));
                 end
             end
         end
-
-    end
     
+    end
     
     %computation of the cumulative initial probability: 
     cdfb=Pb;

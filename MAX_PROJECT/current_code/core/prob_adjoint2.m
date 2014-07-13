@@ -2,23 +2,40 @@ function [Pb, cdfb, P, cdf]=prob_adjoint2(A, b, p1, p2)
 
     display('Building of transition matrix');
 
+    if (p1 == 0)
+        Pb=zeros(size(A,1),1);
+        for i=1:size(Pb,1)
+            Pb(i)=(b(i)~=0)/(length(find(b)));
+        end
+    else        
 
-    %initial probability distribution
-    Pb=zeros(size(A,1),1);
-    for i=1:size(A,1)
-        Pb(i)=(abs(b(i)).^p1)/(sum(abs(b)).^p1);
+        %initial probability distribution
+        Pb=zeros(size(A,1),1);
+        for i=1:size(A,1)
+            Pb(i)=(abs(b(i)).^p1)/(sum(abs(b)).^p1);
+        end
+
     end
 
-
-    P=zeros(size(A));
-    for i=1:size(P,1)
-        for j=1:size(P,2)
-            if sum(abs(A(:,i)))>0
-                P(i,j)=abs(A(j,i)).^p2/(sum(abs(A(:,i)).^p2));
+    
+   if (p2 == 0)    
+        P=zeros(size(A));
+        for i=1:size(P,1)
+            for j=1:size(P,2)
+                P(i,j)=(A(i,j)~=0)/(length(find(A(i,:))));
             end
         end
-    end
 
+   else
+        P=zeros(size(A));
+        for i=1:size(P,1)
+            for j=1:size(P,2)
+                if sum(abs(A(:,i)))>0
+                    P(i,j)=abs(A(j,i)).^p2/(sum(abs(A(:,i)).^p2));
+                end
+            end
+        end
+   end
     
     
     %computation of the cumulative initial probability: 

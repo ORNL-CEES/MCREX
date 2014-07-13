@@ -1,31 +1,30 @@
-function [sol, rel_err, var, NWALKS, iterations, time]=system_solver(scheme, method, fp, dist, P, cdf, rich_it, n_walks, max_step, eps)
+function [sol, rel_res, var, VAR, DX, NWALKS, iterations, time]=system_solver(scheme, method, fp, dist, P, cdf, numer, stat)
 
     if strcmp(scheme, 'SEQ') && strcmp(method, 'forward')
         start=cputime;
-        [sol, rel_err, var, NWALKS, iterations]=SEQ_forward(fp, ...
-            P, cdf, rich_it, n_walks, max_step, eps);
+        [sol, rel_res, var, VAR, DX, NWALKS, iterations]=SEQ_forward(fp, ...
+            P, cdf, numer, stat);
         finish=cputime;
 
     elseif strcmp(scheme, 'MCSA') && strcmp(method, 'forward')
         start=cputime;
-        [sol, rel_err, var, NWALKS, iterations]=MCSA_forward(fp, ...
-            P, cdf, rich_it, n_walks, max_step, eps);
+        [sol, rel_res, var, VAR, DX, NWALKS, iterations]=MCSA_forward(fp, ...
+            P, cdf, numer, stat);
         finish=cputime;
         
     elseif strcmp(scheme, 'SEQ') && strcmp(method, 'adjoint')
         start=cputime;
-        [sol, rel_err, var, NWALKS, iterations]=SEQ_adjoint(fp, ...
-            dist, P, cdf, rich_it, n_walks, max_step, eps);
+        [sol, rel_res, var, VAR, DX, NWALKS, iterations]=SEQ_adjoint(fp, ...
+            dist, P, cdf, numer, stat);
         finish=cputime;
     
 
     elseif strcmp(scheme, 'MCSA') && strcmp(method, 'adjoint')
         start=cputime;
-        [sol, rel_err, var, NWALKS, iterations]=MCSA_adjoint(fp, ...
-            dist, P, cdf, rich_it, n_walks, max_step, eps);
+        [sol, rel_res, var, VAR, DX, NWALKS, iterations]=MCSA_adjoint(fp, ...
+            dist, P, cdf, numer, stat);
         finish=cputime;
-    
-        
+           
     else
         error(strcat('Invalid Monte Carlo scheme inserted', '\n', '\n'));
         fprintf('\n\n');

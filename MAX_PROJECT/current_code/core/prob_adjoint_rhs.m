@@ -1,23 +1,24 @@
-function [Pb, cdfb]=prob_adjoint_rhs(b, dist)
+function [Pb, cdfb]=prob_adjoint_rhs(b, p)
 
-display('updating of initial probability');
+display('Updating of the inital probability');
 
-    if strcmp(dist, 'UM')
+    if p==0
         
-        Pb=zeros(size(b,1),1);
+        Pb=zeros(size(A,1),1);
         for i=1:size(Pb,1)
             Pb(i)=(b(i)~=0)/(length(find(b)));
         end
         
-    elseif strcmp(dist, 'MAO')
+    else
+
         %initial probability distribution
         Pb=zeros(size(b,1),1);
         for i=1:size(Pb,1)
-            Pb(i)=(abs(b(i)))/(sum(abs(b)));
+            Pb(i)=(abs(b(i)).^p)/(sum(abs(b)).^p);
         end  
         
     end
-
+        
     %computation of the cumulative initial probability: 
     cdfb=Pb;
     for i=2:size(cdfb)

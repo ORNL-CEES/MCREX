@@ -1,6 +1,8 @@
-function [P, cdf]=prob_forward(A, dist)
+function [P, cdf]=prob_forward(A, p)
 
-    if strcmp(dist, 'UM')
+display('Building of transition matrix');
+
+    if (p == 0)
         P=zeros(size(A));
         for i=1:size(P,1)
             for j=1:size(P,2)
@@ -8,14 +10,15 @@ function [P, cdf]=prob_forward(A, dist)
             end
         end
 
-               
-    elseif strcmp(dist, 'MAO')
+    else
+
         P=zeros(size(A));
         for i=1:size(P,1)
             for j=1:size(P,2)
-                P(i,j)=abs(A(i,j))/(sum(abs(A(i,:))));
+                P(i,j)=abs(A(i,j)).^p/(sum(abs(A(i,:)).^p));
             end
         end
+
     end
 
     cdf=P;
