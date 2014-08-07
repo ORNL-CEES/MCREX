@@ -35,8 +35,9 @@ stat.max_step=20;
 stat.adapt_walks=1;
 stat.adapt_cutoff=1;
 stat.walkcut=10^(-6);
-stat.nchecks=1;
+stat.nchecks=2;
 stat.varcut=0.5;
+stat.vardiff=10^(-1);
 dist=1;
 
 %% Definition of initial and transitional probabilities
@@ -51,18 +52,25 @@ fp.precond='diag';
 %% Monte Carlo Adjoint Method resolution
 
 start=cputime;
-[sol, rel_residual, var, VAR, DX, NWALKS, tally, iterations]=MCSA_adjoint(fp, dist, P, cdf, numer, stat);
+[sol, rel_residual, VAR, RES, DX, NWALKS, tally, iterations, reject]=MCSA_adjoint(fp, dist, P, cdf, numer, stat);
 finish=cputime;
 
-conf=0.05;
 
-plot(sol, '*');
-hold on
-plot(sol-var*norminv(1-conf/2, 0, 1), 'g*');
-plot(sol+var*norminv(1-conf/2, 0, 1), 'g*');
-plot(u,'r*');
+for i=1:iterations
+    figure()
+    norm_var=[];
+    for j=1:size(VAR{i},2)
+        norm_var=[norm_var norm(VAR{i}(:,j))];
+    end
+    loglog(norm_var, '-o')
+end
 
-hold off
-bar(NWALKS);
+for i=1:iterations
+    figure()
+    loglog(RES{i}, '-o')
+    %axis([1 length(norm_res) 10^(-1) 10^0]);
+end
 
-save(strcat('../results/MCSA_adjoint/MCSA_adjoint_test_', matrix, '_p=', num2str(dist)))
+
+
+save(strcat('../results/MCSA_adjoint2/MCSA_adjoint_test2_', matrix, '_p=', num2str(dist)))

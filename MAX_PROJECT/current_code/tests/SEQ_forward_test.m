@@ -2,7 +2,7 @@ addpath('../core')
 addpath('../utils')
 
 % 'jpwh_991'; 'fs_680_1', 'ifiss_convdiff'; 'shifted_laplacian_1d'; 'thermal_eq_diff'
-matrix='fs_680_1';
+matrix='thermal_eq_diff';
 
 addpath(strcat('../utils/model_problems/', matrix))
 
@@ -32,7 +32,9 @@ numer.rich_it=300;
 
 stat.nwalks=2;
 stat.max_step=20;
-stat.adapt=1;
+stat.adapt_walks=1;
+stat.adapt_cutoff=1;
+stat.walkcut=10^(-6);
 stat.varcut=0.5;
 dist=1;
 
@@ -47,7 +49,7 @@ fp.rhs=rhs;
 fp.precond='diag';
 %% SEQ forward method resolution
 
-[sol, rel_residual, var, VAR, DX, NWALKS, iterations]=SEQ_forward(fp, P, cdf, numer, stat);
+[sol, rel_residual, var, VAR, DX, NWALKS, tally, iterations]=SEQ_forward(fp, P, cdf, numer, stat);
 
 conf=0.05;
 var=var*norminv(1-conf/2, 0, 1);

@@ -2,8 +2,8 @@ addpath('../core')
 addpath('../utils')
 
 % 'jpwh_991'; 'fs_680_1'; 'ifiss_convdiff'; 'shifted_laplacian_1d';
-% 'thermal_eq_diff'; 'laplacian_2d'
-matrix='thermal_eq_diff';
+% 'thermal_eq_diff';  'laplacian_2d'
+matrix='jpwh_991';
 
 addpath(strcat('../utils/model_problems/', matrix))
 
@@ -18,29 +18,31 @@ else
      rhs=mmread('b.mtx');
      u=mmread('x.mtx');
 end
-
+    
 Prec=diag(diag(A));
 
 H=eye(size(A))-Prec\A;
 rhs=Prec\rhs;
 
-%% Numerical setting
+%% NUmerical setting
 
 numer.eps=10^(-3);
 numer.rich_it=300;
 
 %% Statistical setting
+
 stat.nwalks=2;
 stat.max_step=20;
 stat.adapt_walks=1;
 stat.adapt_cutoff=1;
 stat.walkcut=10^(-6);
-stat.nchecks=1;
+stat.nchecks=2;
 stat.varcut=0.5;
+stat.vardiff=10^(-6);
 dist=1;
 
-%% Definition of initial and transitional probabilities
-[Pb, cdfb, P, cdf]=prob_adjoint(H, rhs, dist);
+%% Definition of the transitional probability
+[P, cdf]=prob_forward(H, dist);
 
 %% Preconditioning setting
 
@@ -48,21 +50,21 @@ fp.u=u; %reference solution
 fp.H=H; %iteration matrix
 fp.rhs=rhs;
 fp.precond='diag';
-%% Monte Carlo Adjoint Method resolution
+%% MCSA forward method resolution
 
 start=cputime;
-[sol, rel_residual, var, VAR, DX, NWALKS, tally, iterations]=MCSA_adjoint(fp, dist, P, cdf, numer, stat);
+[sol, rel_residual, VAR, DX, NWALKS, tally, iterations, reject]=MCSA_forward(fp, P, cdf, numer, stat);
 finish=cputime;
 
-conf=0.05;
+for i=1:iterations
+    figure()
+    %set(gca, 'XScale', 'log') 
+    set(gca, 'YScale', 'log') 
+    for j=1:size(u,1)
+        hold on
+        loglog(VAR{i*j}, '-o');
+    end
+    hold off
+end
 
-plot(sol, '*');
-hold on
-plot(sol-var*norminv(1-conf/2, 0, 1), 'g*');
-plot(sol+var*norminv(1-conf/2, 0, 1), 'g*');
-plot(u,'r*');
-
-hold off
-bar(NWALKS);
-
-save(strcat('../results/MCSA_adjoint/MCSA_adjoint_test_', matrix, '_p=', num2str(dist)))
+save(strcat('../results/MCSA_forward2/MCSA_forward_test2_', matrix, '_p=', num2str(dist)))

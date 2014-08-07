@@ -9,13 +9,13 @@ for i=1:size(A,1)
 end
 
     
-if (diagonally_dominant==1) & (abs(eig(A))<1)
+if (diagonally_dominant==1) && (abs(eig(A))<1)
     M=eye(size(A))-A;
     [P,cdf]=prob_forward(M, dist);
     [inv_A]=MC_inverse(M, P, cdf, n_walks, max_step);
 end
 
-if (diagonally_dominant==1) & (abs(eig(A))>=1)
+if (diagonally_dominant==1) && (abs(eig(A))>=1)
     D=diag(diag(A));
     inv_D=diag(1./diag(D));
     T=eye(size(A))-D\A;

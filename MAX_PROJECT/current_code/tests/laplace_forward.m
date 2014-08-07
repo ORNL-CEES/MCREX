@@ -5,7 +5,7 @@ addpath('../utils')
 %poolobj=parpool('local');
 
 shape = 'S'; % Other possible shapes include L,S,N,C,D,A,H,B
-n=32;
+n=22;
 
 % creation of te grid
 G=gridgen(shape, n);
@@ -15,11 +15,11 @@ reac=0;
 [u, D, rhs]=laplace(shape, G, reac);
 
 %algebraic splitting: 'diag', 'gs', 'triblock', 'trisplit', 'alternating'
-precond='diag';
+precond='triblock';
 
 %Sequential Monte Carlo or Monte Carlo Synthetic Acceleration
 %possible choices: 'SEQ', 'MCSA'
-scheme='MCSA';
+scheme='SEQ';
 method='forward';
 
 [fixed_point]=iteration_matrix(precond, D, u, rhs, G);
@@ -33,10 +33,12 @@ numer.rich_it=300;%maximal number of Richardson iterations
 
 %% Statistical setting
 
-stat.nwalks=2;
+stat.nwalks=10;
 stat.max_step=20;
+stat.adapt_walks=0;
+stat.adapt_cutoff=0;
+stat.walkcut=10^(-6);
 stat.varcut=0.5;
-stat.adapt=1;
 dist=1;
 
 %% Definition of the transitional probability
@@ -51,7 +53,7 @@ end
 
 %% Solver call
 
-[sol, rel_residual, var, VAR, DX, NWALKS, iterations, time]=system_solver(scheme, method, fixed_point, dist, P, cdf, numer, stat);
+[sol, rel_residual, var, VAR, DX, NWALKS, tally, iterations, time]=system_solver(scheme, method, fixed_point, dist, P, cdf, numer, stat);
 
 %delete(poolobj)
 
@@ -87,14 +89,14 @@ bar(NWALKS)
 
 if reac==0
     if strcmp(scheme, 'SEQ')
-        save(strcat('../results/diffusion_problem/Sequential_MC/laplace_forward_', scheme, '_', dist, '_', precond));
+        save(strcat('../results/diffusion_problem/Sequential_MC/laplace_forward_', scheme, '_p=_', num2str(dist), '_', precond));
     elseif strcmp(scheme, 'MCSA')
-        save(strcat('../results/diffusion_problem/MCSA/laplace_forward_', scheme, '_', dist, '_', precond));
+        save(strcat('../results/diffusion_problem/MCSA/laplace_forward_', scheme, '_p=_', num2str(dist), '_', precond));
     end
 else
     if strcmp(scheme, 'SEQ')
-        save(strcat('../results/DR_problem/Sequential_MC/laplace_forward_', scheme, '_', dist, '_', precond));
+        save(strcat('../results/DR_problem/Sequential_MC/laplace_forward_', scheme, '_p=_', num2str(dist), '_', precond));
     elseif strcmp(scheme, 'MCSA')
-        save(strcat('../results/DR_problem/MCSA/laplace_forward_', scheme, '_', dist, '_', precond));
+        save(strcat('../results/DR_problem/MCSA/laplace_forward_', scheme, '_p=_', num2str(dist), '_', precond));
     end      
 end

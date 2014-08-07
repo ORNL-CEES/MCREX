@@ -1,9 +1,6 @@
 addpath('../core')
 addpath('../utils')
 
-parallel
-parpool('local')
-
 dimen=500;
 A=4*diag(ones(dimen,1)) - diag(ones(dimen-1,1),1) - diag(ones(dimen-1,1),-1);
 rhs=[1:500]';
@@ -13,18 +10,20 @@ Prec=diag(diag(A));
 
 H=eye(size(A))-Prec\A;
 rhs=Prec\rhs;
+
+walkcut=10^(-6);
 dist=0;
 
 [P, cdf]=prob_forward(H, dist);
 
-max_step=20;
+max_step=100;
 
 %%
 n_walks=[100 10000 1000000];
 
-tic
-[u_approx, var, err]=MC_forward_error(u, H, rhs, P, cdf, n_walks, max_step);
-toc 
+cputime
+[u_approx, var, err]=MC_forward_error2(u, H, rhs, P, cdf, n_walks, max_step);
+cputime
 
 rel_error=[];
 for i=1:length(n_walks)
@@ -43,7 +42,7 @@ loglog(n_walks, rel_error, '-*g', 'Linewidth', 3)
 
 hold off
 figure()
-loglog(n_walks, sqrt(1./n_walks), 'r')
+loglog(n_walks, sqrt(1./n_walks), 'r');
 hold on
 loglog(n_walks, rel_error, '-o');
 

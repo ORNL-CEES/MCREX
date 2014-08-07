@@ -10,9 +10,9 @@ max_step=20;
 err=[];
 WALKS=[];
 n_walks=10^4;
-dist='MAO';
+dist=1;
 
-for i=1:3
+for i=1:6
     n_walks=10^i;
     WALKS=[WALKS n_walks];
     [inv_A]=SEQ_inverse(A, n_walks, max_step, dist);

@@ -1,4 +1,4 @@
-function [x, y, Z]=MC_forward(Z, A, b, P, cdf, n_walks, max_step)
+function [x, y, X]=MC_forward(A, b, P, cdf, n_walks, max_step)
 
     X=zeros(n_walks,size(b,1));
 
@@ -25,8 +25,7 @@ function [x, y, Z]=MC_forward(Z, A, b, P, cdf, n_walks, max_step)
    end
 
    %computation of the expected value for the updating vector
-   Z=[Z; X];
-   x=mean(Z,1)';
-   Y=Z.^2;
-   y=sqrt((mean(Y,1)'-(x.^2))./(size(Z,1))); 
+   x=mean(X,1)';
+   Y=X.^2;
+   y=sqrt((mean(Y,1)'-(x.^2))./(size(X,1))); 
 end
