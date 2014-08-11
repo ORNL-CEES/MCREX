@@ -18,7 +18,7 @@ namespace mcrex
 /*!
  * \brief Compute binomial coefficient
  *
- * \f$ \text{choose}(n,k) = \frac{n\!}{(n-k)\!k\!} \f$
+ * \f$ \mathrm{choose}(n,k) = \frac{n\!}{(n-k)\!k\!} \f$
  *
  * This algorithm is designed to reduce overflow issues relative to
  * a naive implementation from definition of the coefficient.
