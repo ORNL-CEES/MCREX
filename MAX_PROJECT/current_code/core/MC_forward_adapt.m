@@ -25,9 +25,13 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
                 estim=estim+W*b(current);
                 i=1;
                 while i<=max_step && W>Wf
-                    aux=rand;
+                aux=rand;
+                if sum(abs(P(previous,:)))>0
                     current=min(find(cdf(previous,:)>aux));
                     W=W*A(previous,current)/P(previous,current);
+                else 
+                    W=0;
+                end
 
                     if W==0
                         break;
@@ -69,10 +73,13 @@ elseif stat.adapt_cutoff==0 && stat_adapt_walks==1
                 estim=estim+W*b(current);
                 i=1;
                 while i<=max_step 
-                    aux=rand;
+                aux=rand;
+                if sum(abs(P(previous,:)))>0
                     current=min(find(cdf(previous,:)>aux));
                     W=W*A(previous,current)/P(previous,current);
-
+                else 
+                    W=0;
+                end
                     if W==0
                         break;
                     end
@@ -114,10 +121,13 @@ elseif stat.adapt_cutoff==1 && stat_adapt_walks==0
            estim=estim+W*b(current);
            i=1;
            while i<=max_step && W>Wf
-               aux=rand;
-               current=min(find(cdf(previous,:)>aux));
-               W=W*A(previous,current)/P(previous,current);
-
+                aux=rand;
+                if sum(abs(P(previous,:)))>0
+                    current=min(find(cdf(previous,:)>aux));
+                    W=W*A(previous,current)/P(previous,current);
+                else 
+                    W=0;
+                end
                if W==0
                    break;
                end
@@ -155,10 +165,13 @@ else
            estim=estim+W*b(current);
            i=1;
            while i<=max_step 
-               aux=rand;
-               current=min(find(cdf(previous,:)>aux));
-               W=W*A(previous,current)/P(previous,current);
-
+                aux=rand;
+                if sum(abs(P(previous,:)))>0
+                    current=min(find(cdf(previous,:)>aux));
+                    W=W*A(previous,current)/P(previous,current);
+                else 
+                    W=0;
+                end
                if W==0
                    break;
                end

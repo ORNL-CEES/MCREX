@@ -32,7 +32,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
             i=1;
             while i<=max_step && W>Wf
                   aux=rand;
-                  if sum(abs(P(previous,:)))==1
+                  if sum(abs(P(previous,:)))>0
                     current=min(find(cdf(previous,:)>aux));
                     W=W*A(current,previous)/P(previous,current);
                   else
@@ -83,7 +83,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
                 i=1;
                     while i<=max_step && W>Wf
                           aux=rand;
-                          if sum(abs(P(previous,:)))==1
+                          if sum(abs(P(previous,:)))>0
                             current=min(find(cdf(previous,:)>aux));
                             W=W*A(current,previous)/P(previous,current);
                           else
@@ -136,7 +136,7 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
             i=1;
             while i<=max_step 
                   aux=rand;
-                  if sum(abs(P(previous,:)))==1
+                  if sum(abs(P(previous,:)))>0
                     current=min(find(cdf(previous,:)>aux));
                     W=W*A(current,previous)/P(previous,current);
                   else
@@ -185,7 +185,7 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
                 i=1;
                     while i<=max_step 
                           aux=rand;
-                          if sum(abs(P(previous,:)))==1
+                          if sum(abs(P(previous,:)))>0
                             current=min(find(cdf(previous,:)>aux));
                             W=W*A(current,previous)/P(previous,current);
                           else
@@ -237,7 +237,7 @@ elseif  stat.adapt_cutoff==1 && stat.adapt_walks==0
         i=1;
         while i<=max_step && W>Wf
               aux=rand;
-              if sum(abs(P(previous,:)))==1
+              if sum(abs(P(previous,:)))>0
                 current=min(find(cdf(previous,:)>aux));
                 W=W*A(current,previous)/P(previous,current);
               else
@@ -284,7 +284,7 @@ else
         i=1;
         while i<=max_step 
               aux=rand;
-              if sum(abs(P(previous,:)))==1
+              if sum(abs(P(previous,:)))>0
                 current=min(find(cdf(previous,:)>aux));
                 W=W*A(current,previous)/P(previous,current);
               else

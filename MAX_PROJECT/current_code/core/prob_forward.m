@@ -5,8 +5,12 @@ display('Building of transition matrix');
     if (p == 0)
         P=zeros(size(A));
         for i=1:size(P,1)
-            for j=1:size(P,2)
-                P(i,j)=(A(i,j)~=0)/(length(find(A(i,:))));
+            if isempty(A(i,:))
+                break;
+            else            
+                for j=1:size(P,2)
+                    P(i,j)=(A(i,j)~=0)/(length(find(A(i,:))));
+                end
             end
         end
 
@@ -14,8 +18,12 @@ display('Building of transition matrix');
 
         P=zeros(size(A));
         for i=1:size(P,1)
-            for j=1:size(P,2)
-                P(i,j)=abs(A(i,j)).^p/(sum(abs(A(i,:)).^p));
+            if isempty(A(i,:))
+                break;
+            else            
+                for j=1:size(P,2)
+                    P(i,j)=abs(A(i,j)).^p/(sum(abs(A(i,:)).^p));
+                end
             end
         end
 

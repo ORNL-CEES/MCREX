@@ -122,7 +122,6 @@ else
                 r=rhs1-B1*sol;
                 VAR=[VAR dvar];
                 DX=[DX dx];
-                var=var+abs(dvar);
                 rel_residual=norm(r,2)/norm(rhs1,2);
             else
                 r=rhs2-B2*sol;
@@ -132,7 +131,6 @@ else
                 r=rhs2-B2*sol;
                 VAR=[VAR dvar];
                 DX=[DX dx];
-                var=var+abs(dvar);
                 rel_residual=norm(r,2)/norm(rhs2,2);
             end
 

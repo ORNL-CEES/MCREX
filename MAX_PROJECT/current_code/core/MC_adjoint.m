@@ -15,7 +15,7 @@ function [x, y, X, tally]=MC_adjoint(A, b, P, cdf, Pb, cdfb, n_walks, max_step)
     i=1;
         while i<=max_step
               aux=rand;
-              if sum(abs(P(previous,:)))==1
+              if sum(abs(P(previous,:)))>0
                 current=min(find(cdf(previous,:)>aux));
                 W=W*A(current,previous)/P(previous,current);
               else

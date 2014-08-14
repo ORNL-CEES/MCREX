@@ -20,8 +20,12 @@ function [x, y, err, time]=MC_forward_error2(u_ex, A, b, P, cdf, n_walks, max_st
             i=1;
                 while i<=max_step && W/Wf>cutoff
                     aux=rand;
-                    current=min(find(cdf(previous,:)>aux));
-                    W=W*A(previous,current)/P(previous,current);
+                    if sum(abs(P(previous,:)))>0                    
+                        current=min(find(cdf(previous,:)>aux));
+                        W=W*A(previous,current)/P(previous,current);
+                    else
+                        W=0;
+                    end
 
                     if W==0
                         break;

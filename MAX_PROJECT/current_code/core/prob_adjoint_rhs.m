@@ -1,6 +1,6 @@
 function [Pb, cdfb]=prob_adjoint_rhs(b, p)
 
-display('Updating of the inital probability');
+display('Updating of the initial probability');
 
     if p==0
         
