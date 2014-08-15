@@ -1,0 +1,1374 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage[top=1.0in,bottom=1.0in,left=1.0in,right=1.0in]{geometry}
+\usepackage{verbatim}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{tmadd,tmath}
+\usepackage{longtable}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{tmath,tmadd}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage[mathcal]{euscript} 
+\usepackage[usenames]{color}
+\usepackage[
+naturalnames = true, 
+colorlinks = true, 
+linkcolor = black,
+anchorcolor = black,
+citecolor = black,
+menucolor = black,
+urlcolor = blue
+]{hyperref}
+
+%%---------------------------------------------------------------------------%%
+\author{Stuart R. Slattery, Steven P. Hamilton, Thomas M. Evans, and Paul
+  P.H. Wilson
+  \\ \href{mailto:slatterysr@ornl.gov}{\texttt{slatterysr@ornl.gov}} }
+
+\date{\today} \title{A Parallel and Preconditioned Monte Carlo
+  Synthetic-Acceleration Method for the Simplified $P_N$
+  Approximation}
+\begin{document}
+\maketitle
+
+%%---------------------------------------------------------------------------%%
+\abstract
+
+We present Monte Carlo Synthetic Acceleration (MCSA) as a linear
+solver technique for the simplified $P_N$ ($SP_N$) discretization of
+the Boltzmann neutron transport equation. Using the fully-formed
+linear operator for the transport problem, we explore solutions to the
+$SP_N$ equations with MCSA using criticality calculations driving
+problem. Due to neutron scattering in the light water moderator,
+several difficulties arise when applying MCSA to these problems that
+were not observed in previous work where the method was applied to
+more opaque thermal radiaton transport systems. Of most significance,
+it was discovered for these problems that simply reducing the spectral
+radius of the Monte Carlo problem below unity is not enough to
+efficiently achieve convergence as reported in previous work. In order
+to effectively solve the $SP_N$ equations for the model problem, an
+algebraic preconditioning strategy is developed for MCSA where we
+utilize sparse approximate inverse representations of the operator as
+preconditioners to achieve convergence. Using the preconditioners,
+MCSA performance is compared with production implementations of
+preconditioned Krylov methods. Our studies indicate that
+the iterative performance of MCSA when used to solve the $SP_N$
+equations for light water reactor problems is competitive with the
+preconditioned Krylov methods when operator spectrum is properly
+conditioned. To solve large problems, we have parallelized the method
+by constructing a variant of the multiple-set overlapping-domain
+(MSOD) algorithm for Monte Carlo calculations. We discuss the method
+and then present results indicating its scalability.
+
+%%---------------------------------------------------------------------------%%
+\section{Introduction}
+
+Predictive modeling and simulation capability requires the combination
+of high fidelity models, high performance computing hardware that can
+handle the intense computational loads required by these models, and
+modern algorithms for solving these problems that leverage this high
+performance hardware. For nuclear reactor analysis, this predictive
+capability can enable tighter design tolerances for improved thermal
+performance and efficiency, higher fuel utilization and burnup, and
+high confidence in accident scenario models. Modern high fidelity
+deterministic methods for large scale problems where the solution over
+the entire core of a reactor is desired are often variants on the
+discrete ordinates ($S_N$) method \cite{evans_denovo:_2010} or the
+method of characteristics \cite{askew_1972}. For fission reactor
+neutronics simulations, the discrete ordinates method requires
+potentially trillions of unknown angular flux moments to be computed
+to achieve good accuracy for the responses of interest
+\cite{slaybaugh_acceleration_2011} which in many cases can be
+intractable without sufficient computational hardware. On the other
+side of the spectrum, low-fidelity diffusion solutions are often
+leveraged as an alternative to compute a solution over the entire
+domain a reactor core. In the 1960's, Gelbard developed an ad-hoc,
+multidimensional extension of the simple single dimension planar $P_N$
+equations that created a system of coupled, diffusion-like equations
+known as the simplified $P_N$ ($SP_N$) equations \cite{gelbard_1960}
+which incorporates additional angular information into a set of
+diffusion-like equations. Further work in both aysmptotic analysis and
+algorithmic development proceeded in the following decades to serve as
+a theoretical basis for the method
+\cite{morel_1996,brantley_simplified_2000}. Recent work has expanded
+the discretization to a fully algebraic form ammenable to solution
+with modern linear algebra techniques including Krylov solvers and
+advanced precondtioners including multigrid methods and incomplete
+factorizations \cite{hamilton_2014}. Using these new techniques, the
+reduction in numerical complexity compared to current deterministic
+solution methods using the $SP_N$ approximation could mean significant
+savings in both compute time and memory required and permit larger
+simulations to be performed on the available computing platforms.
+
+Looking towards future computing platforms, as machines begin to
+operate at hundreds of petaflops peak performance and beyond, trends
+toward reduced energy consumption will require incredibly high levels
+of concurrency to achieve the desired computation rates
+\cite{kogge_using_2011}. The end result of these hardware changes is
+that the larger number of low-powered processors will be prone to both
+soft failures such as bit errors in floating point operations and hard
+failures where the data owned by that processor cannot be recovered
+\cite{u.s._department_of_energy_resilient_2012}. Because these
+failures are predicted to be common, resilient solver technologies are
+are a possible means of overcoming these events at the application
+level. With solutions to deterministic transport problems based on
+Monte Carlo techniques, such issues are potentially alleviated by
+statistical arguments. In the case of soft failures, isolated floating
+point errors in the Monte Carlo simulation are absorbed within tally
+statistics while a hard failure is treated as a high variance event
+where some portion of the Monte Carlo histories lost.
+
+Considering these physics and hardware issues, the goal of this work
+is to research and develop Monte Carlo Synthetic Acceleration methods
+for neutron transport problems. These methods are based on using the
+Monte Carlo method to directly accelerate the convergence of
+traditional fixed-point iterative schemes for these problems. We aim
+to address both their benefits and their shortcomings in the context
+of the physics of interest and desire to identify areas in which
+improvements can be made. In previous work \cite{evans_monte_2014}, we
+applied the Monte Carlo synthetic acceleration (MCSA) method to the
+thermal radiation diffusion equation. For several transient problems
+we observed that MCSA performed competetively with preconditioned
+Krylov methods. In a continuation of these studies, we apply the
+method to light water reactor problems discretized by the $SP_N$
+equations. This system has no time dependence, a large scattering
+component, and assymetry in the linear operator, creating a set of
+problems complementary to the transient, opaque, and symmetric systems
+of our previous analyis. In addition, we apply a new fixed point
+iteration in the MCSA sequence as well as a new estimator in order to
+study their effects on convergence.
+
+The paper is organized as follows. First, we briefly introduce the
+$SP_N$ equations for eigenvalue problems along with the discretization
+used for this work and the model problem. We then describe the
+application of the MCSA algorithm to the solution of the
+equations. Next, we demonstrate that the basic Jacobi preconditioning
+applied in our previous work is unsatisfactory to achieve convergence
+for neutron transport in light water reactors and subsquently develop
+a new preconditioning scheme. We then apply this preconditioning
+scheme to a set of criticality problems and compare the
+performance of the preconditioned MCSA method to preconditioned Krylov
+methods. We then parallelize the MCSA algorithm leveraging the MSOD
+scheme to enable very large problems with a demonstration of
+scalability using the test problems. We then finish with conclusions
+and indication of future work.
+
+%%---------------------------------------------------------------------------%%
+\section{Simplified $P_N$ Approximation}
+For criticality problems, the space, angle, and energy discretizations
+for the $SP_N$ equations can be applied to the general eigenvalue form
+of the transport equation given by
+Eq~(\ref{eq:eigenvalue_transport}):
+\begin{multline}
+  -\nabla \cdot \Bigg[\frac{n}{2n+1}\mathbf{\Sigma_{n-1}}^{-1} \nabla
+    \Big(\frac{n-1}{2n-1} \mathbf{\Phi_{n-2}} +
+    \frac{n}{2n-1}\mathbf{\Phi_n} \Big) \\+
+    \frac{n+1}{2n+1}\mathbf{\Sigma_{n+1}}^{-1} \nabla
+    \Big(\frac{n+1}{2n+3}\mathbf{\Phi_n} +
+    \frac{n+2}{2n+3}\mathbf{\Phi_{n+2}}\Big) \Bigg] \\+
+  \mathbf{\Sigma_n} \mathbf{\Phi_n} = \frac{1}{k} \mathbf{F}
+  \mathbf{\Phi_n} \delta_{n0} \ \ \ \ \ \ \ \ \ n = 0,2,4,\cdots,N\:.
+  \label{eq:multigroup_spn_eigenvalue}
+\end{multline}
+with $\mathbf{\Phi_n}$ the vector of multigroup flux moments and the
+fission matrix, $\mathbf{F}$. We apply the following change of
+variables to yield the set of multigroup pseudo-moments
+$\mathbb{U}_n$:
+\begin{subequations}
+  \begin{gather}
+    \mathbb{U}_1 = \mathbf{\Phi}_0 + 2\mathbf{\Phi}_2 \\
+    \mathbb{U}_2 = 3\mathbf{\Phi}_2 + 4\mathbf{\Phi}_4 \\
+    \mathbb{U}_3 = 5\mathbf{\Phi}_4 + 6\mathbf{\Phi}_6 \\
+    \mathbb{U}_4 = 7\mathbf{\Phi}_6 \:.
+  \end{gather}
+  \label{eq:spn7_subs}
+\end{subequations}
+where now the application of the fission matrix to the moment vectors
+will be expanded into a set of block matrices in identical fashion to
+the scattering matrices:
+\begin{equation}
+  -\nabla \cdot \mathbb{D}_n \nabla \mathbb{U}_n + \sum_{m=1}^4
+  \mathbb{A}_{nm} \mathbb{U}_m = \frac{1}{k} \sum_{m=1}^4
+  \mathbb{F}_{nm} \mathbb{U}_m\ \ \ \ \ \ \ n = 1,2,3,4\:.
+  \label{eq:spn_fission_matrix}
+\end{equation}
+To complete the spatial discretization, the gradient operators are
+resolved by a finite volume scheme as in \cite{hamilton_2014} such
+that the flux and current are continuous at cell boundaries.. It
+should be noted here that with respect to a general MCSA scheme, the
+introduction of fission in the system will only affect the source
+vector in the linear system for the eigenvalue schemes used in this
+work. The linear operator, and therefore overall MCSA performance will
+be dictated by streaming and scattering as defined on the left-hand
+side. We refer the reader to \cite{hamilton_2014} for an extensive
+presentation of the $SP_N$ discretization used in this work.
+
+%%---------------------------------------------------------------------------%%
+\section{Monte Carlo Synthetic Acceleration}
+\label{sec:mcsa}
+In this section we briefly review the Monte Carlo method for linear
+systems and Monte Carlo Synthetic Acceleration. Given a linear
+problem:
+\begin{equation}
+  \ve{A} \ve{x} = \ve{b}\:,
+  \label{eq:linear_problem}
+\end{equation}
+where $\ve{A} \in \mathbb{R}^{N \times N}$ is a matrix operator such
+that $\ve{A} : \mathbb{R}^{N} \rightarrow \mathbb{R}^{N}$, $\ve{x} \in
+\mathbb{R}^N$ is the solution vector, and $\ve{b} \in
+\mathbb{R}^N$. To form the Monte Carlo method we define the linear
+system adjoint to Eq~(\ref{eq:linear_problem}):
+\begin{equation}
+  \ve{A}^T \ve{y} = \ve{d}\:,
+  \label{eq:adjoint_linear_problem}
+\end{equation}
+where $\ve{y}$ and $\ve{d}$ are the adjoint solution and source
+vectors respectively and $\ve{A}^T$ is the adjoint operator for
+$\ve{A} \in \mathbb{R}^{N \times N}$ which we hten split to get:
+\begin{equation}
+  \ve{y} = \ve{H}^T \ve{y} + \ve{d}\:,
+  \label{eq:adjoint_split_system}
+\end{equation}
+where $\ve{H}^T$ is the adjoint iteration matrix. The spectral radius
+of $\ve{H}^T$ must remain less than 1 for convergence. By defining the
+following adjoint inner product equivalence \cite{spanier_monte_1969}:
+\begin{equation}
+  \langle \ve{A}^T \ve{y}, \ve{x} \rangle = \langle \ve{y}, \ve{A}
+  \ve{x} \rangle\:.
+  \label{eq:adjoint_operator_product}
+\end{equation}
+it follows that:
+\begin{equation}
+  \langle \ve{x}, \ve{d} \rangle = \langle \ve{y}, \ve{b} \rangle\:.
+  \label{eq:adjoint_vector_relation}
+\end{equation}
+We can acquire the adjoint solution by forming the Neumann series by
+writing Eq~(\ref{eq:adjoint_split_system}) as:
+\begin{equation}
+  \ve{y} = (\ve{I} - \ve{H}^T)^{-1} \ve{d}\:,
+  \label{eq:adjoint_split_system_2}
+\end{equation}
+which in turn yields the Neumann series using the adjoint operator:
+\begin{equation}
+  \ve{y} = \sum_{k=0}^{\infty} (\ve{H}^T)^k\ve{d}\:.
+  \label{eq:adjoint_neumann_series}
+\end{equation}
+We expand this summation to again yield a series of transitions that
+can be approximated by a Monte Carlo random walk sequence by forming
+the Neumann series in reverse order:
+\begin{equation}
+  y_i = \sum_{k=0}^{\infty}\sum_{i_1}^{N}\sum_{i_2}^{N}\ldots
+  \sum_{i_k}^{N}h_{i_k,i_{k-1}}\ldots h_{i_2,i_1} h_{i_1,i} d_{i_k}\:.
+  \label{eq:adjoint_neumann_solution}
+\end{equation}
+We can readily build an estimator for the adjoint solution from this
+series expansion, but we instead desire the solution to
+Eq~(\ref{eq:linear_problem}). Here we have 2 unknowns, $\ve{y}$ and
+$\ve{d}$, and therefore we require two constraints to close the
+system. We use Eq~(\ref{eq:adjoint_vector_relation}) as the first
+constraint and as a second constraint we select:
+\begin{equation}
+  \ve{d} = \boldsymbol{\delta}_j\:,
+  \label{eq:adjoint_second_constraint}
+\end{equation}
+where $\boldsymbol{\delta}_j$ is one of a set of vectors in which the
+$j^{th}$ component is the Kronecker delta function $\delta_{i,j}$. If
+we apply Eq~(\ref{eq:adjoint_second_constraint}) to our first
+constraint Eq~(\ref{eq:adjoint_vector_relation}), we get the following
+convenient outcome:
+\begin{equation}
+  \langle \ve{y}, \ve{b} \rangle = \langle \ve{x},
+  \boldsymbol{\delta}_j \rangle = x_j \:,
+  \label{eq:inner_product_constraint}
+\end{equation}
+meaning that if we compute the inner product of the original source
+and the adjoint solution using a delta function source, we recover one
+component of the original solution.
+
+In terms of radiation transport, this adjoint method is equivalent to
+a traditional forward method where the initial state $i_0$ of the
+random walk is determined by sampling the source vector $\ve{b}$ with
+probabilities:
+\begin{equation}
+  P_{(i_0=i)}(\nu) = \frac{|b_i|}{||\ve{b}||_1}\:,
+  \label{eq:adjoint_source_probability}
+\end{equation}
+with a random walk starting weight of:
+\begin{equation}
+  W_0 = ||\ve{b}||_1 \frac{b_i}{|b_i|}\:,
+  \label{eq:adjoint_starting_weight}
+\end{equation}
+which gives the additional useful relation:
+\begin{equation}
+  b_{i_0} = W_0 P_{(i_0=i)}\:.
+  \label{eq:adjoint_source_definition}
+\end{equation}
+We build weights and probabilities for the random walk using the
+\textit{adjoint Neumann-Ulam decomposition} of $\ve{H}$:
+\begin{equation}
+  \ve{H}^{T} = \ve{P} \circ \ve{W}\:,
+  \label{eq:adjoint_neumann_ulam}
+\end{equation}
+where we are forming the decomposition with respect to the transpose
+of $\ve{H}$. $\ve{P}$ is defined element-wise as:
+\begin{equation}
+  p_{ij} = \frac{|h_{ji}|}{\sum_j |h_{ji}|}\:,
+  \label{eq:adjoint_probability}
+\end{equation}
+such that we expect to select a new state, $j$, from the current state
+in the random walk, $i$, by sampling column-wise (or row-wise if an
+adjoint probability matrix is formed). Per
+Eq~(\ref{eq:adjoint_neumann_ulam}), the transition weight is then
+defined as:
+\begin{equation}
+  w_{ij} = \frac{h_{ji}}{p_{ij}}\:.
+  \label{eq:adjoint_weight}
+\end{equation}
+Using the decomposition we can then define an expectation value for
+the adjoint method. The contribution to the solution in state $j$ from
+a particular random walk permutation of $k$ events is given by
+\textit{collision estimator}:
+\begin{equation}
+  X_{j}(\nu) = \sum_{m=0}^k W_{m} \delta_{i_m,j}\:,
+  \label{eq:adjoint_permutation_contribution}
+\end{equation}
+where the Kronecker delta indicates that the tally contributes only in
+the current state, $i_m$, of the random walk. The expectation value
+using all permutations is then:
+\begin{equation}
+  E\{X_j\} = \sum_{\nu} P_{\nu} X_{j}(\nu)\:,
+  \label{eq:adjoint_expectation_value}
+\end{equation}
+which, if expanded utilizing Eq~(\ref{eq:adjoint_source_definition})
+to insert the source term, directly recovers the exact solution:
+\begin{equation}
+  \begin{split}
+    E\{X_j\} &=\sum_{k=0}^{\infty}\sum_{i_1}^{N}\sum_{i_2}^{N}\ldots
+    \sum_{i_k}^{N} b_{i_0} p_{i_0,i_1}p_{i_1,i_2}\ldots
+    p_{i_{k-1},i_k} w_{i_0,i_1}w_{i_1,i_2}\ldots
+    w_{i_{k-1},i_k} \delta_{i_k,j} \\ &= x_{j}\:,
+  \end{split}
+  \label{eq:adjoint_expectation_expansion}
+\end{equation}
+therefore, also providing an unbiased Monte Carlo estimate of the
+solution. It should be noted here that
+Eq~(\ref{eq:adjoint_expectation_expansion}) only computes a single
+component of our desired solution vector when really what we desire is
+the entire solution vector. In an adjoint Monte Carlo simulation using
+this estimator, the $w_{ij}$ elements that are added into the tally
+for each state are only selected if/when the random walk currently
+resides in that state. Much like a mesh tally in a particle transport
+simulation, we have $N$ simultaneous tallies for $\ve{A} \in
+\mathbb{R}^{N \times N}$ that will yield the entire solution vector.
+
+In addition to the collision estimator, an additional estimator is
+available due to the work of Okten \cite{okten_solving_2005} that uses
+the method of expected values as a means to improve the Monte Carlo
+estimate. As outlined by Spanier and Gelbard
+\cite{spanier_monte_1969}, the method of expected values is a
+deterministic averaging of events that may potentially occur in the
+Monte Carlo random walk sequence. Okten applied this principle
+directly to discrete Monte Carlo by forming the \textit{expected value
+  estimator} for a random walk of $k$ events:
+\begin{equation}
+  X_{j}(\nu) = b_j + \sum_{m=0}^k W_m h_{j,i_m}\,
+  \label{eq:expected_value_estimator}
+\end{equation}
+where now the contribution of the iteration matrix is
+deterministically averaged at step $m$ over all potential states $j$
+that may be reached from the current state $i_m$. Via Okten, the
+estimator can be shown to be unbiased through a comparison to the
+collision estimator. We can first rewrite the summation in
+Eq~(\ref{eq:expected_value_estimator}):
+\begin{equation}
+  X_{j}(\nu) = b_j + \sum_{m=0}^k \sum_{i=1}^N W_m
+  \delta_{i_m,i} h_{ji}\,
+  \label{eq:unbiased_eval_1}
+\end{equation}
+where $N$ is the number of states in the system. Immediately, we see
+the collision estimator as defined by
+Eq~(\ref{eq:adjoint_permutation_contribution}) and can therefore write
+the expectation value as:
+\begin{equation}
+  E\{X_{j}\} = b_j + \sum_{i=1}^N E\{X_{i}\} h_{ji}\,
+  \label{eq:unbiased_eval_2}
+\end{equation}
+which is equivalently is the $j^{th}$ component of
+Eq~(\ref{eq:richardson_split}):
+\begin{equation}
+  E\{X_{j}\} = b_j + \sum_{i=1}^N x_{i} h_{ji}\,
+  \label{eq:unbiased_eval_2}
+\end{equation}
+and is therefore an unbiased estimate. Compared to the collision
+estimator, the expected value estimator provides additional
+information at every step of the random walk, yielding potentially
+better statistics with the same amount of transport
+work. Conveniently, even if no Monte Carlo histories are computed, the
+expected value estimator still deterministically computes the first
+term of the Neumann Series, $\ve{H}^0\ve{b}$, whereas the collision
+estimator will provide no information.
+
+\subsection{MCSA Solution of the $SP_N$ Equations}
+\label{subsec:mcsa_solution}
+To generate the multiplication factor and steady-state flux
+distribution for this problem, at every eigenvalue iteration MCSA is
+used to solve the resulting $SP_N$ problem using the provided fission
+source. Algorithm~\ref{alg:power_iteration} presents the use of MCSA
+within a power iteration strategy to find the multiplication factor.
+\begin{algorithm}[h!]
+  \caption{Power Iteration MCSA Scheme}
+  \label{alg:power_iteration}
+  \begin{algorithmic}
+    \State $k_0 =$ initial guess
+    \State $\mathbf{\Phi}_0 =$ initial guess
+    \State $n = 0$
+    \While{$|\frac{k^n - k^{n-1}}{k^n}| < \epsilon$}
+    \Comment{Iterate until convergence of the eigenvalue}
+    \State $\mathbf{M} \mathbf{\Phi}^{n+1} = \frac{1}{k^n} \mathbf{F} \mathbf{\Phi}^n$
+    \Comment{Solve for the new flux state with MCSA}
+    \State $k^{n+1} = k^n \frac{\int \mathbf{F} \mathbf{\Phi}^{n+1} d\mathbf{r}}{\int
+      \mathbf{F} \mathbf{\Phi}^n d\mathbf{r}}$
+    \Comment{Update the multiplication factor}
+    \State $n = n+1$
+    \EndWhile
+  \end{algorithmic}
+\end{algorithm}
+Here, $\mathbf{M}$ is the transport operator generated on the
+left-hand side of the $SP_N$ discretization, $\mathbf{F}$ is the
+fission matrix, and $\mathbf{\Phi}$ the multigroup neutron flux. This
+problem is significantly more complicated than the simple test problem
+used for the previous spectral analysis. Fission has been introduced
+into the set of equations and the addition of moderator into the
+system will increase the amount of scattering, creating a
+significantly more difficult problem manifesting itself in an
+iteration matrix with a larger spectral radius. When using MCSA, the
+linear operator applied to $\mathbf{\Phi}^{n+1}$ at each eigenvalue
+iteration will dictate convergence and remain unchanged throughout the
+computation while the addition of fission to the system will only
+modify the source of neutrons and the multiplication factor while not
+affecting Monte Carlo transport.
+
+At each eigenvalue iteration, we then solve the linear system with the
+MCSA:
+\begin{subequations}
+  \begin{gather}
+    \ve{r}_{l} = \frac{1}{k^n}\ve{F}\mathbf{\Phi}^n -
+    \ve{M}\mathbf{\Phi}^{n+1}_{l}\:,\\
+    \mathbf{\Phi}^{n+1}_{l+1/2} = \mathbf{\Phi}^{n+1}_l + \ve{r}_l\:,\\
+    \ve{r}_{l+1/2} = \frac{1}{k^n}\ve{F}\mathbf{\Phi}^n -
+    \ve{M}\mathbf{\Phi}^{n+1}_{l+1/2}\:,\\
+    \ve{M}\delta\mathbf{\Phi}^{n+1}_{l+1/2} = \ve{r}_{l+1/2}\:,\\
+    \mathbf{\Phi}^{n+1}_{l+1} = \mathbf{\Phi}^{n+1}_{l+1/2} + \delta
+    \mathbf{\Phi}_{l+1/2}\:,
+  \end{gather}
+  \label{eq:mcsa}
+\end{subequations}
+where the $l$ subscript indicates the MCSA iteration number and $n$
+again indicates the eigenvalue iteration. We refer the reader to
+\cite{evans_monte_2014} for more a more complete definition of the
+Monte Carlo method for linear systems and MCSA.
+
+\subsection{Preconditioned MCSA}
+\label{subsec:preconditioning}
+In most cases, at least a minimal amount of \textit{preconditioning}
+of the linear system will be required in order to use the class of
+stochastic methods described. Although these methods have no symmetry
+requirements for convergence, they do require that the spectral radius
+of the iteration matrix be less than one. Preconditioning serves as a
+means of achieving this by altering the eigenvalue spectrum of the
+iteration matrix. It is possible to use general left, right, and left/right
+preconditioning with MCSA by carefully considering the underlying
+Monte Carlo problem that will be solved with the Neumann-Ulam
+method. We consider here the general left/right preconditioned method
+as the left or right preconditioned methods can be inferred from its
+formulation. 
+
+We consider a left preconditioner $\ve{M_L}$ and a right
+preconditioner $\ve{M_R}$. The left/right preconditioned linear
+problem is then:
+\begin{equation}
+  \ve{M}_L^{-1}\ve{A}\ve{M}_R^{-1}\ve{M}_R\ve{x} = \ve{M}_L^{-1}\ve{b}\:.
+  \label{eq:left_right_linear_problem}
+\end{equation}
+To handle the right preconditioning, the system is written with a
+substitution of variables:
+\begin{equation}
+  \ve{M}_L^{-1}\ve{A}\ve{M}_R^{-1}\ve{u} = \ve{M}_L^{-1}\ve{b}\:,
+  \label{eq:left_right_subs_problem}
+\end{equation}
+with
+\begin{equation}
+  \ve{x} = \ve{M}_R^{-1}\ve{u}\:.
+  \label{eq:left_right_recover}
+\end{equation}
+To apply such a method to MCSA, we solve for the substituted variable
+$\ve{u}$ during the iteration sequence:
+\begin{subequations}
+  \begin{gather}
+    \ve{u}^{k+1/2} = \ve{u}^k + \ve{r}^k\:,\\
+    \ve{r}^{k+1/2} = \ve{M}_L^{-1}(\ve{b}-\ve{A}\ve{M}_R^{-1}\ve{u}^{k+1/2})\:,\\ 
+    \ve{M}_L^{-1}\ve{A}\ve{M}_R^{-1}\delta\ve{u}^{k+1/2} = \ve{r}^{k+1/2}\:,\\ 
+    \ve{u}^{k+1} = \ve{u}^{k+1/2} + \delta \ve{u}^{k+1/2}\:,\\
+    \ve{r}^{k+1} = \ve{M}_L^{-1}(\ve{b}-\ve{A}\ve{M}_R^{-1}\ve{u}^{k+1})\:,
+  \end{gather}
+  \label{eq:left_right_mcsa}
+\end{subequations}
+and then recover the original solution vector with
+Eq~(\ref{eq:left_right_recover}). For the Monte Carlo problem, we
+isolate the generation of the correction:
+\begin{equation}
+  \ve{M}_L^{-1}\ve{A}\ve{M}_R^{-1}\delta\ve{u}^{k+1/2} = \ve{r}^{k+1/2}\:,
+  \label{eq:left_right_correction}
+\end{equation}
+and note that the preconditioned residual of the substituted variable
+is now serving as the source and the new iteration matrix is:
+\begin{equation}
+  \ve{H} = \ve{I} - \ve{M}_L^{-1}\ve{A}\ve{M}_R^{-1}\:.
+  \label{eq:left_right_iteration_matrix}
+\end{equation}
+As we require $(i,j)$ element-wise access to the iteration matrix in
+order to construct probabilities and weights for the Monte Carlo
+procedure from the Neumann-Ulam decomposition, the \textit{composite
+  operator}, $\ve{M}_L^{-1}\ve{A}\ve{M}_R^{-1}$, must be formed via
+matrix-matrix multiplication. 
+
+Several possible shortcomings of this preconditioning approach are
+readily observed. First, the matrix-matrix multiplication operation
+for sparse, parallel distributed matrices is significantly more
+expensive than a matrix-vector multiplication operation. Second, each
+preconditioner must be explicitly inverted, an operation in itself
+that may be expensive and which prohibits the use of any
+preconditioners which provide no mechanism to extract their
+inverse. Third, for many modern preconditioning methods, this
+inversion may yield dense matrices, destroying sparsity and further
+impeding the performance of a matrix-matrix multiplication
+operation. It is also interesting to note that the Monte Carlo problem
+in the general left/right preconditioned scheme given by
+Eq~(\ref{eq:left_right_correction}) is not fully left/right
+preconditioned (meaning that we do not recover $\ve{x}$), but instead
+part of a sequence for finding the substituted variable $\ve{u}$. We
+do, however, gain the benefits of this general preconditioning by
+building the iteration matrix in
+Eq~(\ref{eq:left_right_iteration_matrix}) from the fully
+preconditioned linear operator.
+
+\subsubsection{Block Jacobi Preconditioning}
+
+\subsubsection{Sparse Approximate Inverse Preconditioning}
+
+%%---------------------------------------------------------------------------%%
+\section{Criticality Calculations}
+
+\subsection{C5G7 Benchmark}
+
+\subsection{Light Water Reactor Fuel Assemblies}
+
+%%---------------------------------------------------------------------------%%
+\section{Parallel MCSA}
+\label{sec:parallel_mcsa}
+To date, parallel Neumann-Ulam methods have been limited to full
+domain replication with parallelism exploited through individual
+histories \cite{alexandrov_efficient_1998} and in this work we will
+exploit particle transport algorithms to alleviate this. In this
+section we briefly review particle transport methods for domain
+decomposed Monte Carlo. We then devise a parallel algorithm for the
+Neumann-Ulam method based on the multiple-set overlapping-domain
+decomposition algorithm and a parallel algorithm for the MCSA
+iteration that leverages the parallel Monte Carlo algorithm and
+general parallel matrix-vector operations. We then perform parallel
+scaling studies to test its performance on a leadership class machine
+and compare this performance to the production Krylov methods.
+
+%%---------------------------------------------------------------------------%%
+\subsection{Domain Decomposed Monte Carlo}
+\label{subsec:msod}
+Large-scale problems will for reasons typically related to memory
+restrictions or performance have their data partitioned such that each
+parallel process owns a subset of the equations in the linear
+system. Given this convention, the Neumann-Ulam Monte Carlo algorithm
+must perform random walks over a domain that is decomposed and must
+remain decomposed to avoid the same performance and memory
+restrictions. To parallelize this algorithm, we then seek parallel
+Monte Carlo algorithms that handle domain decomposition.
+
+To motivate this problem, consider the square domain presented in
+Figure~\ref{fig:ddmc_example} and on this domain we imagine a Monte
+Carlo particle transport problem. If the domain were decomposed into 9
+subdomains as shown, each of those subdomains and their associated
+data (i.e. cross subsections) could be owned by a different parallel
+process in the computation. In Figure~\ref{fig:ddmc_example}, the
+tracks of 3 particles born in the center subdomain are shown. In this
+example, particle A is first transported from the center domain to the
+domain directly to the left. Before the scattering event in the new
+domain may be processed, particle A must be communicated between the
+two parallel processes that own those domains. For any given particle
+in the transport simulation, this communication event may hardly occur
+during the lifetime of the particle (particle B), or may occur many
+times (particle C) depending on the problem parameters and the random
+path in phase space taken by the particle. Scalable parallel
+algorithms for domain decomposed Monte Carlo are those that handle
+this domain-to-domain communication of particles effectively and
+balance it with the on-process computations for particle interactions,
+tallies, response calculations, and other simulation requirements.
+\begin{figure}[t!]
+  \begin{center}
+    \scalebox{1.5}{
+      \input{chapters/parallel_mc/ddmc_example.pdftex_t} }
+  \end{center}
+  \caption{\textbf{Domain decomposed Monte Carlo transport example
+      illustrating how domain decomposition requires parallel
+      communication of particles.} \textit{If a particle crosses a
+      domain boundary it must be communicated to the next domain in
+      its path.}}
+  \label{fig:ddmc_example}
+\end{figure}
+
+For a domain decomposed Neumann-Ulam method, the situation is very
+much the same where instead the transport process is now discrete and
+the "physics" of the transport process is the Monte Carlo game with
+probabilities and weights described by
+Eq~(\ref{eq:neumann_ulam_decomposition}) for the given linear
+problem. Figure~\ref{fig:ddnu_example} gives the domain decomposed
+Neumann-Ulam analog of particle transport problem in
+Figure~\ref{fig:ddmc_example}. Imagine in this problem that we are
+solving for the monoenergetic scalar neutron flux as in the model
+diffusion problem presented in Appendix~\ref{chap:diffusion_problem}.
+In this problem, the solution has only a spatial dependence and
+therefore each point in the mesh corresponds to an equation in the
+resulting linear system. In Figure~\ref{fig:ddnu_example}, the domain
+has now been discretized by this mesh and again decomposed into 9
+subdomains, each owning a piece of the mesh and therefore the
+corresponding equations in the linear system. As we play the Monte
+Carlo game presented in Chapter~\ref{ch:stochastic_methods}, the
+discretization and resulting Neumann-Ulam decomposition of the problem
+describes how each state in the system is coupled to the other states
+in the system. This coupling is then responsible for the discrete
+random walk that each history takes as shown in this example. As
+discrete states (or rows in the linear system) that do not exist in
+the local domain are reached during the random walk by stochastic
+histories, the histories must be communicated to the subdomain that
+does own the discrete state in an analogous fashion to the particles
+in the previous example.
+\begin{figure}[t!]
+  \begin{center}
+    \scalebox{1.5}{
+      \input{chapters/parallel_mc/ddnu_example.pdftex_t} }
+  \end{center}
+  \caption{\textbf{Domain decomposed Neumann-Ulam example illustrating
+      how domain decomposition requires parallel communication of
+      histories.} \textit{Each mesh point corresponds to an equation
+      in the linear system and the coupling among equations is
+      described by the discretization of the problem.}}
+  \label{fig:ddnu_example}
+\end{figure}
+
+To further motivate using a parallel algorithm similar to particle
+transport methods, again consider history A in
+Figure~\ref{fig:ddnu_example}. This history begins in the center
+subdomain and through the course of transitioning through states in
+the system arrives at a state that exists in the subdomain directly to
+the left of the center subdomain. History A must then be communicated
+from the center subdomain to the subdomain immediately to the left to
+continue the random walk. As with the particle transport system, we
+may find that histories in a domain decomposed Neumann-Ulam method are
+only communicated a few times (history B) if at all, or they may be
+communicated many times (history C) depending on the discretization
+and the outcome of the Monte Carlo game. In identical fashion to the
+particle transport problem, a domain decomposed Neumann-Ulam method
+has the same communication requirements with all histories in both
+examples requiring the same parallel operations. The amount of
+communication of histories from domain to domain will be the primary
+factor in the parallel scalability of the algorithm. In
+Appendix~\ref{chap:parallel_theory}, the number of histories
+communicated in a given problem are quantified analytically for a
+simple model problem.
+
+%%---------------------------------------------------------------------------%%
+\subsection{Domain Decomposed Neumann-Ulam Algorithm}
+\label{subsec:asynchronous_algorithm}
+In the context of radiation transport, in 2009 Brunner and colleagues
+provided a fully asynchronous domain decomposed parallel algorithm as
+implemented in production implicit Monte Carlo codes
+\cite{brunner_efficient_2009}. We will adapt their algorithm and
+directly apply it to construct a parallel formulation of the
+Neumann-Ulam method. Direct analogs can be derived from their works by
+noting that the primary difference between solving a linear transport
+system with Monte Carlo methods and traditional fixed source Monte
+Carlo transport problems is the content of the Markov chains that are
+generated.
+
+In this subsection Brunner and Brantley's fully asynchronous algorithm,
+which was effectively implemented verbatim for this work, is presented
+along with its application to the Neumann-Ulam method. In their work
+they identify two data sets that are required to be communicated: the
+sharing of particles that are transported from one domain to another
+and therefore from one processor to another and a global communication
+that signals if particle transport has been completed on all
+processors. Both of these communication sequences will be addressed at
+a high level along with how the Monte Carlo data structures they
+require are constructed in parallel.
+
+\subsubsection{Parallel Transport Domain and Source}
+\label{subsubsec:domain_generation}
+To utilize a parallel transport algorithm, we must generate the
+required data with the correct parallel decomposition. For the
+Neumann-Ulam method, the transport domain consists of all states in
+the system that are local, and the probabilities and weights for all
+state transitions possible in the local domain. At the core of this
+representation is the Neumann-Ulam decomposition of the linear
+operator as given by Eq~\ref{eq:neumann_ulam_decomposition}. Given an
+input parallel decomposition for the linear operator, by definition
+the Neumann-Ulam decomposition will have the same parallel
+decomposition. In addition, the source vector will have the same
+parallel decomposition as the input matrix and therefore all of the
+birth states for the histories will exist for at least a single
+transition event within the local domain.
+
+Compared to the serial construction of the Neumann-Ulam decomposition,
+data for all states that are required to be on process must be
+collected in parallel so that all possible transitions that leave the
+local domain may be correctly communicated. As an example of this
+state collection, Figure~\ref{fig:diffusion_graph} gives the adjacency
+graph of a single state in the neutron diffusion matrix for the model
+problem presented in Appendix~\ref{chap:diffusion_problem}. The
+discretization stencil of the diffusion problem dictates the structure
+of this graph and the states to which a history may transition.
+
+\begin{figure}[t!]
+  \begin{center}
+    \scalebox{1.5}{ \input{chapters/parallel_mc/stencil_graph.pdftex_t} }
+  \end{center}
+  \caption{\textbf{Neutron diffusion equation state adjacency graph.}
+    \textit{The structure of the graph comes from the discretization
+      of the Laplacian operator describing the diffusion
+      physics. Adjacent boundary states are collected by traversing
+      the graph one step for all local boundary states and collecting
+      the equations for those states that are not local. For a given
+      transition in the random walk for the diffusion problem, a
+      history at mesh point $(i,j)$ may transition to all adjacent
+      mesh points including itself, corresponding to a global state
+      transition from $m$ to $n$ in the linear system.}}
+  \label{fig:diffusion_graph}
+\end{figure}
+
+In this example, we currently reside in state $m$ of the system,
+directly correlating to physical location $(i,j)$ in the mesh (the
+center node). If we play the Monte Carlo game to move to a new state
+$n$, then we may move to any of the nodes in this graph, including the
+node at which we started. If grid point $(i,j)$ in this example is on
+the right side of the local domain boundary and we transition to the
+state $n$ corresponding to mesh point $(i+1,j)$, we are now in a state
+that is owned by the adjacent domain. We must then gather the
+identification number for the neighboring process that owns grid point
+$(i+1,j)$ such that we have an address to send all histories that
+leave the local domain boundary with this state as their
+destination. For the parallel source, these adjacent states are not
+required as histories may only be born in states in the local
+domain. Once the local Neumann-Ulam decomposition has been generated
+with the proper communication data collected from adjacent domains,
+Monte Carlo transport may proceed in parallel.
+
+\subsubsection{Domain Decomposed Algorithm}
+\label{subsubsec:parallel_mc_algorithm}
+
+We next present Brunner and Brantley's 2009 algorithm in detail and
+discuss how it is adapted to parallelize the Neumann Ulam
+method. Presented in Algorithm~\ref{alg:parallel_mc_algorithm}, the
+top level sequence performs the task of managing history transport
+through the local domain, communication of histories to adjacent
+domains, and the completion of transport. For each of these specific
+tasks, additional algorithms, shown in bold in
+Algorithm~\ref{alg:parallel_mc_algorithm}
+(e.g. \textbf{LocalHistoryTransport()}), are presented for additional
+detail in the same manner as Brunner and Brantley.
+
+\begin{algorithm}[h!]
+  \caption{Parallel Neumann-Ulam Algorithm}
+  \label{alg:parallel_mc_algorithm}
+  \begin{algorithmic}[1]
+    \State get list of neighbor processors 
+    \Comment{Each neighbor owns an adjacent subdomain}
+    \ForAll{neighbors}
+    \State post non-blocking receive for maximum history buffer size
+    \State allocate history buffer
+    \EndFor
+    \State \textit{historiesCompleted} = 0
+    \Comment{local+child finished histories}
+    \State \textit{localProcessed} = 0
+    \Comment{local trajectories computed (not necessarily finished)}
+    \State calculate parent and children processor ID numbers in
+    binary tree
+    \ForAll{child processes}
+    \State post non-blocking receive for \textit{historiesCompleted} tally
+    \EndFor
+    \State post non-blocking receive for stop message from parent
+    \While{stop flag not set}
+    \If{any local histories in source or stack}
+    \State \textbf{LocalHistoryTransport()}
+    \State ++\textit{localProcessed}
+    \EndIf
+    \If{message check period == \textit{localProcessed} || no local histories}
+    \State \textbf{ProcessMessages()}
+    \State \textit{localProcessed} = 0
+    \EndIf
+    \If{no local histories}
+    \State \textbf{ControlTermination()}
+    \EndIf
+    \EndWhile
+    \State cancel outstanding non-blocking requests
+    \State free all history buffers
+  \end{algorithmic}
+\end{algorithm}
+
+Successful execution of this algorithm requires construction of the
+parallel Neumann-Ulam decomposition as described in the preceding
+subsection. This data is used to begin
+Algorithm~\ref{alg:parallel_mc_algorithm} where lines 1-5 use the
+collected list of neighboring processors generated while building the
+Neumann-Ulam decomposition to setup the set of asynchronous messages
+required for domain-to-domain communication. Again, consider this
+communication pattern for the 9 subdomain example given by
+Figure~\ref{fig:nearest_neighbor_comm}. In this pattern, each boundary
+domain has two neighbors and the center domain four neighbors with
+which they will communicate parallel histories and this communication
+goes both ways as represented by the adjacent arrows in the
+figure. For each set of neighbors, a non-blocking send and receive is
+required with data buffers allocated with a user-defined size for
+incoming and outgoing histories. This non-blocking structure is
+critical to the performance of the algorithm in that it permits local
+history transport to continue while new histories to transport are
+being collected in the buffers. When a given process is ready to do
+more work, it can check these data buffers for incoming histories
+requiring further transport. In this way there is a maximum amount of
+overlap between communication and transport of histories.
+
+\begin{figure}[t!]
+  \begin{center}
+    \scalebox{1.25}{ \input{chapters/parallel_mc/domain_to_domain.pdftex_t} }
+  \end{center}
+  \caption{\textbf{Nearest neighbor history communication sequence.}
+    \textit{Each subdomain in the system has a set of nearest
+      neighbors determined by the parallel adjacency graph of the
+      input matrix. The subdomains are indexed by an integer.}}
+  \label{fig:nearest_neighbor_comm}
+\end{figure}
+
+Once the nearest-neighbor communication sequence has been prepared,
+the completion of transport sequence is readied in lines 6 and 8-12 in
+Algorithm~\ref{alg:parallel_mc_algorithm}. In these lines we are
+setting up an asynchronous binary communication tree as presented for
+the same 9 subdomain example in Figure~\ref{fig:binary_comm_tree}. In
+this communication pattern, each process has one parent process
+(except for the MASTER process 0) to which it will non-blocking send
+the number of histories that terminated their transport procedure by
+weight cutoff in the local domain. Equivalently, each process has up
+to two child processes from which it will receive their completed
+number of histories with a non-blocking receive operation. Setting up a
+tree in this manner lets the completed history tally
+(\textit{historiesCompleted} in the algorithm) be updated
+incrementally and funneled to the root process. Because we are solving
+fixed source problems with the Neumann-Ulam algorithm without any type
+of variance reduction that may generate more histories that we started
+with, once the root process completion sum tallies to the number of
+histories in the source, transport is complete. Once this occurs, the
+root process non-blocking sends the stop message to its children and
+each process non-blocking receives a stop message from its parent as
+shown in Figure~\ref{fig:binary_comm_tree}. The stop message is then
+propagated up the tree in the same manner.
+
+\begin{figure}[t!]
+  \begin{center}
+    \scalebox{1.0}{
+      \input{chapters/parallel_mc/binary_comm_tree.pdftex_t} }
+  \end{center}
+  \caption{\textbf{Binary communication tree for coordinating the end
+      of a parallel Neumann-Ulam solve.} \textit{Each child process
+      reports to its parents how many histories completed within its
+      domain. When the root process sums all complete histories, it
+      forwards the stop signal to its children which in turn forward
+      the message up the tree. The subdomains are indexed by an
+      integer.}}
+  \label{fig:binary_comm_tree}
+\end{figure}
+
+With these communication structures prepared, we can now enter the
+main transport loop at line 13 of
+Algorithm~\ref{alg:parallel_mc_algorithm}. In this loop, a set of
+mutually exclusive tasks enabled by the fully asynchronous
+communication patterns are executed until the stop signal is received
+from the parent process in the binary tree. In this case, mutually
+exclusivity permits all local operations to occur independently of
+other processes in the system and their current state. For each
+process, there are two data structures from which histories may be
+obtained for the transport procedure. The first is the local source
+and the second is a LIFO (last in first out) stack of histories
+transported to the local domain from the adjacent domains. In lines
+14-17, if histories exist in either of these data structures, then
+they are transported through the local domain using
+Algorithm~\ref{alg:local_history_transport}. If the history is
+terminated by weight cutoff the \textit{historiesCompleted} tally is
+updated. If it hits the boundary of the domain it is added to the
+outgoing history buffer for the neighboring domain and if the buffer
+is full, it is sent to the neighboring domain with a non-blocking
+operation and the memory associated with that buffer reallocated. In
+all instances that Algorithm~\ref{alg:local_history_transport} is
+executed, \textit{localProcessed} is incremented to account for
+histories that have been processed locally.
+
+\begin{algorithm}[h!]
+  \caption{\textbf{LocalHistoryTransport()}}
+  \label{alg:local_history_transport}
+  \begin{algorithmic}[1]
+    \State transport history through the domain until termination
+    \If{history is in neighbor boundary state}
+    \State add history to neighbor buffer
+    \If{neighbor buffer is full}
+    \State non-blocking send history buffer to neighbor
+    \State allocate new history buffer for neighbor
+    \EndIf
+    \Else
+    \If{history terminated by weight cutoff}
+    \State post-process history
+    \State ++\textit{historiesCompleted}
+    \EndIf
+    \EndIf
+  \end{algorithmic}
+\end{algorithm}
+
+Continuing in the transport loop, if there are no local histories to
+transport or the \textit{localProcessed} count has reached some
+user-defined check frequency, lines 18-21 in
+Algorithm~\ref{alg:local_history_transport} check for more histories
+to transport in the incoming data buffers by calling
+Algorithm~\ref{alg:process_messages}. For each neighboring domain in
+the problem, if there are histories in those data buffers then they
+are added to the stack for processing and the non-blocking receive
+operation re-instantiated. In addition, the terminated histories count
+is updated with those values received from the child processes.
+
+\begin{algorithm}[h!]
+  \caption{\textbf{ProcessMessages()}}
+  \label{alg:process_messages}
+  \begin{algorithmic}[1]
+    \ForAll{received history buffers from neighbor}
+    \State unpack number of histories in buffer
+    \State add the histories to the running stack
+    \State re-post non-blocking receive with neighbor
+    \EndFor
+    \ForAll{\textit{historiesCompleted} messages from children}
+    \State \textit{historiesCompleted} += message value
+    \State re-post non-blocking receive with child
+    \EndFor
+  \end{algorithmic}
+\end{algorithm}
+
+Finally, the transport loop finishes in lines 22-24 of
+Algorithm~\ref{alg:local_history_transport} by calling
+Algorithm~\ref{alg:control_termination} if there are no local
+histories to transport in the stack or the source. In
+Algorithm~\ref{alg:control_termination}, we continue to forward the
+terminated history tally down to the parent in the binary tree and
+send all history buffers to our neighbors, even if they are not
+full. If Algorithm~\ref{alg:control_termination} is called by the
+MASTER process, it checks for completion of the problem and if
+complete, forwards the stop flag onto its children as in
+Figure~\ref{fig:binary_comm_tree}. If the process is not the MASTER,
+then we check for a stop signal from the parent and forward it to the
+child processes.
+
+\begin{algorithm}[h!]
+  \caption{\textbf{ControlTermination()}}
+  \label{alg:control_termination}
+  \begin{algorithmic}[1]
+    \State non-blocking send all partially full history buffers
+    \ForAll{\textit{historiesCompleted} messages from children} \State
+    \textit{historiesCompleted} += message \textit{historiesCompleted}
+    \State re-post non-blocking receive with child \EndFor \If{MASTER
+      processor} \If{\textit{historiesCompleted} == global \# of
+      source histories} \State set stop flag \ForAll{children} \State
+    non-blocking send stop message to child \EndFor \EndIf \Else \State
+    non-blocking send \textit{historiesCompleted} to parent \State
+    \textit{historiesCompleted} = 0 \State check for stop signal from
+    parent \If{stop signal from parent} \ForAll{children} \State
+    non-blocking send stop message to child \EndFor \EndIf \EndIf
+  \end{algorithmic}
+\end{algorithm}
+
+The transport loop continues in this manner until all processes have
+received the stop signal from their parents. Older versions of this
+algorithm, particularly some of those presented in
+\cite{brunner_comparison_2006}, use a master/slave approach as given
+by Figure~\ref{fig:master_comm_tree} for the completion of a transport
+stage instead of the binary tree scheme. In this approach, the root
+process still manages the final summation of the completion tally, but
+it directly receives completed tally results from all other processes
+in the problem instead of from just its children. Although this
+implementation is potentially simpler to understand than the binary
+tree approach, the authors of \cite{brunner_comparison_2006} observed
+that this type of termination pattern, even when implemented in a
+fully asynchronous manner, was a significant scalability
+bottleneck. This bottleneck is due to the fact that the master process
+falls behind the others, creating a load imbalance even with the
+addition of a few integer addition operations. We will explicitly
+demonstrate in scaling studies how this bottleneck also occurs within
+a Neumann-Ulam implementation of this algorithm thus requiring the
+implementation of a binary communication tree.
+
+\begin{figure}[t!]
+  \begin{center}
+    \scalebox{0.75}{
+      \input{chapters/parallel_mc/master_comm_tree.pdftex_t} }
+  \end{center}
+    \caption{\textbf{Master/slave scheme for coordinating the end of a
+        parallel Neumann-Ulam solve.} \textit{Each slave process
+        reports to the master how many histories completed within its
+        domain. When the master process sums all complete histories,
+        it sends the stop signal to all slave processes. The
+        subdomains are indexed by an integer.}}
+  \label{fig:master_comm_tree}
+\end{figure}
+
+There is an additional advantage to Brunner and Brantley's work that
+although not immediately applicable to this work has the potential to
+provide value in the future. In addition to a robust fully
+asynchronous communication pattern, this algorithm may also be
+modified to account for situations where the total number of histories
+in a given stage are not known before starting transport. From a
+physics perspective, we might expect this for situations where perhaps
+an (n,2n) interaction occurs in a neutronics problem. In this case,
+the algorithm is modified to account for both histories terminated and
+created and several mechanisms are introduced to determine completion
+of the transport stage. For future variations of this work, certain
+variance reduction techniques that create histories, such as
+splitting, have the potential to be successfully employed as a means
+of accelerating the time to solution for a given problem using
+MCSA. The parallel Neumann-Ulam algorithm presented here may be
+adapted to account for these additional techniques.
+
+%%---------------------------------------------------------------------------%%
+\subsection{Multiple-Set Overlapping-Domain Algorithm}
+\label{subsubsec:msod}
+Although the implementation presented in the previous subsection was
+observed by Brunner and Brantley to be robust and allowed for scaling
+to large numbers of processors, performance issues were still noted
+with parallel efficiency improvements needed in both the weak and
+strong scaling cases for unbalanced problems. These results led them
+to conclude that a combination of domain decomposition and domain
+replication could be used to solve some of these issues. In 2010,
+Wagner and colleagues developed the \textit{multiple-set
+  overlapping-domain} (MSOD) decomposition for parallel Monte Carlo
+applications for full-core light water reactor analysis
+\cite{wagner_hybrid_2010}. In their work, an extension of Brunner's,
+their scheme employed similar parallel algorithms for particle
+transport but a certain amount of overlap between adjacent domains was
+used to decrease the number of particles leaving the local domain. In
+addition, Wagner utilized a level of replication of the domain such
+that the domain was only decomposed on $O(100)$ processors and if
+replicated $O(1,000)$ times potentially achieves efficient simulation
+on $O(100,000)$ processors, thus providing both spatial and particle
+parallelism.
+
+Each collection of processors that constitutes a representation of the
+entire domain is referred to as a set, and within a set overlap occurs
+among its sub-domains. The original motivation was to decompose the
+domain in a way that it remained in a physical cabinet in a large
+distributed machine, thus reducing latency costs during
+communication. A multiple set scheme is also motivated by the fact
+that communication during particle transport only occurs within a set,
+limiting communications during the transport procedure to a group of
+$O(100)$ processors, a number that was shown to have excellent
+parallel efficiencies in Brunner's work and therefore will scale well
+in this algorithm.
+
+To demonstrate this, consider the example adapted from Mervin's work
+with Wagner and others in the same area \cite{mervin_variance_2012}
+and presented in Figure~\ref{fig:msod_example}.
+\begin{figure}[t!]
+  \begin{center}
+    \scalebox{1.5}{
+      \input{chapters/parallel_mc/msod_example.pdftex_t} }
+  \end{center}
+  \caption{\textbf{Overlapping domain example illustrating how domain
+      overlap can reduce communication costs.}
+    \textit{All particles start in the blue region of interest. The
+      dashed line represents 0.5 domain overlap between domains.}}
+  \label{fig:msod_example}
+\end{figure}
+In this example, 3 particle histories are presented emanating from the
+blue region of interest. Starting with particle A, if no domain
+overlap is used then the only the blue domain exists on the starting
+processor. Particle A is then transported through 3 other domains
+before the history ends, therefore requiring three communications to
+occur in Brunner's algorithm. If a 0.5 domain overlap is permitted as
+shown by the dashed line, then the starting process owns enough of the
+domain such that no communications must occur in order to complete the
+particle A transport process. Using 0.5 domain overlap also easily
+eliminates cases such as that represented by the path of particle
+C. In this case, particle C is scattering between two adjacent
+domains, incurring a large latency cost for a single
+particle. Finally, with particle B we observe that 0.5 domain overlap
+will still not eliminate all communications. However, if 1 domain
+overlap were used, the entire geometry shown in
+Figure~\ref{fig:msod_example} would be contained on the source
+processor and therefore transport of all 3 particles without
+communication would occur.
+
+Wagner and colleagues used this methodology for a 2-dimensional
+calculation of a pressurized water reactor core and varied the domain
+overlap from 0 to 3 domain overlap (a $7 \times 7$ box in the context
+of our example) where a domain contained an entire fuel assembly. For
+the fully domain decomposed case, they observed that 76.12\% of all
+source particles leave the domain. At 1.5 domain overlap, the
+percentage of source particles born in the center assembly leaving the
+processor domain dropped to 1.05\% and even further for 0.02\% for the
+3 domain overlap. Based on their results, we hypothesize that the
+overlap approach coupled with the multiple sets paradigm that will
+enhance the scalability of the pure domain-decomposition algorithm for
+Neumann-Ulam presented in the previous subsection.
+
+\subsubsection{Generating the MSOD Decomposition}
+\label{subsubsec:msod_generation}
+In \S~\ref{subsubsec:domain_generation} we discussed how to generate the
+parallel transport domain from the Neumann-Ulam decomposition of a
+domain decomposed linear operator. We can readily adapt those data
+structures to account for the extra information required by an
+implementation of the MSOD algorithm. First, we consider the
+generation of overlap. Conveniently, this is identical to the
+neighboring states discovery problem discussed in conjunction with
+Figure~\ref{fig:diffusion_graph}. To generate the boundary for the
+local transport domain, we needed to gather the identification numbers
+of all owning processes from the immediately adjacent states in the
+system. We solved this problem by traversing the graph of the matrix
+for each of the boundary states and determining which processes owned
+those adjacent states.
+
+To generate overlap, we use the identical algorithm but in this case
+we perform as many graph level traversals as the specified amount of
+overlap and collect additional information. For the overlapping domain
+decomposition case, given an input parallel decomposition for the
+Neumann-Ulam decomposition, for all local states $m$, including those
+in the overlap, we require access to $P_{mn}$ and $W_{mn}$ (or
+$P^T_{mn}$ and $W^T_{mn}$ for the adjoint method) for all possible
+states $n$. Doing this provides us with the data required by the
+estimators permitting $P_{mn}$ and $W_{mn}$ to be computed locally for
+any boundary transition.
+
+As an example, consider the analytic relations derived in
+Appendix~\ref{chap:parallel_theory} for the length of random walks in
+a Neumann-Ulam method and the amount of leakage from a domain
+considering a neutron diffusion problem. From these relations we might
+determine that, for our particular problem, if we can grow the domain
+by 10 additional discrete state transitions, we can reduce the number
+of histories that must be communicated by a significant fraction. We
+determine the information we must gather from neighboring domains to
+build the overlap by traversing the graph of the matrix outward from
+the boundary 10 levels. At each step, we find the data in the adjacent
+domain that we require and make that data local, incrementing the size
+of the overlap. Once the overlap has been gathered, one extra graph
+traversal on the boundary states is performed to get the new
+neighboring states and their owning processes.
+
+Once overlap has been generated, the transport domain for a single set
+is complete. However, if multiple sets are to be used, an additional
+set of parallel procedures is required to generate the necessary data
+structures. Figure~\ref{fig:msod_construction} gives a schematic
+representation of the MSOD construction process using 4 sets. For a
+problem where $P$ parallel processors are available and $S$ sets are
+to be used, each set is allocated $P/S$ processors for computation. On
+the first $P/S$ processors, the linear problem is generated. From the
+linear problem, the linear operator is used to construct the transport
+domain with overlap, the solution vector used to construct the
+tallies, and the forcing term vector used to construct the fixed
+source. Once these Monte Carlo data structures have been generated,
+they are broadcast to the remaining sets in the problem as shown in
+Figure~\ref{fig:msod_construction} such that we have $S$ replications
+of the Monte Carlo problem for a single instance of the original
+linear problem.
+
+\clearpage
+
+\begin{figure}[t!]
+  \begin{center}
+    \scalebox{0.55}{ \input{chapters/parallel_mc/msod_construction.pdftex_t} }
+  \end{center}
+  \caption{\textbf{MSOD construction for 4 sets with overlap.}
+    \textit{The linear system is used to construct the Monte Carlo
+      transport domain on the primary set. The Monte Carlo data
+      structures are then broadcast among the blocks to all sets in
+      the system.}}
+  \label{fig:msod_construction}
+\end{figure}
+
+\subsubsection{MSOD Neumann Ulam Algorithm}
+\label{subsubsec:msod_algorithm}
+
+With the ability to generate the transport domain within an MSOD
+decomposition as well as the source and tally structures, we can now
+define how to perform a Neumann-Ulam solve using MSOD. Given by
+Algorithm~\ref{alg:msod_transport}, we begin by constructing the Monte
+Carlo data structures for each set including the transport domain, the
+source, and the tallies. Next, in line 4 we perform the asynchronous
+transport algorithm presented in \S~\ref{subsec:asynchronous_algorithm}
+for each of the individual sets. Adding overlap to
+Algorithm~\ref{alg:parallel_mc_algorithm} in this case simply modifies
+the set of local states and the set of neighboring states with the
+additional states gathered during overlap generation.
+
+\begin{algorithm}[h!]
+  \caption{\textbf{MSOD Transport Sequence}}
+  \label{alg:msod_transport}
+  \begin{algorithmic}[1]
+    \State build MSOD domain
+    \State build Monte Carlo source
+    \State build Monte Carlo tally
+    \State perform parallel Neumann-Ulam transport in each set
+    \State combine set tallies
+    \State combine block tallies
+  \end{algorithmic}
+\end{algorithm}
+
+Once Monte Carlo transport is complete, the tallies for each
+individual computation must be gathered to the original set in order
+to build the correction vector within an MCSA sequence. To do this, we
+perform two parallel vector operations. First, overlap not only
+creates additional states in the local transport domain but also
+additional states in the local tally vector such that any events that
+occur in the local domain may be tallied in a local vector. Because of
+this, the tally vector in a single set will share local states with
+other domains and a parallel sum reduction operation is required to
+transform the tally into the original Neumann-Ulam parallel
+decomposition. Second, the tallies in individual sets must be combined
+and applied to the primary set in the problem that shares the
+processor space with the original linear problem. For this operation,
+we employ the concept of blocks as a subdivision of parallel space
+complementary to the concept of sets.
+
+Consider the schematic representation of the final parallel reduction
+presented in Figure~\ref{fig:msod_tally_reduction}. For this
+operation, the tally vectors in each set must be summed together and
+applied to the primary set. As each set is an exact replica of the
+others, the parallel decomposition of the tally vector is the same
+within all sets. We can take advantage of this by building a processor
+space that encapsulates each identical domain across all sets and then
+use this processor space for the reduction. For the schematic in
+Figure~\ref{fig:msod_tally_reduction}, the combined upper-left domains
+in each set create a block, giving 9 total blocks for this example
+problem. The processor space that encapsulates each of the upper-left
+domains is then used for the parallel reduction operation. This
+reduction will happen in a mutually exclusive manner for each of the
+blocks in the system.
+
+\begin{figure}[t!]
+  \begin{center}
+    \scalebox{0.55}{ \input{chapters/parallel_mc/msod_tally.pdftex_t} }
+  \end{center}
+  \caption{\textbf{MSOD tally reduction over blocks.} \textit{The
+      tally computed independently in each set is reduced across the
+      blocks to the primary set. The linear system vector is updated
+      on the primary set. In this example the tally vector in the
+      block containing upper-left subdomains is combined. Identical
+      reduction operations occur for all other blocks
+      simultaneously.}}
+  \label{fig:msod_tally_reduction}
+\end{figure}
+
+%%---------------------------------------------------------------------------%%
+\subsection{Parallel MCSA}
+\label{subsec:parallel_mcsa}
+With the parallel adjoint Neumann-Ulam solver implementation described
+above, the parallel implementation of an MCSA iteration is
+trivial. Recall the MCSA iteration procedure presented again here for
+clarity:
+\begin{subequations}
+  \begin{gather}
+    \label{eq:mcsa_r1}
+    \ve{x}^{k+1/2} = \ve{x}^k + \ve{r}^k\:,\\
+    \label{eq:mcsa_r2}
+    \ve{r}^{k+1/2} = \ve{b} - \ve{A}\ve{x}^{k+1/2}\:,\\
+    \label{eq:mcsa_r3}
+    \ve{A}\delta\ve{x}^{k+1/2} = \ve{r}^{k+1/2}\:,\\
+    \label{eq:mcsa_r4}
+    \ve{x}^{k+1} = \ve{x}^{k+1/2} + \delta \ve{x}^{k+1/2}\:,\\
+    \label{eq:mcsa_r5}
+    \ve{r}^{k+1} = \ve{b} - \ve{A}\ve{x}^{k+1}\:.
+  \end{gather}
+\end{subequations}
+In \S\ref{subsec:parallel_krylov_methods} we discuss parallel matrix and
+vector operations as utilized in conventional projection methods. We
+utilize these here for the parallel MCSA implementation for the
+computations required in Eqs~(\ref{eq:mcsa_r1}), (\ref{eq:mcsa_r2}),
+(\ref{eq:mcsa_r4}), and (\ref{eq:mcsa_r5}). In the first step, a
+parallel vector update is used to apply the residual to the previous
+iterate's solution in a Richardson iteration. In the next step and
+Eq~(\ref{eq:mcsa_r5}), the residual is computed by a parallel
+matrix-vector multiply and vector update. Once the correction is
+computed with a parallel adjoint Neumann-Ulam solve, this correction
+is applied to the solution with a parallel vector
+update. Additionally, as given by
+Eq~(\ref{eq:mcsa_stopping_criteria}), 2 parallel vector reductions
+will be required to check the stopping criteria: one initially to
+compute the infinity norm of the source vector, and another at every
+iteration to compute the infinity norm of the residual vector.
+
+To parallelize the solution of Eq~(\ref{eq:mcsa_r3}), we apply the
+MSOD Neumann-Ulam algorithm presented in the previous subsection. The
+problem is potentially replicated with overlap and the Monte Carlo
+procedure returns a correction vector, $\delta \ve{x}$, with the same
+parallel decomposition as the input linear problem. As was the case
+for generating the replications required for a multiple set
+implementation, the explicit matrix and vector operations required for
+the rest of an MCSA iteration occur only on the subset of processors
+containing the primary set\footnote{For applications where resiliency
+  is potentially of concern, the linear problem and subsequently the
+  operations in Eqs~(\ref{eq:mcsa_r1}), (\ref{eq:mcsa_r2}),
+  (\ref{eq:mcsa_r4}), and (\ref{eq:mcsa_r5}) may be replicated with
+  the penalty of broadcasting the data. Doing so may alleviate issues
+  where any part of the linear problem or residual is disturbed as now
+  there will be multiple copies of these data structures.}. Only the
+Monte Carlo data structures exist on the rest of the processors in the
+problem as replication of the other operations does not generate any
+more information that could be used to accelerate the time to
+solution.
+
+%%---------------------------------------------------------------------------%%
+\section{Conclusion}
+\label{sec:conclusion}
+
+In this paper, the Monte Carlo Synthetic Acceleration method has been
+applied to the $SP_N$ discretization of the neutron transport equation
+and explored in the context of a difficult nuclear fuel assembly
+criticality problem. We observed that MCSA can in fact solve the
+asymmetric system generated by the $SP_N$ equations. In contrast to
+the thermal radiation diffusion problem addressed in our previous
+work, light water reactor problems are difficult to solve with MCSA as
+they have large spectral radii due to the neutron scattering in the
+moderator. Because of this, simple Jacobi-based preconditioning
+reduces the spectral radius of the $SP_N$ system below unity, however,
+this alone was discovered not to be sufficient criteria alone for MCSA
+convergence. As the spectral radius approaches unity, MCSA was
+demonstrated to break down with more stochastic histories required for
+convergence and more CPU time required per history. To alleviate these
+effects, a left-right preconditioned form of the MCSA method was
+developed and applied to the $SP_N$ equations to obtain
+convergence. For the nuclear fuel assembly problem, MCSA was observed
+to converge in fewer iterations per eigenvalue iteration than GMRES
+for the fuel assembly criticality problem and more than Bi-CGStab
+using the same preconditioning. However, the explicit preconditioning
+strategy required to overcome the MCSA spectral radius restriction
+creates run times $O(100)$ larger than the production Krylov methods
+for the fuel assembly criticality problem, indicating that significant
+research in the area of Monte Carlo preconditioning implementations is
+required in order for the method to be competetive in terms of time to
+solution.
+
+%%---------------------------------------------------------------------------%%
+\pagebreak
+\bibliographystyle{ieeetr} 
+\bibliography{references}
+\end{document}
+
+
