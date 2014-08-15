@@ -5,7 +5,7 @@ addpath('../utils')
 %poolobj=parpool('local');
 
 shape = 'S'; % Other possible shapes include L,S,N,C,D,A,H,B
-n=32;
+n=22;
 
 % creation of te grid
 G=gridgen(shape, n);
@@ -33,10 +33,12 @@ numer.rich_it=300;%maximal number of Richardson iterations
 
 %% Statistical setting
 
-stat.nwalks=size(u,1);
+stat.nwalks=900;
 stat.max_step=20;
-stat.varcut=0.1;
-stat.adapt=1;
+stat.adapt_walks=0;
+stat.adapt_cutoff=0;
+stat.walkcut=10^(-6);
+stat.varcut=0.5;
 dist=1;
 
 %% Definition of initial and transitional prbabilities
@@ -51,7 +53,7 @@ end
 
 %% Solver call
 
-[sol, rel_residual, var, VAR, DX, NWALKS, iterations, time]=system_solver(scheme, method, fixed_point, dist, P, cdf, numer, stat);
+[sol, rel_residual, var, VAR, DX, NWALKS, tally, iterations, time]=system_solver(scheme, method, fixed_point, dist, P, cdf, numer, stat);
 
 %delete(poolobj)
 
@@ -88,15 +90,16 @@ bar(NWALKS)
 
 if reac==0
     if strcmp(scheme, 'SEQ')
-        save(strcat('../results/diffusion_problem/Sequential_MC/laplace_adjoint_', scheme, '_', dist, '_', precond));
+        save(strcat('../results/diffusion_problem/Sequential_MC/laplace_adjoint_', scheme, '_p=_', num2str(dist), '_', precond));
     elseif strcmp(scheme, 'MCSA')
-        save(strcat('../results/diffusion_problem/MCSA/laplace_adjoint_', scheme, '_', dist, '_', precond));
+        save(strcat('../results/diffusion_problem/MCSA/laplace_adjoint_', scheme, '_p=_', num2str(dist), '_', precond));
     end
 else
     if strcmp(scheme, 'SEQ')
-        save(strcat('../results/DR_problem/Sequential_MC/laplace_adjoint_', scheme, '_', dist, '_', precond));
+        save(strcat('../results/DR_problem/Sequential_MC/laplace_adjoint_', scheme, '_p=_', num2str(dist), '_', precond));
     elseif strcmp(scheme, 'MCSA')
-        save(strcat('../results/DR_problem/MCSA/laplace_adjoint_', scheme, '_', dist, '_', precond));
+        save(strcat('../results/DR_problem/MCSA/laplace_adjoint_', scheme, '_p=_', num2str(dist), '_', precond));
     end      
 end
+
 

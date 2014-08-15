@@ -22,7 +22,7 @@ elseif strcmp(precond, 'triblock')
        
     %building of the iteration matrix
     Pr=fp.M;
-    H=eye(size(D,1))-Pr\D;
+    H=eye(size(D,1))-Pr\(fp.Per'*D*fp.Per);
     rhs=Pr\rhs;
     Num=size(H,1);
     H(1:Num/2, 1:Num/2)=zeros(Num/2, Num/2);

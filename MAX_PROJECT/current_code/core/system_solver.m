@@ -1,27 +1,27 @@
-function [sol, rel_res, var, VAR, DX, NWALKS, iterations, time]=system_solver(scheme, method, fp, dist, P, cdf, numer, stat)
+function [sol, rel_res, var, VAR, DX, NWALKS, tally, iterations, time]=system_solver(scheme, method, fp, dist, P, cdf, numer, stat)
 
     if strcmp(scheme, 'SEQ') && strcmp(method, 'forward')
         start=cputime;
-        [sol, rel_res, var, VAR, DX, NWALKS, iterations]=SEQ_forward(fp, ...
+        [sol, rel_res, var, VAR, DX, NWALKS, tally, iterations]=SEQ_forward(fp, ...
             P, cdf, numer, stat);
         finish=cputime;
 
     elseif strcmp(scheme, 'MCSA') && strcmp(method, 'forward')
         start=cputime;
-        [sol, rel_res, var, VAR, DX, NWALKS, iterations]=MCSA_forward(fp, ...
+        [sol, rel_res, var, VAR, DX, NWALKS, tally, iterations]=MCSA_forward(fp, ...
             P, cdf, numer, stat);
         finish=cputime;
         
     elseif strcmp(scheme, 'SEQ') && strcmp(method, 'adjoint')
         start=cputime;
-        [sol, rel_res, var, VAR, DX, NWALKS, iterations]=SEQ_adjoint(fp, ...
+        [sol, rel_res, var, VAR, DX, NWALKS, tally, iterations]=SEQ_adjoint(fp, ...
             dist, P, cdf, numer, stat);
         finish=cputime;
     
 
     elseif strcmp(scheme, 'MCSA') && strcmp(method, 'adjoint')
         start=cputime;
-        [sol, rel_res, var, VAR, DX, NWALKS, iterations]=MCSA_adjoint(fp, ...
+        [sol, rel_res, var, VAR, DX, NWALKS, tally, iterations]=MCSA_adjoint(fp, ...
             dist, P, cdf, numer, stat);
         finish=cputime;
            
@@ -30,7 +30,7 @@ function [sol, rel_res, var, VAR, DX, NWALKS, iterations, time]=system_solver(sc
         fprintf('\n\n');
     end
         
-    if strcmp(fp.precond, 'gs') || strcmp(fp.precond, 'trisplit') || strcmp(fp.precond, 'alternating')
+    if strcmp(fp.precond, 'gs') || strcmp(fp.precond, 'trisplit') || strcmp(fp.precond, 'alternating') || strcmp(fp.precond, 'triblock')
         sol=(fp.Per)'\sol;
     end
     

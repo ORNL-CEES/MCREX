@@ -1,0 +1,13 @@
+
+/*!
+ * \mainpage MCREX Overview
+ *
+ * This is a project related to the Monte Carlo resilient exascale 
+ * solvers (MCREX) project.  While the focus of this project 
+ * concerns the application of Monte Carlo methods to solving linear
+ * systems, this package additionally provides a convenient interface
+ * to a number of different solvers. A good place to start is by
+ * viewing the currently available solvers available through the
+ * mcrex::LinearSolverFactory and matrix generation capabilities
+ * in mcrex::LinearSystemFactory.
+ */

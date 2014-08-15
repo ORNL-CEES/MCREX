@@ -1,4 +1,4 @@
-function [x, y, Z, tally]=MC_adjoint(Z, A, b, P, cdf, Pb, cdfb, n_walks, max_step)
+function [x, y, X, tally]=MC_adjoint(A, b, P, cdf, Pb, cdfb, n_walks, max_step)
 
     X=zeros(n_walks,size(b,1));
     tally=zeros(size(b));
@@ -15,7 +15,7 @@ function [x, y, Z, tally]=MC_adjoint(Z, A, b, P, cdf, Pb, cdfb, n_walks, max_ste
     i=1;
         while i<=max_step
               aux=rand;
-              if sum(abs(P(previous,:)))==1
+              if sum(abs(P(previous,:)))>0
                 current=min(find(cdf(previous,:)>aux));
                 W=W*A(current,previous)/P(previous,current);
               else
@@ -38,9 +38,8 @@ function [x, y, Z, tally]=MC_adjoint(Z, A, b, P, cdf, Pb, cdfb, n_walks, max_ste
     end
     
     %computation of the expected value for the updating vector
-   Z=[Z; X];
-   x=mean(Z,1)';
-   Y=Z.^2;
-   y=sqrt((mean(Y,1)'-(x.^2))./(size(Z,1))); 
+   x=mean(X,1)';
+   Y=X.^2;
+   y=sqrt((mean(Y,1)'-(x.^2))./(size(X,1))); 
 end
  

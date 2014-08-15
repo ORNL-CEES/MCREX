@@ -40,7 +40,7 @@ display('Building of transition matrix');
     %computation of the cumulative initial probability: 
     cdfb=Pb;
     for i=2:size(cdfb)
-        aux=max(find(cdfb(1:i-1)))+0;
+        aux=max(find(cdfb(1:i-1)));
         if(cdfb(i)~=0 && ~isempty(aux))
             cdfb(i)=cdfb(i)+cdfb(aux);
         end
@@ -50,7 +50,7 @@ display('Building of transition matrix');
     %computation of the cumulative probability
     for i=1:size(cdf,1)
         for j=2:size(cdf,2)
-            aux=max(find(cdf(i,1:j-1)))+0;
+            aux=max(find(cdf(i,1:j-1)));
             if (cdf(i,j)~=0 && ~isempty(aux))
                 cdf(i,j)=cdf(i,j)+cdf(i,aux);
             end

@@ -1,0 +1,7 @@
+The code contained in this directory is a snapshot of Steven's Monte Carlo solvers code from 8/11/14.  For access to an up-to-date repo, contact Steven.
+The purpose of this code is purely exploratory and not intended to be a production implementation.
+
+To build the code, use cmake:
+
+cmake -D TRILINOS_PATH:PATH=/path/to/trilinos/install /path/to/src/directory
+

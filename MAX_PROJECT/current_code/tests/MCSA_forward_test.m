@@ -1,8 +1,9 @@
 addpath('../core')
 addpath('../utils')
 
-% 'jpwh_991'; 'fs_680_1', 'ifiss_convdiff'; 'shifted_laplacian_1d'; 'thermal_eq_diff'
-matrix='jpwh_991';
+% 'jpwh_991'; 'fs_680_1'; 'ifiss_convdiff'; 'shifted_laplacian_1d';
+% 'thermal_eq_diff';  'laplacian_2d'
+matrix='fs_680_1';
 
 addpath(strcat('../utils/model_problems/', matrix))
 
@@ -32,8 +33,12 @@ numer.rich_it=300;
 
 stat.nwalks=2;
 stat.max_step=20;
-stat.adapt=1;
+stat.adapt_walks=1;
+stat.adapt_cutoff=1;
+stat.walkcut=10^(-6);
+stat.nchecks=1;
 stat.varcut=0.5;
+stat.vardiff=10^(-3);
 dist=1;
 
 %% Definition of the transitional probability
@@ -48,7 +53,7 @@ fp.precond='diag';
 %% MCSA forward method resolution
 
 start=cputime;
-[sol, rel_residual, var, VAR, DX, NWALKS, iterations]=MCSA_forward(fp, P, cdf, numer, stat);
+[sol, rel_residual, VAR, DX, NWALKS, tally, iterations, reject]=MCSA_forward2(fp, P, cdf, numer, stat);
 finish=cputime;
 
 conf=0.05;
