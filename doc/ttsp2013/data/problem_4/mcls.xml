@@ -1,0 +1,92 @@
+<ParameterList>
+  <Parameter name="Linear Solver Type" type="string" value="MCLS"/>
+  <ParameterList name="Linear Solver Types">
+    <ParameterList name="MCLS">
+      <Parameter name="Solver Type" type="string" value="MCSA"/>
+      <ParameterList name = "Solver Types">
+        <ParameterList name = "MCSA">
+	  <Parameter name="MC Type" type="string" value="Adjoint"/>
+	  <Parameter name="Fixed Point Type" type="string" value="Richardson"/>
+	  <Parameter name="Transport Type" type="string" value="Global"/>
+	  <Parameter name="Estimator Type" type="string" value="Collision"/>
+          <Parameter name="Source Sampling Type" type="string" value="Random"/>
+          <Parameter name="Number of Sets" type="int" value="1"/>
+          <Parameter name="Reproducible MC Mode" type="bool" value="false"/>
+          <Parameter name="Overlap Size" type="int" value="0"/>
+          <Parameter name="Weight Cutoff" type="double" value="1.0e-1"/>
+          <Parameter name="Neumann Relaxation" type="double" value="1.0"/>
+          <Parameter name="Richardson Relaxation" type="double" value="1.0"/>
+	  <Parameter name="MC Check Frequency" type="int" value="1000"/>
+	  <Parameter name="MC Buffer Size" type="int" value="1000"/>
+          <Parameter name="Iteration Print Frequency" type="int" value="1"/>
+          <Parameter name="Iteration Check Frequency" type="int" value="1"/>
+          <Parameter name="Smoother Steps" type="int" value="3"/>
+          <Parameter name="Maximum Iterations" type="int" value="100"/>
+          <Parameter name="Convergence Tolerance" type="double" value="1.0e-8"/>
+          <Parameter name="Set Number of Histories" type="int" value="500000"/>
+        </ParameterList>
+        <ParameterList name = "Fixed Point">
+	  <Parameter name="Fixed Point Type" type="string" value="MINRES"/>
+        </ParameterList>
+      </ParameterList>
+    </ParameterList>
+  </ParameterList>
+  <Parameter name="Preconditioner Type" type="string" value="MCLS"/>
+  <ParameterList name="Preconditioner Types">
+    <ParameterList name="MCLS">
+      <Parameter name="Preconditioner Type" type="string" value="ParaSails"/>
+      <ParameterList name="Preconditioner Types">
+        <ParameterList name="Block Jacobi">
+          <Parameter name="Jacobi Block Size" type="int" value="46"/>
+        </ParameterList>
+        <ParameterList name="ParaSails">
+          <Parameter name="ParaSails: Threshold" type="double" value="0.01"/>
+          <Parameter name="ParaSails: Number of Levels" type="int" value="1"/>
+          <Parameter name="ParaSails: Filter" type="double" value="0.01"/>
+        </ParameterList>
+        <ParameterList name="ILUT">
+          <Parameter name="fact: ilut level-of-fill" type="double" value="3.0"/>
+          <Parameter name="fact: drop tolerance" type="double" value="1.0e-5"/>
+        </ParameterList>
+        <ParameterList name="PSILUT">
+          <Parameter name="fact: ilut level-of-fill" type="double" value="5.0"/>
+          <Parameter name="fact: drop tolerance" type="double" value="1.0e-4"/>
+          <Parameter name="ParaSails: Threshold" type="double" value="1.0"/>
+          <Parameter name="ParaSails: Number of Levels" type="int" value="1"/>
+          <Parameter name="ParaSails: Filter" type="double" value="0.0"/>
+        </ParameterList>
+        <ParameterList name="ML">
+          <Parameter name="Fill Level" type="int" value="100"/>
+          <ParameterList name="ML Settings">
+            <Parameter name="ML output" type="int" value="10"/>
+            <Parameter name="prec type" type="string" value="MGV"/>
+            <Parameter name="print unused" type="int" value="0"/>
+            <Parameter name="PDE equations" type="int" value="1"/>
+            <Parameter name="max levels" type="int" value="10"/>
+            <Parameter name="cycle applications" type="int" value="1"/>
+            <Parameter name="aggregation: threshold" type="double" value="0.0"/>
+            <Parameter name="aggregation: type" type="string" value="Uncoupled"/>
+            <Parameter name="aggregation: damping factor" type="double" value="0.0"/>
+            <Parameter name="aggregation: block scaling" type="bool" value="false"/>
+            <Parameter name="energy minimization: enable" type="bool" value="false"/>
+            <Parameter name="energy minimization: type" type="int" value="2"/>
+            <Parameter name="smoother: type" type="string" value="IFPACK"/> 
+            <Parameter name="smoother: ifpack type" type="string" value="ILU"/>
+            <Parameter name="smoother: ifpack overlap" type="int" value="1"/>
+            <ParameterList name="smoother: ifpack list">
+              <Parameter name="fact: level-of-fill" type="int" value="2"/>
+              <Parameter name="schwarz: reordering type" type="string" value="rcm"/> 
+              <Parameter name="fact: drop tolerance" type="double" value="1.0e-6"/>
+              <Parameter name="fact: maximum fill factor" type="double" value="100"/>
+            </ParameterList>
+            <Parameter name="smoother: damping factor" type="double" value="1.0"/>
+            <Parameter name="smoother: pre or post" type="string" value="both"/>
+            <Parameter name="smoother: sweeps" type="int" value="1"/>
+            <Parameter name="coarse: max size" type="int" value="2000"/>
+            <Parameter name="coarse: type" type="string" value="Amesos-KLU"/>
+          </ParameterList>
+        </ParameterList>
+      </ParameterList>
+    </ParameterList>
+  </ParameterList>
+</ParameterList>

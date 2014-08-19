@@ -25,8 +25,8 @@
     </ParameterList>
   </ParameterList>
   <ParameterList name="PROBLEM">
-    <Parameter name="num_blocks_i" type="int" value="1"/>
-    <Parameter name="num_blocks_j" type="int" value="1"/>
+    <Parameter name="num_blocks_i" type="int" value="2"/>
+    <Parameter name="num_blocks_j" type="int" value="2"/>
     <Parameter name="radial mesh" type="int" value="2"/>
     <Parameter name="axial mesh" type="Array(int)" value="{1}"/>
     <Parameter name="symmetry" type="string" value="full"/>
@@ -38,6 +38,6 @@
     <Parameter name="SPn_order" type="int" value="1"/>
     <Parameter name="problem_name" type="string" value="assembly_moderator"/>
     <Parameter name="max_itr" type="int" value="1000"/>
-    <Parameter name="linear_solver_xml_file" type="string" value="aztec.xml"/>
+    <Parameter name="linear_solver_xml_file" type="string" value="mcls.xml"/>
   </ParameterList>
 </ParameterList>
