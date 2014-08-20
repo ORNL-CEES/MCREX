@@ -1,0 +1,615 @@
+ModuleCmd_Switch.c(172):ERROR:152: Module 'PrgEnv-pgi' is currently not loaded
+=======================================
+    Profugus SPN Mini-APP              
+    (C) ORNL, Battelle, 2014           
+=======================================
+
+>>> Reading xml file -> problem_4_976.xml
+>>> Building and initializing mesh
+>>> Building eigenvalue solver
+>>> Built SPN FV Element LHS Matrix with 2338040736 nonzero entries.
+>>> Built SPN FV Element RHS Matrix with 87436800 nonzero entries.
+>>> Built SPN FV Element LHS Matrix with 677376288 nonzero entries.
+>>> Built SPN FV Element LHS Matrix with 174806784 nonzero entries.
+>>> Built SPN FV Element LHS Matrix with 50985312 nonzero entries.
+>>> Built SPN FV Element LHS Matrix with 29134464 nonzero entries.
+>>> Built SPN FV Element LHS Matrix with 7283616 nonzero entries.
+>>> Executing solver
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 0
+The block size is         1
+The number of blocks is   20
+The current basis size is 0
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 0
+
+CURRENT RITZ VALUES             
+   [ NONE COMPUTED ]
+
+================================================================================
+
+ 
+Stratimikos AztecOO performed 25 iterations.  Final residual norm is 8.611e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 1
+The block size is         1
+The number of blocks is   20
+The current basis size is 1
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 1
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   3.054256e+00 + i   0.000000e+00        4.841307e+00
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 25 iterations.  Final residual norm is 8.602e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 2
+The block size is         1
+The number of blocks is   20
+The current basis size is 2
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 2
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.076412e+00 + i   0.000000e+00        9.613092e-02
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 25 iterations.  Final residual norm is 7.901e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 3
+The block size is         1
+The number of blocks is   20
+The current basis size is 3
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 3
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.115407e+00 + i   0.000000e+00        5.309854e-02
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 25 iterations.  Final residual norm is 9.310e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 4
+The block size is         1
+The number of blocks is   20
+The current basis size is 4
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 4
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.113738e+00 + i   0.000000e+00        3.308136e-02
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 26 iterations.  Final residual norm is 5.603e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 5
+The block size is         1
+The number of blocks is   20
+The current basis size is 5
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 5
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.117891e+00 + i   0.000000e+00        2.272810e-02
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 26 iterations.  Final residual norm is 5.824e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 6
+The block size is         1
+The number of blocks is   20
+The current basis size is 6
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 6
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.119575e+00 + i   0.000000e+00        1.685186e-02
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 26 iterations.  Final residual norm is 5.998e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 7
+The block size is         1
+The number of blocks is   20
+The current basis size is 7
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 7
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.120834e+00 + i   0.000000e+00        1.226248e-02
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 26 iterations.  Final residual norm is 6.019e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 8
+The block size is         1
+The number of blocks is   20
+The current basis size is 8
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 8
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.120608e+00 + i   0.000000e+00        8.649458e-03
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 26 iterations.  Final residual norm is 5.672e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 9
+The block size is         1
+The number of blocks is   20
+The current basis size is 9
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 9
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121070e+00 + i   0.000000e+00        8.894347e-03
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 25 iterations.  Final residual norm is 9.908e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 10
+The block size is         1
+The number of blocks is   20
+The current basis size is 10
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 10
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121479e+00 + i   0.000000e+00        7.158361e-03
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 25 iterations.  Final residual norm is 9.000e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 11
+The block size is         1
+The number of blocks is   20
+The current basis size is 11
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 11
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121482e+00 + i   0.000000e+00        4.670276e-03
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 25 iterations.  Final residual norm is 8.955e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 12
+The block size is         1
+The number of blocks is   20
+The current basis size is 12
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 12
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121560e+00 + i   0.000000e+00        2.888561e-03
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 25 iterations.  Final residual norm is 8.807e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 13
+The block size is         1
+The number of blocks is   20
+The current basis size is 13
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 13
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121519e+00 + i   0.000000e+00        1.712975e-03
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 25 iterations.  Final residual norm is 9.373e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 14
+The block size is         1
+The number of blocks is   20
+The current basis size is 14
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 14
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121582e+00 + i   0.000000e+00        7.467367e-04
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 25 iterations.  Final residual norm is 9.589e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 15
+The block size is         1
+The number of blocks is   20
+The current basis size is 15
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 15
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121588e+00 + i   0.000000e+00        3.924904e-04
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 25 iterations.  Final residual norm is 8.651e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 16
+The block size is         1
+The number of blocks is   20
+The current basis size is 16
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 16
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121597e+00 + i   0.000000e+00        2.924840e-04
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 25 iterations.  Final residual norm is 9.533e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 17
+The block size is         1
+The number of blocks is   20
+The current basis size is 17
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 17
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121590e+00 + i   0.000000e+00        1.584326e-04
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 26 iterations.  Final residual norm is 5.649e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 18
+The block size is         1
+The number of blocks is   20
+The current basis size is 18
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 18
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121586e+00 + i   0.000000e+00        8.452727e-05
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 26 iterations.  Final residual norm is 5.712e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 19
+The block size is         1
+The number of blocks is   20
+The current basis size is 19
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 19
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121584e+00 + i   0.000000e+00        3.952668e-05
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 25 iterations.  Final residual norm is 8.121e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 20
+The block size is         1
+The number of blocks is   20
+The current basis size is 20
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 20
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121585e+00 + i   0.000000e+00        2.066060e-05
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 25 iterations.  Final residual norm is 8.859e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 21
+The block size is         1
+The number of blocks is   20
+The current basis size is 21
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 21
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121585e+00 + i   0.000000e+00        1.323369e-05
+
+================================================================================
+
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 21
+The block size is         1
+The number of blocks is   20
+The current basis size is 1
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 21
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121585e+00 + i   0.000000e+00        1.323369e-05
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 25 iterations.  Final residual norm is 8.785e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 22
+The block size is         1
+The number of blocks is   20
+The current basis size is 2
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 22
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121585e+00 + i   0.000000e+00        7.449486e-06
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 27 iterations.  Final residual norm is 6.200e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 23
+The block size is         1
+The number of blocks is   20
+The current basis size is 3
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 23
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121585e+00 + i   0.000000e+00        4.953652e-06
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 27 iterations.  Final residual norm is 6.226e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 24
+The block size is         1
+The number of blocks is   20
+The current basis size is 4
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 24
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121585e+00 + i   0.000000e+00        2.586264e-06
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 27 iterations.  Final residual norm is 7.196e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 25
+The block size is         1
+The number of blocks is   20
+The current basis size is 5
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 25
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121585e+00 + i   0.000000e+00        1.319113e-06
+
+================================================================================
+
+  
+Stratimikos AztecOO performed 27 iterations.  Final residual norm is 7.166e-08
+================================================================================
+
+                         BlockKrylovSchur Solver Status
+
+The solver is initialized.
+The number of iterations performed is 26
+The block size is         1
+The number of blocks is   20
+The current basis size is 6
+The number of auxiliary vectors is 0
+The number of operations Op*x   is 26
+
+CURRENT RITZ VALUES             
+              Ritz Value                 Ritz Residual
+--------------------------------------------------------------------------------
+   1.121585e+00 + i   0.000000e+00        6.839022e-07
+
+================================================================================
+
+k-eff = 1.1215846624
+>>> Outputting data
+
+===================
+Final Timing Report
+===================
+
+                                                     Routine   Max Fraction   Min Fraction
+==========================================================================================
+                                              Manager.output     1.2129e-04     1.2100e-04
+                                               Manager.setup     3.0831e-02     3.0824e-02
+                                               Manager.solve     9.6863e-01     9.6862e-01
+==========================================================================================
+
+Total execution time : 8.0610e+01 seconds.
+Application 730917 resources: utime ~78555s, stime ~1046s, Rss ~199560, inblocks ~2078737, outblocks ~4793732

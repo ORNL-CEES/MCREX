@@ -1,0 +1,13 @@
+  #!/bin/csh
+  # File name: profugus_run.pbs
+  #PBS -A CSC142
+  #PBS -N problem_4_256
+  #PBS -j oe
+  #PBS -l walltime=0:10:00,nodes=16
+  #PBS -l gres=atlas1%atlas2
+  #PBS -m abe
+  #PBS -M slatterysr@ornl.gov
+
+  cd $PBS_O_WORKDIR
+
+  aprun -j1 -S8 -n256 /ccs/home/uy7/csc142/eos/builds/Profugus/release/bin/xspn -i problem_4_256.xml

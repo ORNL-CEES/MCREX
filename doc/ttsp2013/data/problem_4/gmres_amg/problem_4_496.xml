@@ -21,12 +21,12 @@
       <Parameter name="reflect" type="Array(int)" value="{1, 1, 1, 1, 0, 0}"/>
     </ParameterList>
     <Parameter name="radial mesh" type="int" value="2"/>
-    <Parameter name="axial mesh" type="Array(int)" value="{1}"/>
+    <Parameter name="axial mesh" type="Array(int)" value="{50}"/>
     <Parameter name="symmetry" type="string" value="full"/>
     <Parameter name="Pn_order" type="int" value="1"/>
     <Parameter name="SPn_order" type="int" value="1"/>
-    <Parameter name="num_blocks_i" type="int" value="8"/>
-    <Parameter name="num_blocks_j" type="int" value="4"/>
+    <Parameter name="num_blocks_i" type="int" value="31"/>
+    <Parameter name="num_blocks_j" type="int" value="16"/>
     <ParameterList name="eigenvalue_db">
       <Parameter name="diagnostic_level" type="int" value="2"/>
       <Parameter name="eigensolver" type="string" value="Arnoldi"/>
@@ -37,9 +37,9 @@
         <Parameter name="Convergence Tolerance" type="double" value="1e-6"/>
       </ParameterList>
       <ParameterList name="operator_db">
-        <Parameter name="max_itr" type="int" value="1000"/>
+        <Parameter name="max_itr" type="int" value="10000"/>
         <Parameter name="solver_type" type="string" value="stratimikos"/>
-        <Parameter name="linear_solver_xml_file" type="string" value="mcls.xml"/>
+        <Parameter name="linear_solver_xml_file" type="string" value="stratimikos.xml"/>
       </ParameterList>
     </ParameterList>
   </ParameterList>

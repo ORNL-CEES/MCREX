@@ -1,5 +1,5 @@
 <ParameterList>
-  <Parameter name="Linear Solver Type" type="string" value="MCLS"/>
+  <Parameter name="Linear Solver Type" type="string" value="AztecOO"/>
   <ParameterList name="Linear Solver Types">
     <ParameterList name="MCLS">
       <Parameter name="Solver Type" type="string" value="MCSA"/>
@@ -18,7 +18,7 @@
           <Parameter name="Richardson Relaxation" type="double" value="1.0"/>
 	  <Parameter name="MC Check Frequency" type="int" value="1024"/>
 	  <Parameter name="MC Buffer Size" type="int" value="1024"/>
-          <Parameter name="Iteration Print Frequency" type="int" value="1"/>
+          <Parameter name="Iteration Print Frequency" type="int" value="10"/>
           <Parameter name="Iteration Check Frequency" type="int" value="1"/>
           <Parameter name="Smoother Steps" type="int" value="3"/>
           <Parameter name="Maximum Iterations" type="int" value="100"/>
@@ -26,21 +26,32 @@
           <Parameter name="Set Number of Histories" type="int" value="75000"/>
         </ParameterList>
         <ParameterList name = "Fixed Point">
-	  <Parameter name="Fixed Point Type" type="string" value="MINRES"/>
+	  <Parameter name="Fixed Point Type" type="string" value="Richardson"/>
         </ParameterList>
       </ParameterList>
     </ParameterList>
   </ParameterList>
-  <Parameter name="Preconditioner Type" type="string" value="MCLS"/>
+  <Parameter name="Preconditioner Type" type="string" value="Ifpack"/>
   <ParameterList name="Preconditioner Types">
+    <ParameterList name="ML">
+      <Parameter name="Base Method Defaults" type="string" value="SA"/>
+    </ParameterList>
+    <ParameterList name="Ifpack">
+      <Parameter name="Prec Type" type="string" value="ILUT"/>
+      <Parameter name="Overlap" type="int" value="0"/>
+      <ParameterList name="Ifpack Settings">
+	<Parameter name="fact: ilut level-of-fill" type="double" value="1.0"/>
+	<Parameter name="fact: drop tolerance" type="double" value="1.0e-2"/>
+      </ParameterList>
+    </ParameterList>
     <ParameterList name="MCLS">
       <Parameter name="Preconditioner Type" type="string" value="ParaSails"/>
       <ParameterList name="Preconditioner Types">
         <ParameterList name="Block Jacobi">
-          <Parameter name="Jacobi Block Size" type="int" value="46"/>
+          <Parameter name="Jacobi Block Size" type="int" value="23"/>
         </ParameterList>
         <ParameterList name="ParaSails">
-          <Parameter name="ParaSails: Threshold" type="double" value="0.01"/>
+          <Parameter name="ParaSails: Threshold" type="double" value="0.05"/>
           <Parameter name="ParaSails: Number of Levels" type="int" value="2"/>
           <Parameter name="ParaSails: Filter" type="double" value="0.0"/>
 	  <Parameter name="ParaSails: Symmetry" type="int" value="0"/>
