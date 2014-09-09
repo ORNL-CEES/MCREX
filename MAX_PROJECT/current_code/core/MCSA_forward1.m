@@ -159,10 +159,10 @@ else
         count=count-1;
         rel_res=rel_residual;
 
-        for i=1:count
-            var=var+abs(H2*((H1*H2)^(count-1))*VAR1(:,i));
-            var=var+abs((H1*H2)^(count-1)*VAR2(:,i));
-        end
+%         for i=1:count
+%             var=var+abs(H2*((H1*H2)^(i-1))*VAR1(:,count-i));
+%             var=var+abs((H1*H2)^(i-1)*VAR2(:,count-i));
+%         end
 
     end
 

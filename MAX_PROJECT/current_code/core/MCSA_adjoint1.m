@@ -1,6 +1,8 @@
-function [sol, rel_res, var, VAR, DX, NWALKS, tally, count]=MCSA_adjoint1(fp, dist, P, cdf, numer, stat)
+function [sol, rel_res, var, VAR, RES, DX, NWALKS, tally, count]=MCSA_adjoint1(fp, dist, P, cdf, numer, stat)
 
 VAR=[];
+rich_it=numer.rich_it;
+RES=cell(rich_it,1);
 DX=[];
 NWALKS=[];
 tally=[];
@@ -35,7 +37,7 @@ if ~ strcmp(fp.precond, 'alternating')
              sol=H*sol+rhs; 
              r=rhs-B*sol;
              [Pb, cdfb]=prob_adjoint_rhs(r, dist);
-             [dx, dvar, X, aux]=MC_adjoint_adapt(H, r, P, cdf, Pb, cdfb, stat);
+             [dx, dvar, X, aux, resid]=MC_adjoint_adapt(H, r, P, cdf, Pb, cdfb, stat);
              NWALKS=[NWALKS size(X,1)];
              tally=[tally aux];
              sol=sol+dx;
@@ -43,6 +45,7 @@ if ~ strcmp(fp.precond, 'alternating')
              display(strcat('residual norm: ', num2str(norm(r)/norm(rhs))));
              rel_residual=norm(r,2)/norm(rhs,2);
              VAR=[VAR dvar];
+             RES{count}=resid;
              DX=[DX dx];
              count=count+1;
         end
@@ -109,13 +112,14 @@ else
                 sol=H1*sol+rhs1; 
                 r=rhs1-B1*sol;
                 [Pb, cdfb]=prob_adjoint_rhs(r, dist);
-                [dx, dvar, X, aux]=MC_adjoint_adapt(H1, r, P.P1, cdf.cdf1, Pb, cdfb, stat);
+                [dx, dvar, X, aux, resid]=MC_adjoint_adapt(H1, r, P.P1, cdf.cdf1, Pb, cdfb, stat);
                 NWALKS=[NWALKS size(X,1)];
                 tally=[tally aux];
                 sol=sol+dx;
                 r=rhs1-B1*sol;
                 VAR1=[VAR1 dvar];
                 VAR=[VAR dvar];
+                RES{count}=resid;
                 DX=[DX dx];
                 rel_residual=norm(r,2)/norm(rhs1,2);
             else
@@ -129,6 +133,7 @@ else
                 r=rhs2-B2*sol;
                 VAR2=[VAR2 dvar];
                 VAR=[VAR dvar];
+                RES{count}=resid;
                 DX=[DX dx];
                 rel_residual=norm(r,2)/norm(rhs2,2);
             end
@@ -173,10 +178,10 @@ else
     count=count-1;
     rel_res=rel_residual;
 
-    for i=1:count
-        var=var+abs(H2*((H1*H2)^(count-1))*VAR1(:,i));
-        var=var+abs((H1*H2)^(count-1)*VAR2(:,i));
-    end
+%     for i=1:count
+%         var=var+abs(H2*((H1*H2)^(count-1))*VAR1(:,i));
+%         var=var+abs((H1*H2)^(count-1)*VAR2(:,i));
+%     end
 
 end
 

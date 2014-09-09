@@ -21,6 +21,7 @@ if ~ strcmp(fp.precond, 'alternating')
     H=fp.H;
     rhs=fp.rhs;
     sol=ones(size(H,1),1);
+    var=zeros(size(H,1),1);
 
     %matrix to be used for the computation of the redisual at each Richardson
     %iteration
@@ -46,6 +47,7 @@ if ~ strcmp(fp.precond, 'alternating')
             VAR{count}=dvar;
             RES{count}=resid;
             DX=[DX dx];
+            var=var+abs(dvar(:,end));
             count=count+1;
         end
     else
@@ -61,6 +63,7 @@ if ~ strcmp(fp.precond, 'alternating')
             rel_residual=norm(r,2)/norm(rhs,2);
             VAR=[VAR dvar];
             DX=[DX dx];
+            var=var+abs(dvar);
             count=count+1;
         end
     end
@@ -111,7 +114,8 @@ else
                 r=rhs1-B1*sol;
                 VAR{count}=dvar;
                 RES{count}=resid;
-                DX=[DX dx];     
+                DX=[DX dx]; 
+                var=var+abs(dvar(:,end));
                 rel_residual=norm(r,2)/norm(rhs1,2);
             else
                 r=rhs2-B2*sol; 
@@ -125,6 +129,7 @@ else
                 VAR{count}=dvar;
                 RES{count}=resid;
                 DX=[DX dx];
+                var=var+abs(dvar(:,end));
                 rel_residual=norm(r,2)/norm(rhs2,2);
             end
 
@@ -142,6 +147,7 @@ else
                 r=rhs1-B1*sol;
                 VAR=[VAR dvar];
                 DX=[DX dx];
+                var=var+abs(dvar);
                 rel_residual=norm(r,2)/norm(rhs1,2);
             else
                 r=rhs2-B2*sol; 
@@ -152,6 +158,7 @@ else
                 r=rhs2-B2*sol; 
                 VAR=[VAR dvar];
                 DX=[DX dx];
+                var=var+abs(dvar);
                 rel_residual=norm(r,2)/norm(rhs2,2);
             end
 

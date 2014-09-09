@@ -1,4 +1,4 @@
-function [sol, rel_res, var, VAR, DX, NWALKS, tally, count]=SEQ_adjoint(fp, dist, P, cdf, numer, stat)
+function [sol, rel_res, var, VAR, DX, NWALKS, tally, count]=SEQ_adjoint1(fp, dist, P, cdf, numer, stat)
 
 VAR=[];
 DX=[];

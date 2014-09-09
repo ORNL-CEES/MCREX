@@ -1,6 +1,7 @@
-function [x, y, Z, tally]=MC_adjoint_adapt(A, b, P, cdf, Pb, cdfb, stat)
+function [x, y, Z, tally, res]=MC_adjoint_adapt(A, b, P, cdf, Pb, cdfb, stat)
 
 Z=[];
+res=[];
 
 if stat.adapt_cutoff==1 && stat.adapt_walks==1
     
@@ -52,8 +53,15 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
     x=mean(Z,1)';
     Y=Z.^2;
     y=sqrt((mean(Y,1)'-(x.^2))./(size(Z,1))); 
+    res=[res norm( (b-(eye(size(A))-A)*x),2)/norm(b,2)];
+    if norm(x, 1)~=0
+       ratio=norm(y(:,end), 1)/norm(x, 1);
+    else
+       ratio=0;
+    end
 
-    while norm(y, 1)/norm(x, 1) > var_cut  
+
+    while ratio > var_cut  
         X=zeros(n_walks,size(b,1));
         for walk=1:n_walks
                 aux=rand;
@@ -95,7 +103,13 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
         Z=[Z; X];
         x=mean(Z,1)';
         Y=Z.^2;
-        y=sqrt((mean(Y,1)'-(x.^2))./(size(Z,1))); 
+        y=sqrt((mean(Y,1)'-(x.^2))./(size(Z,1)));
+        res=[res norm( (b-(eye(size(A))-A)*x),2)/norm(b,2)];
+        if norm(x, 1)~=0
+           ratio=norm(y(:,end), 1)/norm(x, 1);
+        else
+           ratio=0;
+        end        
     end
     
 elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
@@ -146,8 +160,14 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
     x=mean(Z,1)';
     Y=Z.^2;
     y=sqrt((mean(Y,1)'-(x.^2))./(size(Z,1))); 
+    res=[res norm( (b-(eye(size(A))-A)*x),2)/norm(b,2)];
+    if norm(x, 1)~=0
+       ratio=norm(y(:,end), 1)/norm(x, 1);
+    else
+       ratio=0;
+    end          
 
-    while norm(y, 1)/norm(x, 1) > var_cut  
+    while ratio > var_cut  
         X=zeros(n_walks,size(b,1));
         for walk=1:n_walks
                 aux=rand;
@@ -189,6 +209,12 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
         x=mean(Z,1)';
         Y=Z.^2;
         y=sqrt((mean(Y,1)'-(x.^2))./(size(Z,1))); 
+        res=[res norm( (b-(eye(size(A))-A)*x),2)/norm(b,2)];
+        if norm(x, 1)~=0
+           ratio=norm(y(:,end), 1)/norm(x, 1);
+        else
+           ratio=0;
+        end              
     end
 
 elseif  stat.adapt_cutoff==1 && stat.adapt_walks==0   
@@ -240,6 +266,7 @@ elseif  stat.adapt_cutoff==1 && stat.adapt_walks==0
     x=mean(Z,1)';
     Y=Z.^2;
     y=sqrt((mean(Y,1)'-(x.^2))./(size(Z,1))); 
+    res=[res norm( (b-(eye(size(A))-A)*x),2)/norm(b,2)];
     
 else
     n_walks=stat.nwalks;
@@ -287,6 +314,7 @@ else
     x=mean(Z,1)';
     Y=Z.^2;
     y=sqrt((mean(Y,1)'-(x.^2))./(size(Z,1))); 
+    res=[res norm( (b-(eye(size(A))-A)*x),2)/norm(b,2)];
 
 end
 

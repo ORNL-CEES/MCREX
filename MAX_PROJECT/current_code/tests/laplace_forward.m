@@ -15,11 +15,11 @@ reac=0;
 [u, D, rhs]=laplace(shape, G, reac);
 
 %algebraic splitting: 'diag', 'gs', 'triblock', 'trisplit', 'alternating'
-precond='triblock';
+precond='alternating';
 
 %Sequential Monte Carlo or Monte Carlo Synthetic Acceleration
 %possible choices: 'SEQ', 'MCSA'
-scheme='SEQ';
+scheme='MCSA';
 method='forward';
 
 [fixed_point]=iteration_matrix(precond, D, u, rhs, G);
@@ -33,11 +33,12 @@ numer.rich_it=300;%maximal number of Richardson iterations
 
 %% Statistical setting
 
-stat.nwalks=10;
+stat.nwalks=20;
 stat.max_step=20;
 stat.adapt_walks=0;
 stat.adapt_cutoff=0;
 stat.walkcut=10^(-6);
+stat.nchecks=1;
 stat.varcut=0.5;
 dist=1;
 
@@ -79,7 +80,7 @@ end
 
 amplitude=0;
 for i=1:size(u,1)
-    amplitude=amplitude+2*var(i)*norminv(1-conf/2, 0, 1);
+    amplitude=amplitude+2*VAR(i,end)*norminv(1-conf/2, 0, 1);
 end
 amplitude=amplitude/norm(u,2);
 

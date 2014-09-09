@@ -3,7 +3,7 @@ addpath('../utils')
 
 % 'jpwh_991'; 'fs_680_1'; 'ifiss_convdiff'; 'shifted_laplacian_1d';
 % 'thermal_eq_diff'; 'laplacian_2d'
-matrix='thermal_eq_diff';
+matrix='laplacian_2d';
 
 addpath(strcat('../utils/model_problems/', matrix))
 
@@ -31,12 +31,12 @@ numer.rich_it=300;
 
 %% Statistical setting
 stat.nwalks=2;
-stat.max_step=20;
+stat.max_step=1000;
 stat.adapt_walks=1;
 stat.adapt_cutoff=1;
-stat.walkcut=10^(-6);
+stat.walkcut=10^(-12);
 stat.nchecks=1;
-stat.varcut=0.5;
+stat.varcut=0.1;
 dist=1;
 
 %% Definition of initial and transitional probabilities

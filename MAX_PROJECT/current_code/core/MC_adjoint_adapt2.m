@@ -60,10 +60,17 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
         Y=Z.^2;
         y=[ y sqrt((mean(Y,1)'-(x.^2))./(size(Z,1))) ];     
         res=[res norm( (b-(eye(size(A))-A)*x),2)/norm(b,2)];
+        if norm(x, 1)~=0
+            ratio=norm(y(:,end), 1)/norm(x, 1);
+        else
+            ratio=0;
+        end
     end 
     
     
-    while norm(y(:,end), 1)/norm(x, 1) > var_cut  || norm(y(:,end) - y(:,end-1), 1)/norm(y(:,1)) > var_diff
+    while  ratio > var_cut  || ( ratio > 0 && norm(y(:,end) - y(:,end-1), 1)/norm(x, 1) > var_diff )
+        
+        %display(strcat('ratio= ', num2str(ratio)))
         
         if norm(y(end), 1)/norm(x(end), 1) < var_cut
             reject=reject+1;
@@ -111,6 +118,11 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
         Y=Z.^2;
         y=[ y sqrt((mean(Y,1)'-(x.^2))./(size(Z,1))) ]; 
         res=[res norm( (b-(eye(size(A))-A)*x),2)/norm(b,2)];
+        if norm(x, 1)~=0
+            ratio=norm(y(:,end), 1)/norm(x, 1);
+        else
+            ratio=0;
+        end        
     end
     
 elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
@@ -164,9 +176,16 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
         Y=Z.^2;
         y=[y sqrt((mean(Y,1)'-(x.^2))./(size(Z,1)))]; 
         res=[res norm( (b-(eye(size(A))-A)*x),2)/norm(b,2)];
+        if norm(x, 1)~=0
+            ratio=norm(y(:,end), 1)/norm(x, 1);
+        else
+            ratio=0;
+        end       
     end
 
-    while norm(y(:,end), 1)/norm(x, 1) > var_cut  || norm(y(:,end) - y(:,end-1), 1)/norm(y(:,end)) > var_diff
+    while ratio > var_cut  || ( ratio > 0 && norm(y(:,end) - y(:,end-1), 1)/norm(x, 1) > var_diff )
+
+         display(strcat('ratio= ', num2str(ratio)))       
         
         if norm(y(end), 1)/norm(x(end), 1) < var_cut
             reject=reject+1;
@@ -213,6 +232,12 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
         Y=Z.^2;
         y=[ y sqrt((mean(Y,1)'-(x.^2))./(size(Z,1))) ];   
         res=[res norm( (b-(eye(size(A))-A)*x),2)/norm(b,2)];
+        if norm(x, 1)~=0
+            ratio=norm(y(:,end), 1)/norm(x, 1);
+        else
+            ratio=0;
+        end       
+        
     end
 
 elseif  stat.adapt_cutoff==1 && stat.adapt_walks==0   

@@ -1,4 +1,4 @@
-function [sol, rel_res, VAR, DX, NWALKS, tally, count, reject]=MCSA_forward2(fp, P, cdf, numer, stat)
+function [sol, rel_res, var, VAR, DX, NWALKS, tally, count, reject]=MCSA_forward2(fp, P, cdf, numer, stat)
 
 VAR=[];
 NWALKS=[];

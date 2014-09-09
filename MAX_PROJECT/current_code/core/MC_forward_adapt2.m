@@ -14,7 +14,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
     NWALKS=zeros(size(b));
     VAR=cell(size(b));
 
-   for k=1:size(b,1)
+   parfor k=1:size(b,1)
        count=0;
        x=[];
        ratio=1;
@@ -45,53 +45,66 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
                 end
                 x=[x; estim];
                 dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
-                ratio=dvar/abs(mean(x));
+                if abs(mean(x))~=0
+                    ratio=dvar/abs(mean(x));
+                else
+                    ratio=0;
+                end
             end
             count=count+n_walks;  
             VAR{k}=[VAR{k} dvar];
        end
        
-       while   ratio > var_cut || abs((VAR{k}(end)-VAR{k}(end-1))) > var_diff 
-           
-           if ratio > var_cut 
-               reject(k)=reject(k)+1;
-           end
-           
-            for walk=1:n_walks
-                estim=0;
-                previous=k;
-                W=1;
-                Wf=walkcut*W;
-                current=k;
-                estim=estim+W*b(current);
-                i=1;
-                while i<=max_step && W>Wf
-                aux=rand;
-                if sum(abs(P(previous,:)))>0
-                    current=min(find(cdf(previous,:)>aux));
-                    W=W*A(previous,current)/P(previous,current);
-                else 
-                    W=0;
-                end
+       while   ratio > var_cut || ( ratio > 0 && abs((VAR{k}(end)-VAR{k}(end-1)))/abs(mean(x)) > var_diff ) 
+               
+               %display(strcat('ratio =', num2str(ratio), '   ', num2str(count)))
+               %display(strcat('ratio =', num2str(abs((VAR{k}(end)-VAR{k}(end-1)))/abs(mean(x)))))
+               if ratio < var_cut 
+                   reject(k)=reject(k)+1;
+               end
 
-                    if W==0
-                        break;
-                    end
+               for walk=1:n_walks
+                    estim=0;
+                    previous=k;
+                    W=1;
+                    Wf=walkcut*W;
+                    current=k;
                     estim=estim+W*b(current);
-                    i=i+1;
-                    previous=current;
-                end
-                x=[x; estim];
-                dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
-                ratio=dvar/abs(mean(x));
-            end
-            count=count+n_walks;
-            VAR{k}=[VAR{k} dvar];
+                    i=1;
+                    while i<=max_step && W>Wf
+                    aux=rand;
+                    if sum(abs(P(previous,:)))>0
+                        current=min(find(cdf(previous,:)>aux));
+                        W=W*A(previous,current)/P(previous,current);
+                    else 
+                        W=0;
+                    end
+
+                        if W==0
+                            break;
+                        end
+                        estim=estim+W*b(current);
+                        i=i+1;
+                        previous=current;
+                    end
+                    x=[x; estim];
+                    dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
+                    if abs(mean(x))~=0
+                        ratio=dvar/abs(mean(x));
+                    else
+                        ratio=0;
+                    end
+                
+
+               end
+              count=count+n_walks;
+              VAR{k}=[VAR{k} dvar];
        end
        
        X(k)=mean(x);
        NWALKS(k)=count;
    end
+
    
 elseif stat.adapt_cutoff==0 && stat_adapt_walks==1
     n_walks=stat.nwalks;
@@ -103,7 +116,7 @@ elseif stat.adapt_cutoff==0 && stat_adapt_walks==1
     NWALKS=zeros(size(b));
     VAR=zeros(size(b));
 
-   for k=1:size(b,1)
+   parfor k=1:size(b,1)
        count=0;
        x=[];
        ratio=1;
@@ -134,51 +147,62 @@ elseif stat.adapt_cutoff==0 && stat_adapt_walks==1
                 end
                 x=[x; estim];
                 dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
-                ratio=dvar/abs(mean(x));
+                if abs(mean(x))~=0
+                    ratio=dvar/abs(mean(x));
+                else
+                    ratio=0;
+                end
+
             end
             count=count+n_walks;
             VAR{k}=[VAR{k} dvar];
        end
            
        
-       while  ( ratio > var_cut || abs((VAR{k}(end)-VAR{k}(end-1))/VAR{k}(1)) > var_diff )
-           
-            if ratio > var_cut 
-               reject(k)=reject(k)+1;
-            end          
-           
-            for walk=1:n_walks
-                estim=0;
-                previous=k;
-                W=1;
-                current=k;
-                estim=estim+W*b(current);
-                i=1;
-                while i<=max_step 
-                aux=rand;
-                if sum(abs(P(previous,:)))>0
-                    current=min(find(cdf(previous,:)>aux));
-                    W=W*A(previous,current)/P(previous,current);
-                else 
-                    W=0;
-                end
+       while   ratio > var_cut || ( ratio > 0 && abs((VAR{k}(end)-VAR{k}(end-1)))/abs(mean(x)) > var_diff ) 
+                               
+                if ratio < var_cut 
+                   reject(k)=reject(k)+1;
+                end          
 
-                    if W==0
-                        break;
-                    end
+                for walk=1:n_walks
+                    estim=0;
+                    previous=k;
+                    W=1;
+                    current=k;
                     estim=estim+W*b(current);
-                    i=i+1;
-                    previous=current;
+                    i=1;
+                    while i<=max_step 
+                    aux=rand;
+                    if sum(abs(P(previous,:)))>0
+                        current=min(find(cdf(previous,:)>aux));
+                        W=W*A(previous,current)/P(previous,current);
+                    else 
+                        W=0;
+                    end
+
+                        if W==0
+                            break;
+                        end
+                        estim=estim+W*b(current);
+                        i=i+1;
+                        previous=current;
+                    end
+                    x=[x; estim];
+                    dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
+                    if abs(mean(x))~=0
+                        ratio=dvar/abs(mean(x));
+                    else
+                        ratio=0;
+                    end
+
                 end
-                x=[x; estim];
-                dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
-                ratio=dvar/abs(mean(x));
-            end
-            count=count+n_walks;
-            VAR{k}=[VAR{k} dvar];
+                count=count+n_walks;
+                VAR{k}=[VAR{k} dvar];
+           
+                X(k)=mean(x);
+                NWALKS(k)=count;
        end
-       X(k)=mean(x);
-       NWALKS(k)=count;
    end
      
 elseif stat.adapt_cutoff==1 && stat_adapt_walks==0   
@@ -191,7 +215,7 @@ elseif stat.adapt_cutoff==1 && stat_adapt_walks==0
     NWALKS=zeros(size(b));
     VAR=zeros(size(b));
 
-   for k=1:size(b,1)
+   parfor k=1:size(b,1)
        count=0;
        x=[];
 
@@ -237,7 +261,7 @@ else
     NWALKS=zeros(size(b));
     VAR=zeros(size(b));
 
-   for k=1:size(b,1)
+   parfor k=1:size(b,1)
        count=0;
        x=[];
 

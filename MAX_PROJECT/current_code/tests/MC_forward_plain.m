@@ -1,10 +1,28 @@
 addpath('../core')
 addpath('../utils')
 
-dimen=500;
-A=4*diag(ones(dimen,1)) - diag(ones(dimen-1,1),1) - diag(ones(dimen-1,1),-1);
-rhs=[1:500]';
-u=A\rhs;
+parjob=parpool('local');
+
+% 'jpwh_991'; 'fs_680_1'; 'ifiss_convdiff'; 'shifted_laplacian_1d';
+% 'thermal_eq_diff'; 'laplacian_2d'
+matrix='fs_680_1';
+
+if ~strcmp(matrix, 'simple')
+    addpath(strcat('../utils/model_problems/', matrix));
+end
+
+
+if strcmp(matrix, 'simple')
+    dimen=500;
+    A=4*diag(ones(dimen,1)) - diag(ones(dimen-1,1),1) - diag(ones(dimen-1,1),-1);
+    rhs=[1:dimen]';
+    u=A\rhs;
+
+else
+     [A, dimen, ~, ~] = mmread('A.mtx');
+     rhs=mmread('b.mtx');
+     u=mmread('x.mtx');
+end
 
 Prec=diag(diag(A));
 
@@ -12,18 +30,20 @@ H=eye(size(A))-Prec\A;
 rhs=Prec\rhs;
 
 walkcut=10^(-6);
-dist=0;
+dist=1;
 
 [P, cdf]=prob_forward(H, dist);
 
-max_step=100;
+max_step=10;
 
 %%
-n_walks=[100 10000 1000000];
+n_walks=[10 100 1000];
 
-cputime
-[u_approx, var, err]=MC_forward_error2(u, H, rhs, P, cdf, n_walks, max_step);
-cputime
+start=cputime;
+[u_approx, var, err]=MC_forward_error(u, H, rhs, P, cdf, n_walks, max_step);
+finish=cputime;
+
+delete(parjob)
 
 rel_error=[];
 for i=1:length(n_walks)
@@ -71,5 +91,5 @@ plot(u_approx(:,end)+var(:,end)*norminv(1-conf/2, 0,1), 'g*')
 plot(u, 'r*')
 
 
-save(strcat('../results/MC_forward_plain/MC_forward_plain_p=', num2str(dist)))
+save(strcat('../results/MC_forward_plain/MC_forward_plain_p=', num2str(dist), '_', matrix))
 %save(strcat('MC_forward_plain_', dist))
