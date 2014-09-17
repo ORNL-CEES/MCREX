@@ -25,8 +25,7 @@ urlcolor = blue
 ]{hyperref}
 
 %%---------------------------------------------------------------------------%%
-\author{Stuart R. Slattery, Steven P. Hamilton, Thomas M. Evans, and Paul
-  P.H. Wilson
+\author{Stuart R. Slattery, Steven P. Hamilton, and Thomas M. Evans
   \\ \href{mailto:slatterysr@ornl.gov}{\texttt{slatterysr@ornl.gov}} }
 
 \date{\today} \title{A Parallel and Preconditioned Monte Carlo
@@ -41,22 +40,22 @@ urlcolor = blue
 We present Monte Carlo Synthetic Acceleration (MCSA) as a linear
 solver technique for the simplified $P_N$ ($SP_N$) discretization of
 the Boltzmann neutron transport equation. Using the fully-formed
-linear operator for the transport problem, we explore solutions to the
-$SP_N$ equations with MCSA using criticality calculations driving
-problem. Due to neutron scattering in the light water moderator,
-several difficulties arise when applying MCSA to these problems that
-were not observed in previous work where the method was applied to
-more opaque thermal radiaton transport systems. Of most significance,
-it was discovered for these problems that simply reducing the spectral
-radius of the Monte Carlo problem below unity is not enough to
-efficiently achieve convergence as reported in previous work. In order
-to effectively solve the $SP_N$ equations for the model problem, an
-algebraic preconditioning strategy is developed for MCSA where we
-utilize sparse approximate inverse representations of the operator as
-preconditioners to achieve convergence. Using the preconditioners,
-MCSA performance is compared with production implementations of
-preconditioned Krylov methods. Our studies indicate that
-the iterative performance of MCSA when used to solve the $SP_N$
+linear operators for the transport problem, we explore solutions to
+the $SP_N$ equations with MCSA using criticality calculations as the
+driving problems. Due to neutron scattering in the light water
+moderator, several difficulties arise when applying MCSA to these
+problems that were not observed in previous work where the method was
+applied to more opaque thermal radiaton transport systems. Of most
+significance, it was discovered for these problems that simply
+reducing the spectral radius of the Monte Carlo problem below unity is
+not enough to efficiently achieve convergence as reported in previous
+work. In order to effectively solve the $SP_N$ equations for the model
+problem, an algebraic preconditioning strategy is developed for MCSA
+where we utilize sparse approximate inverse representations of the
+operator as preconditioners to achieve convergence. Using the
+preconditioners, MCSA performance is compared with production
+implementations of preconditioned Krylov methods. Our studies indicate
+that the iterative performance of MCSA when used to solve the $SP_N$
 equations for light water reactor problems is competitive with the
 preconditioned Krylov methods when operator spectrum is properly
 conditioned. To solve large problems, we have parallelized the method
@@ -559,13 +558,6 @@ preconditioned linear operator.
 \subsubsection{Block Jacobi Preconditioning}
 
 \subsubsection{Sparse Approximate Inverse Preconditioning}
-
-%%---------------------------------------------------------------------------%%
-\section{Criticality Calculations}
-
-\subsection{C5G7 Benchmark}
-
-\subsection{Light Water Reactor Fuel Assemblies}
 
 %%---------------------------------------------------------------------------%%
 \section{Parallel MCSA}
@@ -1333,6 +1325,13 @@ Monte Carlo data structures exist on the rest of the processors in the
 problem as replication of the other operations does not generate any
 more information that could be used to accelerate the time to
 solution.
+
+%%---------------------------------------------------------------------------%%
+\section{Criticality Calculations}
+
+\subsection{C5G7 Benchmark}
+
+\subsection{Light Water Reactor Fuel Assemblies}
 
 %%---------------------------------------------------------------------------%%
 \section{Conclusion}

@@ -1,0 +1,52 @@
+<ParameterList>
+  <Parameter name="Linear Solver Type" type="string" value="MCLS"/>
+  <ParameterList name="Linear Solver Types">
+    <ParameterList name="MCLS">
+      <Parameter name="Solver Type" type="string" value="MCSA"/>
+      <ParameterList name = "Solver Types">
+        <ParameterList name = "MCSA">
+	  <Parameter name="MC Type" type="string" value="Adjoint"/>
+	  <Parameter name="Fixed Point Type" type="string" value="Richardson"/>
+	  <Parameter name="Transport Type" type="string" value="Global"/>
+	  <Parameter name="Estimator Type" type="string" value="Collision"/>
+          <Parameter name="Source Sampling Type" type="string" value="Random"/>
+          <Parameter name="Number of Sets" type="int" value="1"/>
+          <Parameter name="Reproducible MC Mode" type="bool" value="false"/>
+          <Parameter name="Overlap Size" type="int" value="0"/>
+          <Parameter name="Weight Cutoff" type="double" value="1.0e-1"/>
+          <Parameter name="Neumann Relaxation" type="double" value="1.0"/>
+          <Parameter name="Richardson Relaxation" type="double" value="1.0"/>
+	  <Parameter name="MC Check Frequency" type="int" value="1024"/>
+	  <Parameter name="MC Buffer Size" type="int" value="1024"/>
+          <Parameter name="Iteration Print Frequency" type="int" value="1"/>
+          <Parameter name="Iteration Check Frequency" type="int" value="1"/>
+          <Parameter name="Smoother Steps" type="int" value="1"/>
+          <Parameter name="Maximum Iterations" type="int" value="100"/>
+          <Parameter name="Composite Operator Threshold" type="double" value="0.01"/>
+          <Parameter name="Sample Ratio" type="double" value="1.0"/>
+        </ParameterList>
+        <ParameterList name = "Fixed Point">
+	  <Parameter name="Fixed Point Type" type="string" value="MINRES"/>
+        </ParameterList>
+      </ParameterList>
+    </ParameterList>
+  </ParameterList>
+  <Parameter name="Preconditioner Type" type="string" value="MCLS"/>
+  <ParameterList name="Preconditioner Types">
+    <ParameterList name="MCLS">
+      <Parameter name="Preconditioner Type" type="string" value="ParaSails"/>
+      <ParameterList name="Preconditioner Types">
+        <ParameterList name="Block Jacobi">
+          <Parameter name="Jacobi Block Size" type="int" value="46"/>
+        </ParameterList>
+        <ParameterList name="ParaSails">
+          <Parameter name="ParaSails: Threshold" type="double" value="0.1"/>
+          <Parameter name="ParaSails: Number of Levels" type="int" value="2"/>
+          <Parameter name="ParaSails: Filter" type="double" value="0.0"/>
+	  <Parameter name="ParaSails: Symmetry" type="int" value="0"/>
+	  <Parameter name="ParaSails: Load Balance" type="int" value="1"/>
+        </ParameterList>
+      </ParameterList>
+    </ParameterList>
+  </ParameterList>
+</ParameterList>

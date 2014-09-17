@@ -22,16 +22,26 @@
     <ParameterList name="boundary_db">
       <Parameter name="reflect" type="Array(int)" value="{1, 0, 1, 0, 1, 0}"/>
     </ParameterList>
-    <Parameter name="radial mesh" type="int" value="1"/>
-    <Parameter name="axial mesh" type="Array(int)" value="{20,10}"/>
-    <Parameter name="symmetry" type="string" value="full"/>
-    <Parameter name="Pn_order" type="int" value="0"/>
-    <Parameter name="SPn_order" type="int" value="1"/>
     <Parameter name="num_blocks_i" type="int" value="2"/>
     <Parameter name="num_blocks_j" type="int" value="2"/>
+    <Parameter name="radial mesh" type="int" value="1"/>
+    <Parameter name="axial mesh" type="Array(int)" value="{2,1}"/>
+    <Parameter name="symmetry" type="string" value="full"/>
+    <Parameter name="Pn_order" type="int" value="1"/>
+    <Parameter name="SPn_order" type="int" value="3"/>
     <ParameterList name="eigenvalue_db">
-      <Parameter name="eigensolver" type="string" value="Davidson"/>
-      <Parameter name="Preconditioner" type="string" value="ML"/>
+      <Parameter name="diagnostic_level" type="int" value="2"/>
+      <Parameter name="eigensolver" type="string" value="Arnoldi"/>
+      <Parameter name="Convergence Tolerance" type="double" value="1e-6"/>
+      <Parameter name="Preconditioner" type="string" value="Multilevel"/>
+      <ParameterList name="Anasazi">
+	<Parameter name="Convergence Tolerance" type="double" value="1e-6"/>
+      </ParameterList>
+      <ParameterList name="operator_db">
+	<Parameter name="max_itr" type="int" value="1000"/>
+	<Parameter name="solver_type" type="string" value="stratimikos"/>
+	<!-- <Parameter name="linear_solver_xml_file" type="string" value="stratimikos.xml"/> -->
+      </ParameterList>
     </ParameterList>
   </ParameterList>
 </ParameterList>
