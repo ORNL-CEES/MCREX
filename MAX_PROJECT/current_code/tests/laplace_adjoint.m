@@ -5,7 +5,7 @@ addpath('../utils')
 %poolobj=parpool('local');
 
 shape = 'S'; % Other possible shapes include L,S,N,C,D,A,H,B
-n=22;
+n=14;
 
 % creation of te grid
 G=gridgen(shape, n);
@@ -15,7 +15,7 @@ reac=0;
 [u, D, rhs]=laplace(shape, G, reac);
 
 %algebraic splitting: 'diag', 'gs', 'triblock', 'trisplit', 'alternating'
-precond='diag';
+precond='trisplit';
 
 %Sequential Monte Carlo or Monte Carlo Synthetic Acceleration
 %possible choices: 'SEQ', 'MCSA'
@@ -33,12 +33,14 @@ numer.rich_it=300;%maximal number of Richardson iterations
 
 %% Statistical setting
 
-stat.nwalks=900;
+stat.nwalks=10^5;
 stat.max_step=20;
 stat.adapt_walks=0;
 stat.adapt_cutoff=0;
 stat.walkcut=10^(-6);
+stat.nchecks=1;
 stat.varcut=0.5;
+%stat.vardiff=0.5;
 dist=1;
 
 %% Definition of initial and transitional prbabilities

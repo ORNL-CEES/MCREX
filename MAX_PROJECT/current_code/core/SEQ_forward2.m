@@ -1,4 +1,4 @@
-function [sol, rel_res, VAR, DX, NWALKS, tally, count, reject]=SEQ_forward2(fp, P, cdf, numer, stat)
+function [sol, rel_res, var, VAR, DX, NWALKS, tally, count, reject]=SEQ_forward2(fp, P, cdf, numer, stat)
 
 VAR=[];
 NWALKS=[];
@@ -20,6 +20,7 @@ if ~ strcmp(fp.precond, 'alternating')
     H=fp.H;
     rhs=fp.rhs;
     sol=ones(size(H,1),1);
+    var=zeros(size(H,1),1);
 
     %matrix to be used for the computation of the redisual at each Richardson
     %iteration
@@ -41,6 +42,7 @@ if ~ strcmp(fp.precond, 'alternating')
             rel_residual=norm(r,2)/norm(rhs,2);
             VAR=[VAR abs(dvar)];
             DX=[DX dx];
+            var=var+abs(dvar);
             count=count+1;
         end
     else
@@ -55,6 +57,7 @@ if ~ strcmp(fp.precond, 'alternating')
             rel_residual=norm(r,2)/norm(rhs,2);
             VAR=[VAR abs(dvar)];
             DX=[DX dx];
+            var=var+abs(dvar);
             count=count+1;
         end
     end
@@ -97,6 +100,7 @@ else
                 r=rhs1-B1*sol;
                 VAR=[VAR dvar];
                 DX=[DX dx];
+                var=var+abs(dvar);
                 rel_residual=norm(r,2)/norm(rhs1,2);
             else
                 r=rhs2-B2*sol;
@@ -107,6 +111,7 @@ else
                 r=rhs2-B2*sol;
                 VAR=[VAR dvar];
                 DX=[DX dx];
+                var=var+abs(dvar);
                 rel_residual=norm(r,2)/norm(rhs2,2);
             end
 
@@ -122,6 +127,7 @@ else
                 r=rhs1-B1*sol;
                 VAR=[VAR dvar];
                 DX=[DX dx];
+                var=var+abs(dvar);
                 rel_residual=norm(r,2)/norm(rhs1,2);
             else
                 r=rhs2-B2*sol;
@@ -131,6 +137,7 @@ else
                 r=rhs2-B2*sol;
                 VAR=[VAR dvar];
                 DX=[DX dx];
+                var=var+abs(dvar);
                 rel_residual=norm(r,2)/norm(rhs2,2);
             end
 

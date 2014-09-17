@@ -1,4 +1,4 @@
-function [sol, rel_res, VAR, RES, DX, NWALKS, tally, count, reject]=MCSA_adjoint2(fp, dist, P, cdf, numer, stat)
+function [sol, rel_res, var, VAR, RES, DX, NWALKS, tally, count, reject]=MCSA_adjoint2(fp, dist, P, cdf, numer, stat)
 
 DX=[];
 NWALKS=[];
@@ -22,6 +22,7 @@ if ~ strcmp(fp.precond, 'alternating')
     H=fp.H;
     rhs=fp.rhs;
     sol=ones(size(H,1),1);
+    var=zeros(size(H,1),1);
 
     %matrix to be used for the computation of the redisual at each Richardson
     %iteration

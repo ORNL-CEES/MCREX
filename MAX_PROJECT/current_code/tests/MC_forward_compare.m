@@ -1,10 +1,25 @@
 addpath('../core')
 addpath('../utils')
 
-dimen=500;
-A=4*diag(ones(dimen,1)) - diag(ones(dimen-1,1),1) - diag(ones(dimen-1,1),-1);
-rhs=[1:500]';
-u=A\rhs;
+% 'jpwh_991'; 'fs_680_1'; 'ifiss_convdiff'; 'shifted_laplacian_1d';
+% 'thermal_eq_diff'; 'laplacian_2d'
+matrix='ifiss_convdiff';
+
+if ~strcmp(matrix, 'simple')
+    addpath(strcat('../utils/model_problems/', matrix));
+end
+
+if strcmp(matrix, 'simple')
+    dimen=500;
+    A=4*diag(ones(dimen,1)) - diag(ones(dimen-1,1),1) - diag(ones(dimen-1,1),-1);
+    rhs=[1:dimen]';
+    u=A\rhs;
+
+else
+     [A, dimen, ~, ~] = mmread('A.mtx');
+     rhs=mmread('b.mtx');
+     u=mmread('x.mtx');
+end
 
 Prec=diag(diag(A));
 
@@ -68,5 +83,5 @@ semilogx(n_walks, FoM_un, '-or');
 hold on
 semilogx(n_walks, FoM_mao, '-ob');
 
-save(strcat('../results/MC_forward_compare/MC_forward_plain'))
+save(strcat('../results/MC_forward_compare/MC_forward_compare', matrix))
 %save(strcat('MC_forward_plain_', dist))

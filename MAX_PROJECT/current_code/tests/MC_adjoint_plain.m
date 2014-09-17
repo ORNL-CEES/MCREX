@@ -1,10 +1,25 @@
 addpath('../core')
 addpath('../utils')
 
-dimen=500;
-A=4*diag(ones(dimen,1)) - diag(ones(dimen-1,1),1) - diag(ones(dimen-1,1),-1);
-rhs=[1:500]';
-u=A\rhs;
+% 'jpwh_991'; 'fs_680_1'; 'ifiss_convdiff'; 'shifted_laplacian_1d';
+% 'thermal_eq_diff'; 'laplacian_2d'
+matrix='thermal_eq_diff';
+
+if ~strcmp(matrix, 'simple')
+    addpath(strcat('../utils/model_problems/', matrix));
+end
+
+if strcmp(matrix, 'simple')
+    dimen=500;
+    A=4*diag(ones(dimen,1)) - diag(ones(dimen-1,1),1) - diag(ones(dimen-1,1),-1);
+    rhs=[1:dimen]';
+    u=A\rhs;
+
+else
+     [A, dimen, ~, ~] = mmread('A.mtx');
+     rhs=mmread('b.mtx');
+     u=mmread('x.mtx');
+end
 
 Prec=diag(diag(A));
 
@@ -20,7 +35,7 @@ walkcut=10^(-6);
 %%
 n_walks=[10^1 10^2 10^3 10^4 10^5 10^6];
 
-max_step=100;
+max_step=1000;
 
 [sol, var, tally, time]=MC_adjoint_error(H, rhs, P, cdf, Pb, cdfb, n_walks, max_step);
     

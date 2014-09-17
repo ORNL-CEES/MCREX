@@ -11,11 +11,11 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
     NWALKS=zeros(size(b));
     VAR=zeros(size(b));
 
-   for k=1:size(b,1)
+   parfor k=1:size(b,1)
        count=0;
        x=[];
        ratio=1;
-       while count < 1000*size(b,1) && ratio > var_cut
+       while count < 10*size(b,1) && ratio > var_cut
             for walk=1:n_walks
                 estim=0;
                 previous=k;
@@ -41,9 +41,13 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
                     previous=current;
                 end
                 x=[x; estim];
-                dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
-                ratio=dvar/abs(mean(x));
             end
+            dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
+            if abs(mean(x))~=0
+               ratio=dvar/abs(mean(x));
+            else
+               ratio=0;
+            end       
             count=count+n_walks;
        end
        X(k)=mean(x);
@@ -51,7 +55,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
        VAR(k)=dvar;
    end
    
-elseif stat.adapt_cutoff==0 && stat_adapt_walks==1
+elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
     n_walks=stat.nwalks;
     max_step=stat.max_step;
     var_cut=stat.varcut;
@@ -60,7 +64,7 @@ elseif stat.adapt_cutoff==0 && stat_adapt_walks==1
     NWALKS=zeros(size(b));
     VAR=zeros(size(b));
 
-   for k=1:size(b,1)
+   parfor k=1:size(b,1)
        count=0;
        x=[];
        ratio=1;
@@ -88,9 +92,14 @@ elseif stat.adapt_cutoff==0 && stat_adapt_walks==1
                     previous=current;
                 end
                 x=[x; estim];
-                dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
-                ratio=dvar/abs(mean(x));
             end
+            dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
+            if abs(mean(x))~=0
+               ratio=dvar/abs(mean(x));
+            else
+               ratio=0;
+            end       
+           
             count=count+n_walks;
        end
        X(k)=mean(x);
@@ -98,7 +107,7 @@ elseif stat.adapt_cutoff==0 && stat_adapt_walks==1
        VAR(k)=dvar;
    end
      
-elseif stat.adapt_cutoff==1 && stat_adapt_walks==0   
+elseif stat.adapt_cutoff==1 && stat.adapt_walks==0   
     
     n_walks=stat.nwalks;
     max_step=stat.max_step;
@@ -108,7 +117,7 @@ elseif stat.adapt_cutoff==1 && stat_adapt_walks==0
     NWALKS=zeros(size(b));
     VAR=zeros(size(b));
 
-   for k=1:size(b,1)
+   parfor k=1:size(b,1)
        count=0;
        x=[];
 
@@ -153,7 +162,7 @@ else
     NWALKS=zeros(size(b));
     VAR=zeros(size(b));
 
-   for k=1:size(b,1)
+   parfor k=1:size(b,1)
        count=0;
        x=[];
 

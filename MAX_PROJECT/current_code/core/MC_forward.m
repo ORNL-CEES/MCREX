@@ -3,7 +3,7 @@ function [x, y, X]=MC_forward(A, b, P, cdf, n_walks, max_step)
     X=zeros(n_walks,size(b,1));
 
    for k=1:size(b,1)
-        for walk=1:n_walks
+        parfor walk=1:n_walks
         previous=k;
         W=1;
         current=k;

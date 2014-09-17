@@ -38,7 +38,7 @@ stat.adapt_cutoff=1;
 stat.walkcut=10^(-6);
 stat.nchecks=2;
 stat.varcut=0.5;
-stat.vardiff=10^(-3);
+stat.vardiff=10^(-6);
 dist=1;
 
 %% Definition of the transitional probability
@@ -53,7 +53,7 @@ fp.precond='diag';
 %% MCSA forward method resolution
 
 start=cputime;
-[sol, rel_residual, var, VAR, DX, NWALKS, tally, iterations, reject]=MCSA_forward(fp, P, cdf, numer, stat);
+[sol, rel_residual, VAR, DX, NWALKS, tally, iterations, reject]=SEQ_forward(fp, P, cdf, numer, stat);
 finish=cputime;
 
 for i=1:iterations

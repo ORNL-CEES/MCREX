@@ -1,4 +1,4 @@
-function [sol, rel_res, var, VAR, DX, NWALKS, tally, count]=SEQ_forward(fp, P, cdf, numer, stat)
+function [sol, rel_res, var, VAR, DX, NWALKS, tally, count]=SEQ_forward1(fp, P, cdf, numer, stat)
 
 VAR=[];
 NWALKS=[];

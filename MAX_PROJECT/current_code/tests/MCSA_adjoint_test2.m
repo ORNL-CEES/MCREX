@@ -3,7 +3,7 @@ addpath('../utils')
 
 % 'jpwh_991'; 'fs_680_1'; 'ifiss_convdiff'; 'shifted_laplacian_1d';
 % 'thermal_eq_diff'; 'laplacian_2d'
-matrix='thermal_eq_diff';
+matrix='fs_680_1';
 
 addpath(strcat('../utils/model_problems/', matrix))
 
@@ -31,13 +31,13 @@ numer.rich_it=300;
 
 %% Statistical setting
 stat.nwalks=2;
-stat.max_step=20;
+stat.max_step=1000;
 stat.adapt_walks=1;
 stat.adapt_cutoff=1;
 stat.walkcut=10^(-6);
 stat.nchecks=2;
-stat.varcut=0.5;
-stat.vardiff=10^(-1);
+stat.varcut=0.1;
+stat.vardiff=0.1;
 dist=1;
 
 %% Definition of initial and transitional probabilities
@@ -52,7 +52,7 @@ fp.precond='diag';
 %% Monte Carlo Adjoint Method resolution
 
 start=cputime;
-[sol, rel_residual, VAR, RES, DX, NWALKS, tally, iterations, reject]=MCSA_adjoint(fp, dist, P, cdf, numer, stat);
+[sol, rel_residual, var, VAR, RES, DX, NWALKS, tally, iterations, reject]=MCSA_adjoint(fp, dist, P, cdf, numer, stat);
 finish=cputime;
 
 
