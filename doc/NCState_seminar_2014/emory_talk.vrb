@@ -1,0 +1,43 @@
+\frametitle{Multiple-Set Overlapping-Domain Decomposition}
+
+  \vspace{-1cm}
+  \begin{columns}
+
+    \begin{column}{0.52\textwidth}
+
+      \begin{figure}[t!]
+        \begin{center}
+          \scalebox{0.275}{ \input{msod_construction.pdftex_t} }
+        \end{center}
+        \caption{\small MSOD construction.}
+      \end{figure}
+
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+
+      \begin{figure}[t!]
+        \begin{center}
+          \scalebox{0.2}{ \input{msod_tally.pdftex_t} }
+        \end{center}
+        \caption{\small MSOD tally reduction.}
+      \end{figure}
+
+      \begin{itemize}
+        {\small
+        \item Multiple sets replicate the domain
+        \item Domains overlap within a set
+        \item Each set contains the full domain
+        }
+      \end{itemize}
+
+    \end{column}
+
+  \end{columns}
+
+%  \let\thefootnote\relax\footnote{\tiny{Wagner et. al., "Hybrid and
+%      parallel domain-decomposition methods development to enable
+%      Monte Carlo for reactor analysis", Joint International
+%      Conference on Supercomputing in Nuclear Applications and Monte
+%      Carlo (SNA+MC 2010), 2010.}}
+

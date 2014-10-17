@@ -2,7 +2,7 @@
   <Parameter name="Linear Solver Type" type="string" value="MCLS"/>
   <ParameterList name="Linear Solver Types">
     <ParameterList name="MCLS">
-      <Parameter name="Solver Type" type="string" value="MCSA"/>
+      <Parameter name="Solver Type" type="string" value="Anderson"/>
       <ParameterList name = "Solver Types">
         <ParameterList name = "Anderson">
 	  <Parameter name="MC Type" type="string" value="Adjoint"/>
@@ -14,15 +14,15 @@
           <Parameter name="Weight Cutoff" type="double" value="1.0e-1"/>
           <Parameter name="Neumann Relaxation" type="double" value="1.0"/>
           <Parameter name="Richardson Relaxation" type="double" value="1.0"/>
-	  <Parameter name="MC Check Frequency" type="int" value="1000"/>
-	  <Parameter name="MC Buffer Size" type="int" value="1000"/>
-          <Parameter name="Iteration Print Frequency" type="int" value="10"/>
+	  <Parameter name="MC Check Frequency" type="int" value="1024"/>
+	  <Parameter name="MC Buffer Size" type="int" value="1024"/>
+          <Parameter name="Iteration Print Frequency" type="int" value="1"/>
           <Parameter name="Iteration Check Frequency" type="int" value="1"/>
           <Parameter name="Smoother Steps" type="int" value="1"/>
           <Parameter name="Maximum Iterations" type="int" value="10"/>
           <Parameter name="Convergence Tolerance" type="double" value="1.0e-8"/>
-          <Parameter name="Composite Operator Threshold" type="double" value="0.01"/>
-          <Parameter name="Sample Ratio" type="double" value="1.0"/>
+          <Parameter name="Composite Operator Threshold" type="double" value="0.1"/>
+          <Parameter name="Sample Ratio" type="double" value="0.1"/>
           <ParameterList name = "Anderson Parameters">
             <Parameter name="Storage Depth" type="int" value="10"/>
             <Parameter name="Mixing Parameter" type="double" value="1.0"/>
@@ -64,7 +64,7 @@
           <Parameter name="Sample Ratio" type="double" value="0.25"/>
         </ParameterList>
         <ParameterList name = "Fixed Point">
-	  <Parameter name="Fixed Point Type" type="string" value="RNSD"/>
+	  <Parameter name="Fixed Point Type" type="string" value="Richardson"/>
         </ParameterList>
       </ParameterList>
     </ParameterList>
