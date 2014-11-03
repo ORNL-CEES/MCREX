@@ -3,10 +3,10 @@ BIB    := bibtex
 PDFTEX := pdflatex
 PDF    := dvipdf
 
-all: emory_talk.tex
-	$(PDFTEX) emory_talk
-	$(PDFTEX) emory_talk
-	$(PDFTEX) emory_talk
+all: ncstate_seminar.tex
+	$(PDFTEX) ncstate_seminar
+	$(PDFTEX) ncstate_seminar
+	$(PDFTEX) ncstate_seminar
 
 clean:
 	-rm -f *~
@@ -24,4 +24,4 @@ clean:
 	-rm -f TAGS
 
 realclean: clean
-	-rm -f emory_talk.pdf
+	-rm -f ncstate_seminar.pdf
