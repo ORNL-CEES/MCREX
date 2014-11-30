@@ -14,7 +14,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
    parfor k=1:size(b,1)
        count=0;
        x=[];
-       ratio=1;
+       ratio=10^6;
        while count < 10*size(b,1) && ratio > var_cut
             for walk=1:n_walks
                 estim=0;
@@ -42,7 +42,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
                 end
                 x=[x; estim];
             end
-            dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
+            dvar=sqrt(var(x)/size(x,1));
             if abs(mean(x))~=0
                ratio=dvar/abs(mean(x));
             else
@@ -68,7 +68,7 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
        count=0;
        x=[];
        ratio=1;
-       while count < 1000*size(b,1) && ratio > var_cut
+       while count < 10*size(b,1) && ratio > var_cut
             for walk=1:n_walks
                 estim=0;
                 previous=k;
@@ -93,7 +93,7 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
                 end
                 x=[x; estim];
             end
-            dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
+            dvar=sqrt(var(x)/size(x,1));
             if abs(mean(x))~=0
                ratio=dvar/abs(mean(x));
             else
@@ -145,7 +145,7 @@ elseif stat.adapt_cutoff==1 && stat.adapt_walks==0
                previous=current;
            end
            x=[x; estim];
-           dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
+           dvar=sqrt(var(x)/size(x,1));
        end
        count=count+n_walks;
 
@@ -189,7 +189,7 @@ else
                previous=current;
            end
            x=[x; estim];
-           dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
+            dvar=sqrt(var(x)/size(x,1));
        end
        count=count+n_walks;
 

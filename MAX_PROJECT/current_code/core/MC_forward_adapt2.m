@@ -44,7 +44,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
                     previous=current;
                 end
                 x=[x; estim];
-                dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
+                dvar=sqrt(var(x)/size(x,1));
                 if abs(mean(x))~=0
                     ratio=dvar/abs(mean(x));
                 else
@@ -55,7 +55,8 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
             VAR{k}=[VAR{k} dvar];
        end
        
-       while   ratio > var_cut || ( ratio > 0 && abs((VAR{k}(end)-VAR{k}(end-1)))/abs(mean(x)) > var_diff ) 
+       %while   ratio > var_cut || ( ratio > 0 && abs((VAR{k}(end)-VAR{k}(end-1)))/abs(mean(x)) > var_diff ) 
+       while   ( ratio > 0 && abs((VAR{k}(end)-VAR{k}(end-1)))/(VAR{k}(end)*sqrt(length(x))) > var_diff ) 
                
                %display(strcat('ratio =', num2str(ratio), '   ', num2str(count)))
                %display(strcat('ratio =', num2str(abs((VAR{k}(end)-VAR{k}(end-1)))/abs(mean(x)))))
@@ -88,14 +89,12 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
                         previous=current;
                     end
                     x=[x; estim];
-                    dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
+                    dvar=sqrt(var(x)/size(x,1));
                     if abs(mean(x))~=0
                         ratio=dvar/abs(mean(x));
                     else
                         ratio=0;
                     end
-                
-
                end
               count=count+n_walks;
               VAR{k}=[VAR{k} dvar];
@@ -106,7 +105,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
    end
 
    
-elseif stat.adapt_cutoff==0 && stat_adapt_walks==1
+elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
     n_walks=stat.nwalks;
     max_step=stat.max_step;
     var_cut=stat.varcut;
@@ -146,7 +145,7 @@ elseif stat.adapt_cutoff==0 && stat_adapt_walks==1
                     previous=current;
                 end
                 x=[x; estim];
-                dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
+                dvar=sqrt(var(x)/size(x,1));
                 if abs(mean(x))~=0
                     ratio=dvar/abs(mean(x));
                 else
@@ -189,7 +188,7 @@ elseif stat.adapt_cutoff==0 && stat_adapt_walks==1
                         previous=current;
                     end
                     x=[x; estim];
-                    dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
+                    dvar=sqrt(var(x)/size(x,1));
                     if abs(mean(x))~=0
                         ratio=dvar/abs(mean(x));
                     else
@@ -205,7 +204,7 @@ elseif stat.adapt_cutoff==0 && stat_adapt_walks==1
        end
    end
      
-elseif stat.adapt_cutoff==1 && stat_adapt_walks==0   
+elseif stat.adapt_cutoff==1 && stat.adapt_walks==0   
     
     n_walks=stat.nwalks;
     max_step=stat.max_step;
@@ -244,7 +243,7 @@ elseif stat.adapt_cutoff==1 && stat_adapt_walks==0
                previous=current;
            end
            x=[x; estim];
-           dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
+           dvar=sqrt(var(x)/size(x,1));
        end
        count=count+n_walks;
 
@@ -289,7 +288,7 @@ else
                previous=current;
            end
            x=[x; estim];
-           dvar=sqrt((mean(x.^2)-(mean(x)).^2)/size(x,1));
+           dvar=sqrt(var(x)/size(x,1));
        end
        count=count+n_walks;
 

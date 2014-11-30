@@ -3,7 +3,7 @@ addpath('../utils')
 
 % 'jpwh_991'; 'fs_680_1'; 'ifiss_convdiff'; 'shifted_laplacian_1d';
 % 'thermal_eq_diff'; 'laplacian_2d'
-matrix='fs_680_1';
+matrix='jpwh_991';
 
 addpath(strcat('../utils/model_problems/', matrix))
 
@@ -19,11 +19,12 @@ else
      u=mmread('x.mtx');
 end
 
+A=sparse(A);
+
 Prec=diag(diag(A));
+Prec=sparse(Prec);
 
-H=eye(size(A))-Prec\A;
-rhs=Prec\rhs;
-
+H=sparse(speye(size(A))-Prec\A);
 %% Numerical setting
 
 numer.eps=10^(-3);
@@ -36,8 +37,8 @@ stat.adapt_walks=1;
 stat.adapt_cutoff=1;
 stat.walkcut=10^(-6);
 stat.nchecks=2;
-stat.varcut=0.1;
-stat.vardiff=0.1;
+stat.varcut=0.5;
+stat.vardiff=0.5;
 dist=1;
 
 %% Definition of initial and transitional probabilities
@@ -52,7 +53,11 @@ fp.precond='diag';
 %% Monte Carlo Adjoint Method resolution
 
 start=cputime;
-[sol, rel_residual, var, VAR, RES, DX, NWALKS, tally, iterations, reject]=MCSA_adjoint(fp, dist, P, cdf, numer, stat);
+
+%parjob=parpool('local');
+[sol, rel_residual, var, VAR, DX, NWALKS, tally, iterations, reject]=MCSA_adjoint(fp, dist, P, cdf, numer, stat);
+%delete(parjob);
+
 finish=cputime;
 
 
@@ -64,13 +69,6 @@ for i=1:iterations
     end
     loglog(norm_var, '-o')
 end
-
-for i=1:iterations
-    figure()
-    loglog(RES{i}, '-o')
-    %axis([1 length(norm_res) 10^(-1) 10^0]);
-end
-
 
 
 save(strcat('../results/MCSA_adjoint2/MCSA_adjoint_test2_', matrix, '_p=', num2str(dist)))

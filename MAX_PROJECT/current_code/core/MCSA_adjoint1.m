@@ -1,4 +1,4 @@
-function [sol, rel_res, var, VAR, RES, DX, NWALKS, tally, count]=MCSA_adjoint1(fp, dist, P, cdf, numer, stat)
+function [sol, rel_res, VAR, RES, DX, NWALKS, tally, count]=MCSA_adjoint1(fp, dist, P, cdf, numer, stat)
 
 VAR=[];
 rich_it=numer.rich_it;
@@ -22,28 +22,37 @@ if ~ strcmp(fp.precond, 'alternating')
     H=fp.H;
     rhs=fp.rhs;
     sol=ones(size(H,1),1);
-    var=zeros(size(H,1),1);
 
-    %matrix to be used for the computation of the redisual at each Richardson
+    %matrix to be used for the computation of the residual at each Richardson
     %iteration
-    B=(eye(size(H))-H);    
+    B=sparse((speye(size(H))-H));     
 
     rel_residual=norm(rhs-B*sol,2)/norm(rhs,2);
     count=1;
 
+    r=rhs-B*sol;
+    R=norm(r,2)/norm(rhs,2);
+    
     if stat.adapt_walks==1 || stat.adapt_cutoff==1
         while(rel_residual>eps && count<=rich_it)
              display(strcat('iteration number', {' '}, num2str(count)))
-             sol=H*sol+rhs; 
+             sol=sol+r; 
              r=rhs-B*sol;
              [Pb, cdfb]=prob_adjoint_rhs(r, dist);
+             
+             if count>1 && R(end)>R(end-1)
+                 stat.varcut=stat.varcut/ceil(R(end)/min(R));
+             end
+                     
              [dx, dvar, X, aux, resid]=MC_adjoint_adapt(H, r, P, cdf, Pb, cdfb, stat);
+             
              NWALKS=[NWALKS size(X,1)];
              tally=[tally aux];
              sol=sol+dx;
              r=rhs-B*sol;
              display(strcat('residual norm: ', num2str(norm(r)/norm(rhs))));
              rel_residual=norm(r,2)/norm(rhs,2);
+             R=[R rel_residual];          
              VAR=[VAR dvar];
              RES{count}=resid;
              DX=[DX dx];
@@ -52,7 +61,7 @@ if ~ strcmp(fp.precond, 'alternating')
     else
          while(rel_residual>eps && count<=rich_it)
              display(strcat('iteration number', {' '}, num2str(count)))
-             sol=H*sol+rhs; 
+             sol=sol+r; 
              r=rhs-B*sol;
              [Pb, cdfb]=prob_adjoint_rhs(r, dist);
              [dx, dvar, X, aux]=MC_adjoint(H, r, P, cdf, Pb, cdfb, n_walks, max_step);
@@ -70,10 +79,6 @@ if ~ strcmp(fp.precond, 'alternating')
 
     count=count-1;
     rel_res=rel_residual;
-
-    for i=1:count
-        var=var+abs(H^(count-i)*VAR(:,i));
-    end   
 
 else 
 
@@ -101,7 +106,6 @@ else
     rel_residual=norm(rhs1-B1*sol,2)/norm(rhs1,2);
     count=1;
 
-    var=zeros(size(H1,1),1);
     VAR1=[];
     VAR2=[];
 
@@ -109,9 +113,14 @@ else
     if stat.adapt_walks==1 || stat.adapt_cutoff==1
         while(rel_residual>eps && count<=rich_it)
             if mod(count,2)==1
-                sol=H1*sol+rhs1; 
+                sol=sol+r; 
                 r=rhs1-B1*sol;
                 [Pb, cdfb]=prob_adjoint_rhs(r, dist);
+                
+                if count>1 && R(end)>R(end-1)
+                   stat.varcut=stat.varcut/ceil(R(end)/min(R));
+                end               
+                
                 [dx, dvar, X, aux, resid]=MC_adjoint_adapt(H1, r, P.P1, cdf.cdf1, Pb, cdfb, stat);
                 NWALKS=[NWALKS size(X,1)];
                 tally=[tally aux];
@@ -123,9 +132,14 @@ else
                 DX=[DX dx];
                 rel_residual=norm(r,2)/norm(rhs1,2);
             else
-                sol=H2*sol+rhs2; 
+                sol=sol+r; 
                 r=rhs2-B2*sol;
                 [Pb, cdfb]=prob_adjoint_rhs(r, dist);
+                
+                if count>1 && R(end)>R(end-1)
+                   stat.varcut=stat.varcut/ceil(R(end)/min(R));
+                end               
+                
                 [dx, dvar, X, aux]=MC_adjoint_adapt(H2, r, P.P2, cdf.cdf2, Pb, cdfb, stat);
                 NWALKS=[NWALKS size(X,1)];
                 tally=[tally aux];
@@ -144,7 +158,7 @@ else
         while(rel_residual>eps && count<=rich_it)
             X=[];
             if mod(count,2)==1
-                sol=H1*sol+rhs1; 
+                sol=sol+r; 
                 r=rhs1-B1*sol;
                 [Pb, cdfb]=prob_adjoint_rhs(r, dist);
                 [dx, dvar, X, aux]=MC_adjoint(H1, r, P.P1, cdf.cdf1, Pb, cdfb, n_walks, max_step);
@@ -157,7 +171,7 @@ else
                 DX=[DX dx];
                 rel_residual=norm(r,2)/norm(rhs1,2);
             else
-                sol=H2*sol+rhs2; 
+                sol=sol+r; 
                 r=rhs2-B2*sol;
                 [Pb, cdfb]=prob_adjoint_rhs(r, dist);
                 [dx, dvar, X, aux]=MC_adjoint(H2, r, P.P2, cdf.cdf2, Pb, cdfb, n_walks, max_step);
@@ -178,10 +192,6 @@ else
     count=count-1;
     rel_res=rel_residual;
 
-%     for i=1:count
-%         var=var+abs(H2*((H1*H2)^(count-1))*VAR1(:,i));
-%         var=var+abs((H1*H2)^(count-1)*VAR2(:,i));
-%     end
 
 end
 

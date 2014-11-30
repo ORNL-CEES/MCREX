@@ -13,7 +13,7 @@ end
 
 
 if strcmp(matrix, 'simple')
-    dimen=500;
+    dimen=5;
     A=4*diag(ones(dimen,1)) - diag(ones(dimen-1,1),1) - diag(ones(dimen-1,1),-1);
     rhs=[1:dimen]';
     u=A\rhs;

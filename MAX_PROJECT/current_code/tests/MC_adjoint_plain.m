@@ -3,14 +3,14 @@ addpath('../utils')
 
 % 'jpwh_991'; 'fs_680_1'; 'ifiss_convdiff'; 'shifted_laplacian_1d';
 % 'thermal_eq_diff'; 'laplacian_2d'
-matrix='thermal_eq_diff';
+matrix='simple';
 
 if ~strcmp(matrix, 'simple')
     addpath(strcat('../utils/model_problems/', matrix));
 end
 
 if strcmp(matrix, 'simple')
-    dimen=500;
+    dimen=5;
     A=4*diag(ones(dimen,1)) - diag(ones(dimen-1,1),1) - diag(ones(dimen-1,1),-1);
     rhs=[1:dimen]';
     u=A\rhs;

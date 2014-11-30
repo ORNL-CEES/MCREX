@@ -49,7 +49,7 @@ for i=1:length(n_walks)
 end
 
 
-walkcut2=10^(-2);
+walkcut2=10^(-3);
 start2=cputime;
 [sol2, var2, err2]=MC_forward_error2(u, H, rhs, P, cdf, n_walks, max_step, walkcut2);
 finish2=cputime;
@@ -59,7 +59,7 @@ for i=1:length(n_walks)
     rel_error2=[rel_error2 sqrt(sum((u-sol2(:,i)).^2))/sqrt(sum((u.^2)))];
 end
 
-walkcut3=10^(-4);
+walkcut3=10^(-6);
 start3=cputime;
 [sol3, var3, err3]=MC_forward_error2(u, H, rhs, P, cdf, n_walks, max_step, walkcut3);
 finish3=cputime;
@@ -69,7 +69,7 @@ for i=1:length(n_walks)
     rel_error3=[rel_error3 sqrt(sum((u-sol3(:,i)).^2))/sqrt(sum((u.^2)))];
 end
 
-walkcut4=10^(-6);
+walkcut4=10^(-9);
 start4=cputime;
 [sol4, var4, err4]=MC_forward_error2(u, H, rhs, P, cdf, n_walks, max_step, walkcut4);
 finish4=cputime;

@@ -29,6 +29,5 @@ function [x, y, X]=MC_forward(A, b, P, cdf, n_walks, max_step)
 
    %computation of the expected value for the updating vector
    x=mean(X,1)';
-   Y=X.^2;
-   y=sqrt((mean(Y,1)'-(x.^2))./(size(X,1))); 
+   y=sqrt(var(X,1)'./(size(X,1))); 
 end

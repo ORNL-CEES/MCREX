@@ -24,7 +24,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
 
             %it detects what is the inital status of the chain
             previous=min(find(cdfb>aux));
-            W=sum(abs(b))*sign(b(previous));
+            W=norm(b,1)*sign(b(previous));
             Wf=W*walkcut;
             tally(previous)=tally(previous)+1;
         %    W=b(previous)*length(find(P(previous,:)));
@@ -57,8 +57,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
         %computation of the expected value for the updating vector
         Z=[Z; X];
         x=mean(Z,1)';
-        Y=Z.^2;
-        y=[ y sqrt((mean(Y,1)'-(x.^2))./(size(Z,1))) ];     
+        y=[y sqrt((var(Z,1)')./(size(Z,1)))];     
         res=[res norm( (b-(eye(size(A))-A)*x),2)/norm(b,2)];
         if norm(x, 1)~=0
             ratio=norm(y(:,end), 1)/norm(x, 1);
@@ -69,7 +68,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
     
     
     while  ratio > var_cut  || ( ratio > 0 && norm(y(:,end) - y(:,end-1), 1)/norm(x, 1) > var_diff )
-        
+    %while   ( ratio > 0 && norm(y(:,end) - y(:,end-1), 1)/norm(x, 1) > var_diff ) 
         %display(strcat('ratio= ', num2str(ratio)))
         
         if norm(y(end), 1)/norm(x(end), 1) < var_cut
@@ -82,7 +81,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
 
                 %it detects what is the inital status of the chain
                 previous=min(find(cdfb>aux));
-                W=sum(abs(b))*sign(b(previous));
+                W=norm(b,1)*sign(b(previous));
                 Wf=W*walkcut;
                 tally(previous)=tally(previous)+1;
             %    W=b(previous)*length(find(P(previous,:)));
@@ -115,8 +114,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
         %computation of the expected value for the updating vector
         Z=[Z; X];
         x=mean(Z,1)';
-        Y=Z.^2;
-        y=[ y sqrt((mean(Y,1)'-(x.^2))./(size(Z,1))) ]; 
+        y=[y sqrt((var(Z,1)')./(size(Z,1)))]; 
         res=[res norm( (b-(eye(size(A))-A)*x),2)/norm(b,2)];
         if norm(x, 1)~=0
             ratio=norm(y(:,end), 1)/norm(x, 1);
@@ -141,7 +139,7 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
 
             %it detects what is the inital status of the chain
             previous=min(find(cdfb>aux));
-            W=sum(abs(b))*sign(b(previous));
+            W=norm(b,1)*sign(b(previous));
             tally(previous)=tally(previous)+1;
         %    W=b(previous)*length(find(P(previous,:)));
             X(walk,previous)=X(walk,previous)+W;
@@ -173,8 +171,7 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
         %computation of the expected value for the updating vector
         Z=[Z; X];
         x=mean(Z,1)';
-        Y=Z.^2;
-        y=[y sqrt((mean(Y,1)'-(x.^2))./(size(Z,1)))]; 
+        y=[y sqrt((var(Z,1)')./(size(Z,1)))]; 
         res=[res norm( (b-(eye(size(A))-A)*x),2)/norm(b,2)];
         if norm(x, 1)~=0
             ratio=norm(y(:,end), 1)/norm(x, 1);
@@ -197,7 +194,7 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
 
                 %it detects what is the inital status of the chain
                 previous=min(find(cdfb>aux));
-                W=sum(abs(b))*sign(b(previous));
+                W=norm(b,1)*sign(b(previous));
                 tally(previous)=tally(previous)+1;
             %    W=b(previous)*length(find(P(previous,:)));
                 X(walk,previous)=X(walk,previous)+W;
@@ -229,8 +226,7 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
         %computation of the expected value for the updating vector
         Z=[Z; X];
         x=mean(Z,1)';
-        Y=Z.^2;
-        y=[ y sqrt((mean(Y,1)'-(x.^2))./(size(Z,1))) ];   
+        y=[y sqrt((var(Z,1)')./(size(Z,1)))];   
         res=[res norm( (b-(eye(size(A))-A)*x),2)/norm(b,2)];
         if norm(x, 1)~=0
             ratio=norm(y(:,end), 1)/norm(x, 1);
@@ -254,7 +250,7 @@ elseif  stat.adapt_cutoff==1 && stat.adapt_walks==0
 
         %it detects what is the inital status of the chain
         previous=min(find(cdfb>aux));
-        W=sum(abs(b))*sign(b(previous));
+        W=norm(b,1)*sign(b(previous));
         tally(previous)=tally(previous)+1;
         Wf=W*walkcut;
     %    W=b(previous)*length(find(P(previous,:)));
@@ -287,9 +283,8 @@ elseif  stat.adapt_cutoff==1 && stat.adapt_walks==0
     %computation of the expected value for the updating vector
     Z=[Z; X];
     x=mean(Z,1)';
-    Y=Z.^2;
-    y=sqrt((mean(Y,1)'-(x.^2))./(size(Z,1))); 
-    
+    y=[y sqrt((var(Z,1)')./(size(Z,1)))]; 
+
 else
     n_walks=stat.nwalks;
     max_step=stat.max_step;
@@ -302,7 +297,7 @@ else
 
         %it detects what is the inital status of the chain
         previous=min(find(cdfb>aux));
-        W=sum(abs(b))*sign(b(previous));
+        W=norm(b,1)*sign(b(previous));
         tally(previous)=tally(previous)+1;
     %    W=b(previous)*length(find(P(previous,:)));
         X(walk,previous)=X(walk,previous)+W;
@@ -334,9 +329,7 @@ else
     %computation of the expected value for the updating vector
     Z=[Z; X];
     x=mean(Z,1)';
-    Y=Z.^2;
-    y=sqrt((mean(Y,1)'-(x.^2))./(size(Z,1))); 
-
+    y=[y sqrt((var(Z,1)')./(size(Z,1)))]; 
 end
 
 end

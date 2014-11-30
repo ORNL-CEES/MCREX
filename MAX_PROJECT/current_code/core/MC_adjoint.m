@@ -8,7 +8,7 @@ function [x, y, X, tally]=MC_adjoint(A, b, P, cdf, Pb, cdfb, n_walks, max_step)
     
     %it detects what is the inital status of the chain
     previous=min(find(cdfb>aux));
-    W=sum(abs(b))*sign(b(previous));
+    W=norm(b,1)*sign(b(previous));
     tally(previous)=tally(previous)+1;
 %    W=b(previous)*length(find(P(previous,:)));
     X(walk,previous)=X(walk,previous)+W;

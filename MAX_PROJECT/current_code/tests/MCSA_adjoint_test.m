@@ -19,10 +19,12 @@ else
      u=mmread('x.mtx');
 end
 
-Prec=diag(diag(A));
+A=sparse(A);
 
-H=eye(size(A))-Prec\A;
-rhs=Prec\rhs;
+Prec=diag(diag(A));
+Prec=sparse(Prec);
+
+H=sparse(speye(size(A))-Prec\A);
 
 %% Numerical setting
 
@@ -30,13 +32,13 @@ numer.eps=10^(-3);
 numer.rich_it=300;
 
 %% Statistical setting
-stat.nwalks=2;
+stat.nwalks=size(rhs,1);
 stat.max_step=1000;
 stat.adapt_walks=1;
 stat.adapt_cutoff=1;
-stat.walkcut=10^(-12);
+stat.walkcut=10^(-6);
 stat.nchecks=1;
-stat.varcut=0.1;
+stat.varcut=0.5;
 dist=1;
 
 %% Definition of initial and transitional probabilities
@@ -51,18 +53,12 @@ fp.precond='diag';
 %% Monte Carlo Adjoint Method resolution
 
 start=cputime;
-[sol, rel_residual, var, VAR, DX, NWALKS, tally, iterations]=MCSA_adjoint(fp, dist, P, cdf, numer, stat);
+%parjob=parpool('local');
+%[sol, rel_residual, RES, VAR, DX, NWALKS, tally, iterations]=MCSA_adjoint(fp, dist, P, cdf, numer, stat);
+[sol, rel_residual, ~, ~, ~, NWALKS, ~, iterations]=MCSA_adjoint(fp, dist, P, cdf, numer, stat);
+%delete(parjob);
 finish=cputime;
 
-conf=0.05;
-
-plot(sol, '*');
-hold on
-plot(sol-var*norminv(1-conf/2, 0, 1), 'g*');
-plot(sol+var*norminv(1-conf/2, 0, 1), 'g*');
-plot(u,'r*');
-
-hold off
 bar(NWALKS);
 
 save(strcat('../results/MCSA_adjoint/MCSA_adjoint_test_', matrix, '_p=', num2str(dist)))

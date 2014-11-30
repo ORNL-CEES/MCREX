@@ -40,4 +40,6 @@ display('Building of transition matrix');
         end
     end
 
+    P=sparse(P);
+    cdf=sparse(cdf);
 end

@@ -1,11 +1,11 @@
 addpath('../core')
 addpath('../utils')
 
-%parjob=parpool('local');
+parjob=parpool('local');
 
 % 'jpwh_991'; 'fs_680_1'; 'ifiss_convdiff'; 'shifted_laplacian_1d';
 % 'thermal_eq_diff'; 'laplacian_2d'
-matrix='fs_680_1';
+matrix='jpwh_991';
 
 if ~strcmp(matrix, 'simple')
     addpath(strcat('../utils/model_problems/', matrix));
@@ -30,7 +30,7 @@ H=eye(size(A))-Prec\A;
 rhs=Prec\rhs;
 
 %% Statistical setting
-stat.nwalks=2;
+stat.nwalks=1000;
 stat.max_step=1000;
 stat.adapt_walks=1;
 stat.adapt_cutoff=1;
@@ -44,8 +44,7 @@ dist=1;
 
 %% Computation of the approximated solution and relative error
 start=cputime;
-%[u_approx, var, Z, tally, res, reject]=MC_adjoint_adapt2(H, rhs, P, cdf, Pb, cdfb, stat);
-[u_approx, var, Z, tally, res]=MC_adjoint_adapt(H, rhs, P, cdf, Pb, cdfb, stat);
+[u_approx, var, Z, tally, res, reject]=MC_adjoint_adapt2(H, rhs, P, cdf, Pb, cdfb, stat);
 finish=cputime;
 
 rel_error=sqrt(sum((u-u_approx).^2))/sqrt(sum((u.^2)));

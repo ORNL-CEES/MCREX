@@ -1,4 +1,4 @@
-function [sol, rel_res, var, VAR, DX, NWALKS, tally, count, reject]=MCSA_forward2(fp, P, cdf, numer, stat)
+function [sol, rel_res, VAR, DX, NWALKS, tally, count, reject]=MCSA_forward2(fp, P, cdf, numer, stat)
 
 VAR=[];
 NWALKS=[];
@@ -21,20 +21,26 @@ if ~ strcmp(fp.precond, 'alternating')
     H=fp.H;
     rhs=fp.rhs;
     sol=ones(size(H,1),1);
-    var=zeros(size(H,1),1);
 
-    %matrix to be used for the computation of the redisual at each Richardson
+    %matrix to be used for the computation of the residual at each Richardson
     %iteration
-    B=(eye(size(H))-H);
-
+    B=sparse((speye(size(H))-H));  
+    
     rel_residual=norm(rhs-B*sol,2)/norm(rhs,2);
+    R=rel_residual;
+
     count=1;
 
     if stat.adapt_walks==1 || stat.adapt_cutoff==1
         while(rel_residual>eps && count<=rich_it)
             display(strcat('iteration number', {' '}, num2str(count)))
-            sol=H*sol+rhs; 
+            sol=sol+r; 
             r=rhs-B*sol;
+            
+            if count>2 && R(end)>R(end-1)
+                stat.vardiff=stat.vardiff/2;
+            end
+            
             [dx, dvar, nwalks, rej]=MC_forward_adapt2(H, r, P, cdf, stat);
             NWALKS=[NWALKS nwalks]; 
             reject{count}=rej;
@@ -42,6 +48,7 @@ if ~ strcmp(fp.precond, 'alternating')
             r=rhs-B*sol;
             display(strcat('residual norm: ', num2str(norm(r)/norm(rhs))));    
             rel_residual=norm(r,2)/norm(rhs,2);
+            R=[R rel_residual];            
             VAR=[VAR dvar];
             DX=[DX dx];
             count=count+1;
@@ -49,7 +56,7 @@ if ~ strcmp(fp.precond, 'alternating')
     else
         while(rel_residual>eps && count<=rich_it)
             display(strcat('iteration number', {' '}, num2str(count)))
-            sol=H*sol+rhs; 
+            sol=sol+r; 
             r=rhs-B*sol;
             [dx, dvar, X]=MC_forward(H, r, P, cdf, n_walks, max_step);
             NWALKS=[NWALKS size(X,1)];
@@ -85,7 +92,6 @@ else
     rhs2=fp.rhs2;
 
     sol=ones(size(H1,1),1);
-    var=zeros(size(H1,1),1);
 
     VAR1=[];
     VAR2=[];
@@ -101,7 +107,7 @@ else
     if stat.adapt_walks==1 || stat.adapt_cutoff==1
         while(rel_residual>eps && count<=rich_it)
            if mod(count,2)==1
-               sol=H1*sol+rhs1; 
+               sol=sol+r; 
                r=rhs1-B1*sol;
                [dx, dvar, nwalks, rej]=MC_forward_adapt2(H1, r, P.P1, cdf.cdf1, stat);
                NWALKS=[NWALKS nwalks];
@@ -112,7 +118,7 @@ else
                DX=[DX dx];
                rel_residual=norm(r,2)/norm(rhs1,2);
            else
-               sol=H2*sol+rhs2;
+               sol=sol+r;
                r=rhs2-B2*sol;
                [dx, dvar, nwalks]=MC_forward_adapt2(H2, r, P.P2, cdf.cdf2, stat);
                NWALKS=[NWALKS nwalks];
@@ -130,7 +136,7 @@ else
        while(rel_residual>eps && count<=rich_it)
            X=[];
            if mod(count,2)==1
-               sol=H1*sol+rhs1; 
+               sol=sol+r; 
                r=rhs1-B1*sol;
                [dx, dvar, X]=MC_forward(H1, r, P.P1, cdf.cdf1, n_walks, max_step);
                NWALKS=[NWALKS size(X,1)];
@@ -140,7 +146,7 @@ else
                DX=[DX dx];
                rel_residual=norm(r,2)/norm(rhs1,2);
            else
-               sol=H2*sol+rhs2;
+               sol=sol+r;
                r=rhs2-B2*sol;
                [dx, dvar, X]=MC_forward(H2, r, P.P2, cdf.cdf2, n_walks, max_step);
                NWALKS=[NWALKS size(X,1)];
@@ -157,7 +163,6 @@ else
         rel_res=rel_residual;
 
     end
-
 
 end
 

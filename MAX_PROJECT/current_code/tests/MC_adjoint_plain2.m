@@ -3,7 +3,7 @@ addpath('../utils')
 
 % 'jpwh_991'; 'fs_680_1'; 'ifiss_convdiff'; 'shifted_laplacian_1d';
 % 'thermal_eq_diff'; 'laplacian_2d'
-matrix='jpwh_991';
+matrix='laplacian_2d';
 
 if ~strcmp(matrix, 'simple')
     addpath(strcat('../utils/model_problems/', matrix));
@@ -40,13 +40,13 @@ max_step=1000;
 walkcut1=1;
 [sol1, var1, tally1, time1]=MC_adjoint_error2(H, rhs, P, cdf, Pb, cdfb, n_walks, max_step, walkcut1);
 
-walkcut2=10^(-3);
+walkcut2=10^(-4);
 [sol2, var2, tally2, time2]=MC_adjoint_error2(H, rhs, P, cdf, Pb, cdfb, n_walks, max_step, walkcut2);
 
-walkcut3=10^(-6);
+walkcut3=10^(-8);
 [sol3, var3, tally3, time3]=MC_adjoint_error2(H, rhs, P, cdf, Pb, cdfb, n_walks, max_step, walkcut3);
 
-walkcut4=10^(-9);
+walkcut4=10^(-12);
 [sol4, var4, tally4, time4]=MC_adjoint_error2(H, rhs, P, cdf, Pb, cdfb, n_walks, max_step, walkcut4);
     
 rel_error1=[];
