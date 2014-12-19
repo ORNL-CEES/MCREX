@@ -20,13 +20,14 @@ if ~ strcmp(fp.precond, 'alternating')
 
     H=fp.H;
     rhs=fp.rhs;
-    sol=ones(size(H,1),1);
+    sol=rand*ones(size(H,1),1);
 
     %matrix to be used for the computation of the residual at each Richardson
     %iteration
     B=sparse((speye(size(H))-H));  
     
-    rel_residual=norm(rhs-B*sol,2)/norm(rhs,2);
+    r=rhs-B*sol;
+    rel_residual=norm(r,2)/norm(rhs,2);
     R=rel_residual;
 
     count=1;

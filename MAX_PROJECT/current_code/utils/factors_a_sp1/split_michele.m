@@ -1,13 +1,18 @@
+format long
 load('A_sp1.mat')
-load('z')
-Z_t=spconvert(z);
+load('prec_z')
+Z_t=spconvert(prec_z);
 Z_t=sparse(Z_t);
-load('w')
-W=spconvert(w);
+load('prec_w')
+W=spconvert(prec_w);
 W=sparse(W);
+nn=18207;
+W=W(1:nn,1:nn);
+Z_t=Z_t(1:nn,1:nn);
+A_sp1=A_sp1(1:nn,1:nn);
+
 D_inv=sparse(diag(diag(Z_t)));
-Z_t=sparse( Z_t - D_inv + sparse(diag(ones(18207,1))) );
-Z=Z_t';
+Z=Z_t'*inv(D_inv);
 C=sparse(Z * D_inv * W);
 
 %% Study of positive definitiness
@@ -51,15 +56,6 @@ display('\n Spectral radius of iteration matrix after filtering each factor--- d
 max(abs(eigs(H5)))
 
 
-Z3=filtering(Z, 10^(-1));
-W3=filtering(W, 10^(-1));
-C5=filtering(sparse(Z3 * D_inv * W3), 10^(-1));
-H6 = sparse( speye(18207) - C5*A_sp1 );
-
-display('\n Spectral radius of iteration matrix with two level filtering --- double sided preconditioning:\n');
-max(abs(eigs(H6)))
-
-
 %% tests about iterative methods
 
 rhs=A_sp1*ones(18207,1);
@@ -73,7 +69,7 @@ Prec_A=C*A_sp1;
 Prec_rhs=C*rhs;
 
 [x_bicg,flag_bicg,relres_bicg,iter_bicg,resvec_bicg] = bicgstab(Prec_A,Prec_rhs,10^(-8)*norm(Prec_rhs), max_itbcg);
-display('Relative error for BiCGASTAB --- left preconditioning:')
+display('Relative error for BiCGSTAB --- left preconditioning:')
 norm((ones(18207,1))-x_bicg)/norm(ones(18207,1))
 semilogy(resvec_bicg/norm(Prec_rhs))
 title('BiCGASTAB --- left preconditioning: trend of the relative redisual for all the half iterations computed');
@@ -89,7 +85,7 @@ title('GMRES --- left preconditioning: trend of the relative redisual for all th
 Prec_A2=A_sp1*C;
 
 [y_bicg2,flag_bicg2,relres_bicg2,iter_bicg2,resvec_bicg2] = bicgstab(Prec_A2,rhs,10^(-8)*norm(rhs), max_itbcg);
-display('Relative error for BiCGASTAB --- right preconditioning:')
+display('Relative error for BiCGSTAB --- right preconditioning:')
 x_bicg2=C*y_bicg2;
 norm((ones(18207,1))-x_bicg2)/norm(ones(18207,1))
 figure()
@@ -110,7 +106,7 @@ Prec_A3=D_inv*W*A_sp1*Z;
 Prec_rhs3=D_inv*W*rhs;
 
 [y_bicg3,flag_bicg3,relres_bicg3,iter_bicg3,resvec_bicg3] = bicgstab(Prec_A3,Prec_rhs3,10^(-8)*norm(Prec_rhs3), max_itbcg);
-display('Relative error for BiCGASTAB --- double sided preconditioning:')
+display('Relative error for BiCGSTAB --- double sided preconditioning:')
 x_bicg3=Z*y_bicg3;
 norm((ones(18207,1))-x_bicg3)/norm(ones(18207,1))
 figure()

@@ -26,8 +26,10 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
                 i=1;
                 while i<=max_step && W>Wf
                 aux=rand;
-                if sum(abs(P(previous,:)))>0
-                    current=min(find(cdf(previous,:)>aux));
+                cdfrow_ind=find(cdf(previous,:));
+                if ~isempty(cdfrow_ind)
+                    current=min(find(cdf(previous,cdfrow_ind)>aux));
+                    current=cdfrow_ind(current);
                     W=W*A(previous,current)/P(previous,current);
                 else 
                     W=0;
@@ -78,8 +80,10 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
                 i=1;
                 while i<=max_step 
                 aux=rand;
-                if sum(abs(P(previous,:)))>0
-                    current=min(find(cdf(previous,:)>aux));
+                cdfrow_ind=find(cdf(previous,:));
+                if ~isempty(cdfrow_ind)
+                    current=min(find(cdf(previous,cdfrow_ind)>aux));
+                    current=cdfrow_ind(current);
                     W=W*A(previous,current)/P(previous,current);
                 else 
                     W=0;
@@ -131,8 +135,10 @@ elseif stat.adapt_cutoff==1 && stat.adapt_walks==0
            i=1;
            while i<=max_step && W>Wf
                 aux=rand;
-                if sum(abs(P(previous,:)))>0
-                    current=min(find(cdf(previous,:)>aux));
+                cdfrow_ind=find(cdf(previous,:));
+                if ~isempty(cdfrow_ind)
+                    current=min(find(cdf(previous,cdfrow_ind)>aux));
+                    current=cdfrow_ind(current);
                     W=W*A(previous,current)/P(previous,current);
                 else 
                     W=0;
@@ -175,8 +181,10 @@ else
            i=1;
            while i<=max_step 
                 aux=rand;
-                if sum(abs(P(previous,:)))>0
-                    current=min(find(cdf(previous,:)>aux));
+                cdfrow_ind=find(cdf(previous,:));
+                if ~isempty(cdfrow_ind)
+                    current=min(find(cdf(previous,cdfrow_ind)>aux));
+                    current=cdfrow_ind(current);
                     W=W*A(previous,current)/P(previous,current);
                 else 
                     W=0;

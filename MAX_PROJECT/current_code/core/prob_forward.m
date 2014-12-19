@@ -4,12 +4,16 @@ display('Building of transition matrix');
 
     if (p == 0)
         P=zeros(size(A));
+        cdf=zeros(size(A));
         for i=1:size(P,1)
             if isempty(A(i,:))
                 break;
-            else            
-                for j=1:size(P,2)
-                    P(i,j)=(A(i,j)~=0)/(length(find(A(i,:))));
+            else 
+                Prow_ind=find(A(i,:));
+                num_elem=length(find(A(i,:)));
+                for j=1:num_elem
+                    P(i,Prow_ind(j))=(A(i,Prow_ind(j))~=0)/num_elem;
+                    cdf(i,Prow_ind(j))=j/num_elem;
                 end
             end
         end
@@ -17,28 +21,23 @@ display('Building of transition matrix');
     else
 
         P=zeros(size(A));
+        cdf=zeros(size(A));
         for i=1:size(P,1)
             if isempty(A(i,:))
                 break;
-            else            
-                for j=1:size(P,2)
-                    P(i,j)=abs(A(i,j)).^p/(sum(abs(A(i,:)).^p));
+            else 
+                 Prow_ind=find(A(i,:));
+                num_elem=length(find(A(i,:)));
+                sump=sum(abs(A(i,Prow_ind)).^p);
+                for j=1:num_elem
+                    P(i,Prow_ind(j))=abs(A(i,Prow_ind(j))).^p/sump;
+                    cdf(i,Prow_ind(j))=sum(abs(A(i,Prow_ind(1:j))))/sump;
                 end
             end
         end
 
     end
 
-    cdf=P;
-    %computation of the cumulative probability
-    for i=1:size(cdf,1)
-        for j=2:size(cdf,2)
-            aux=max(find(cdf(i,1:j-1)))+0;
-            if (cdf(i,j)~=0 && ~isempty(aux))
-                cdf(i,j)=cdf(i,j)+cdf(i,aux);
-            end
-        end
-    end
 
     P=sparse(P);
     cdf=sparse(cdf);

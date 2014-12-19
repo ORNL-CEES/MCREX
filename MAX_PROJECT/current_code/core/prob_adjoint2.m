@@ -20,20 +20,30 @@ function [Pb, cdfb, P, cdf]=prob_adjoint2(A, b, p1, p2)
     
    if (p2 == 0)    
         P=zeros(size(A));
+        cdf=zeros(size(A));
         for i=1:size(P,1)
-            for j=1:size(P,2)
-                if sum(abs(A(:,i)))>0
-                    P(i,j)=(A(j,i)~=0)/(length(find(A(:,i))));
+            Prow_ind=find(A(:,i));
+            num_elem=length(find(A(:,i)));   
+            if ~isempty(find(A(:,i)))
+               aux=find(A(:,i));
+                for j=1:1:num_elem
+                    P(i,Prow_ind(j))=(A(Prow_ind(j),i)~=0)/num_elem;
+                    cdf(i,Prow_ind(j))=j/num_elem;
                 end
             end
         end
 
    else
         P=zeros(size(A));
+        cdf=zeros(size(A));
         for i=1:size(P,1)
-            for j=1:size(P,2)
-                if sum(abs(A(:,i)))>0
-                    P(i,j)=abs(A(j,i)).^p2/(sum(abs(A(:,i)).^p2));
+           Prow_ind=find(A(:,i));
+            num_elem=length(find(A(:,i)));  
+            sump=(sum(abs(A(:,i)).^p));
+            for j=1:1:num_elem
+                if ~isempty(find(A(:,i)))
+                    P(i,Prow_ind(j))=abs(A(Prow_ind(j),i)).^p/sump;
+                    cdf(i,Prow_ind(j))=sum(abs(A(Prow_ind(1:j),i)))/sump;
                 end
             end
         end
@@ -49,17 +59,7 @@ function [Pb, cdfb, P, cdf]=prob_adjoint2(A, b, p1, p2)
         end
     end
     
-    cdf=P;
-    %computation of the cumulative probability
-    for i=1:size(cdf,1)
-        for j=2:size(cdf,2)
-            aux=max(find(cdf(i,1:j-1)));
-            if (cdf(i,j)~=0 && ~isempty(aux))
-                cdf(i,j)=cdf(i,j)+cdf(i,aux);
-            end
-        end
-    end
-    
+ 
     P=sparse(P);
     cdf=sparse(cdf);
     

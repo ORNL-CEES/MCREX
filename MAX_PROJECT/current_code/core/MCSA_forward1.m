@@ -19,7 +19,7 @@ if ~ strcmp(fp.precond, 'alternating')
 
     H=fp.H;
     rhs=fp.rhs;
-    sol=ones(size(H,1),1);
+    sol=rand*ones(size(H,1),1);
 
     %matrix to be used for the computation of the residual at each Richardson
     %iteration

@@ -27,8 +27,10 @@ function [x, y, TALLY, time]=MC_adjoint_error2(A, b, P, cdf, Pb, cdfb, n_walks, 
            i=1;
            while i<=max_step && W/Wf>cutoff
               aux=rand;
-              if sum(abs(P(previous,:)))>0
-                current=min(find(cdf(previous,:)>aux));
+              cdfrow_ind=find(cdf(previous,:));
+              if ~isempty(cdfrow_ind)
+                current=min(find(cdf(previous,cdfrow_ind)>aux));
+                current=cdfrow_ind(current);
                 W=W*A(current,previous)/P(previous,current);
               else
                  W=0;
