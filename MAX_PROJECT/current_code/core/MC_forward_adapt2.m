@@ -14,7 +14,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
     NWALKS=zeros(size(b));
     VAR=cell(size(b));
 
-   parfor k=1:size(b,1)
+   for k=1:size(b,1)
        count=0;
        x=[];
        ratio=1;
@@ -29,13 +29,15 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
                 estim=estim+W*b(current);
                 i=1;
                 while i<=max_step && W>Wf
-                aux=rand;
-                if sum(abs(P(previous,:)))>0
-                    current=min(find(cdf(previous,:)>aux));
-                    W=W*A(previous,current)/P(previous,current);
-                else 
-                    W=0;
-                end
+                    aux=rand;
+                    cdfrow_ind=find(cdf(previous,:));
+                    if ~isempty(cdfrow_ind)
+                        current=min(find(cdf(previous,cdfrow_ind)>aux));
+                        current=cdfrow_ind(current);
+                        W=W*A(previous,current)/P(previous,current);
+                    else 
+                        W=0;
+                    end
                     if W==0
                         break;
                     end
@@ -74,8 +76,10 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
                     i=1;
                     while i<=max_step && W>Wf
                     aux=rand;
-                    if sum(abs(P(previous,:)))>0
-                        current=min(find(cdf(previous,:)>aux));
+                    cdfrow_ind=find(cdf(previous,:));
+                    if ~isempty(cdfrow_ind)
+                        current=min(find(cdf(previous,cdfrow_ind)>aux));
+                        current=cdfrow_ind(current);
                         W=W*A(previous,current)/P(previous,current);
                     else 
                         W=0;
@@ -115,7 +119,7 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
     NWALKS=zeros(size(b));
     VAR=zeros(size(b));
 
-   parfor k=1:size(b,1)
+   for k=1:size(b,1)
        count=0;
        x=[];
        ratio=1;
@@ -130,8 +134,10 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
                 i=1;
                 while i<=max_step 
                 aux=rand;
-                if sum(abs(P(previous,:)))>0
-                    current=min(find(cdf(previous,:)>aux));
+                cdfrow_ind=find(cdf(previous,:));
+                if ~isempty(cdfrow_ind)
+                    current=min(find(cdf(previous,cdfrow_ind)>aux));
+                    current=cdfrow_ind(current);
                     W=W*A(previous,current)/P(previous,current);
                 else 
                     W=0;
@@ -173,8 +179,10 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
                     i=1;
                     while i<=max_step 
                     aux=rand;
-                    if sum(abs(P(previous,:)))>0
-                        current=min(find(cdf(previous,:)>aux));
+                    cdfrow_ind=find(cdf(previous,:));
+                    if ~isempty(cdfrow_ind)
+                        current=min(find(cdf(previous,cdfrow_ind)>aux));
+                        current=cdfrow_ind(current);
                         W=W*A(previous,current)/P(previous,current);
                     else 
                         W=0;
@@ -214,7 +222,7 @@ elseif stat.adapt_cutoff==1 && stat.adapt_walks==0
     NWALKS=zeros(size(b));
     VAR=zeros(size(b));
 
-   parfor k=1:size(b,1)
+   for k=1:size(b,1)
        count=0;
        x=[];
 
@@ -228,8 +236,10 @@ elseif stat.adapt_cutoff==1 && stat.adapt_walks==0
            i=1;
            while i<=max_step && W>Wf
                 aux=rand;
-                if sum(abs(P(previous,:)))>0
-                    current=min(find(cdf(previous,:)>aux));
+                cdfrow_ind=find(cdf(previous,:));
+                if ~isempty(cdfrow_ind)
+                    current=min(find(cdf(previous,cdfrow_ind)>aux));
+                    current=cdfrow_ind(current);
                     W=W*A(previous,current)/P(previous,current);
                 else 
                     W=0;
@@ -260,7 +270,7 @@ else
     NWALKS=zeros(size(b));
     VAR=zeros(size(b));
 
-   parfor k=1:size(b,1)
+   for k=1:size(b,1)
        count=0;
        x=[];
 
@@ -273,8 +283,10 @@ else
            i=1;
            while i<=max_step 
                 aux=rand;
-                if sum(abs(P(previous,:)))>0
-                    current=min(find(cdf(previous,:)>aux));
+                cdfrow_ind=find(cdf(previous,:));
+                if ~isempty(cdfrow_ind)
+                    current=min(find(cdf(previous,cdfrow_ind)>aux));
+                    current=cdfrow_ind(current);
                     W=W*A(previous,current)/P(previous,current);
                 else 
                     W=0;

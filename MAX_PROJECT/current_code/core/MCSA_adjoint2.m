@@ -13,21 +13,22 @@ RES=cell(rich_it,1);
 
 if ~ strcmp(fp.precond, 'alternating')
 
-    if ~ asyn_check(fp.H)
-        error('Iteration matrix does not have spectral radius less than 1');
-    end   
+%     if ~ asyn_check(fp.H)
+%         error('Iteration matrix does not have spectral radius less than 1');
+%     end   
 
     display(strcat('Adjoint MCSA with', {' '}, fp.precond, ' preconditioning started'));
 
     H=fp.H;
     rhs=fp.rhs;
-    sol=ones(size(H,1),1);
+    sol=rand*ones(size(H,1),1);
 
     %matrix to be used for the computation of the residual at each Richardson
     %iteration
     B=sparse((speye(size(H))-H));    
 
-    rel_residual=norm(rhs-B*sol,2)/norm(rhs,2);
+    r=rhs-B*sol;
+    rel_residual=norm(r,2)/norm(rhs,2);
     count=1;
 
     if stat.adapt_walks==1 || stat.adapt_cutoff==1

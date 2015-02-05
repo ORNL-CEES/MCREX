@@ -25,8 +25,10 @@ for i=1:L
     i=1;
         while i<=max_step
               aux=rand;
-              if sum(abs(P(previous,:)))>0
-                current=min(find(cdf(previous,:)>aux));
+              cdfrow_ind=find(cdf(previous,:));
+              if ~isempty(cdfrow_ind)
+                current=min(find(cdf(previous,cdfrow_ind)>aux));
+                current=cdfrow_ind(current);
                 W=W*A(current,previous)/P(previous,current);
                 % I insert a contribution on the estimator related to the
                 % current state
