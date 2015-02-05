@@ -320,3 +320,53 @@
   number =       {4},
   pages =        {2107--2122}
 }
+
+@article{alexandrov_efficient_1998,
+	title = {Efficient parallel {M}onte {C}arlo methods for matrix computations},
+	volume = {47},
+	issn = {0378-4754},
+	url = {http://www.sciencedirect.com/science/article/pii/S0378475498000974},
+	doi = {10.1016/S0378-4754(98)00097-4},
+	number = {2-5},
+	urldate = {2012-12-02},
+	journal = {Mathematics and Computers in Simulation},
+	author = {Alexandrov, {V.N.}},
+	month = aug,
+	year = {1998},
+	keywords = {Matrix inversion, {M}onte {C}arlo methods, System of linear algebraic equations, parallel algorithms},
+	pages = {113--122}
+}
+
+@article{brunner_efficient_2009,
+	title = {An efficient, robust, domain-decomposition algorithm for particle {M}onte {C}arlo},
+	volume = {228},
+	issn = {0021-9991},
+	url = {http://www.sciencedirect.com/science/article/pii/S0021999109000965},
+	doi = {10.1016/j.jcp.2009.02.013},
+	abstract = {A previously described algorithm [{T.A.} Brunner, {T.J.} Urbatsch, {T.M.} Evans, {N.A.} Gentile, Comparison of four parallel algorithms for domain decomposed implicit {M}onte {C}arlo, Journal of Computational Physics 212 (2) (2006) 527-539] for doing domain decomposed particle {M}onte {C}arlo calculations in the context of thermal radiation transport has been improved. It has been extended to support cases where the number of particles in a time step are unknown at the beginning of the time step. This situation arises when various physical processes, such as neutron transport, can generate additional particles during the time step, or when particle splitting is used for variance reduction. Additionally, several race conditions that existed in the previous algorithm and could cause code hangs have been fixed. This new algorithm is believed to be robust against all race conditions. The parallel scalability of the new algorithm remains excellent.},
+	number = {10},
+	urldate = {2012-09-20},
+	journal = {Journal of Computational Physics},
+	author = {Brunner, Thomas A. and Brantley, Patrick S.},
+	month = jun,
+	year = {2009},
+	keywords = {{M}onte {C}arlo methods, Neutron transport, Parallel computation, Radiative transfer},
+	pages = {3882--3890}
+}
+
+@article{brunner_comparison_2006,
+	title = {Comparison of four parallel algorithms for domain decomposed implicit {M}onte {C}arlo},
+	volume = {212},
+	issn = {0021-9991},
+	url = {http://www.sciencedirect.com/science/article/pii/S0021999105003311},
+	doi = {10.1016/j.jcp.2005.07.009},
+	abstract = {We consider four asynchronous parallel algorithms for Implicit {M}onte {C}arlo ({IMC)} thermal radiation transport on spatially decomposed meshes. Two of the algorithms are from the production codes {KULL} from Lawrence Livermore National Laboratory and Milagro from Los Alamos National Laboratory. Improved versions of each of the existing algorithms are also presented. All algorithms were analyzed in an implementation of the {KULL} {IMC} package in {ALEGRA}, a Sandia National Laboratory high energy density physics code. The improved Milagro algorithm performed the best by scaling almost linearly out to 244 processors for well load balanced problems.},
+	number = {2},
+	urldate = {2012-09-20},
+	journal = {Journal of Computational Physics},
+	author = {Brunner, Thomas A. and Urbatsch, Todd J. and Evans, Thomas M. and Gentile, Nicholas A.},
+	month = mar,
+	year = {2006},
+	keywords = {{M}onte {C}arlo methods, Parallel computation, Radiative transfer},
+	pages = {527--539}
+}

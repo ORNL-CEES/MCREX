@@ -78,10 +78,8 @@ processors.
 \section{Introduction}
 
 Predictive modeling and simulation capability requires the combination
-of high fidelity models, high performance computing hardware that can
-handle the intense computational loads required by these models, and
-modern algorithms for solving these problems that leverage this high
-performance hardware. For nuclear reactor analysis, this predictive
+of high fidelity models, high performance computing hardware, and
+modern algorithms. For nuclear reactor analysis, this predictive
 capability can enable tighter design tolerances for improved thermal
 performance and efficiency, higher fuel utilization and burnup, and
 high confidence in accident scenario models. Modern high fidelity
@@ -96,7 +94,7 @@ to achieve good accuracy for the responses of interest
 intractable without sufficient computational hardware. On the other
 side of the spectrum, low-fidelity diffusion solutions are often
 leveraged as an alternative to computing a solution over the entire
-domain a reactor core where diffusion theory is often valid. 
+domain of a reactor core where diffusion theory is often valid.
 
 In the 1960's, Gelbard developed an ad-hoc, multidimensional extension
 of the simple one-dimensional planar $P_N$ equations that created a
@@ -175,22 +173,25 @@ asynchronous domain decomposed Monte Carlo kernel for the Neumann-Ulam
 algorithm. In tandem, these two developments permit solutions of the
 $SP_N$ equations for large-scale light water criticality problems. We
 believe both of these contributions in preconditioning and
-parallelizing the Neumann-Ulam algorithm are new and unique.
+parallelizing the Neumann-Ulam algorithm are new and unique. Although
+we have motivated this work by looking forward to exascale computing,
+resiliency of this solution technique in the presence of faults will
+not be considered here but instead be addressed in future work.
 
 The paper is organized as follows. First, we briefly introduce the
 $SP_N$ equations for eigenvalue problems along with the discretization
 used for this work. We then describe the application of the MCSA
 algorithm to the solution of the equations and introduce the
 criticality problems used for the numerical studies in the this
-work. Next, we demonstrate that the basic Jacobi preconditioning
-applied in our previous work is unsatisfactory to achieve convergence
-for these problems and subsquently present our new preconditioning
-scheme. We then parallelize the MCSA algorithm and describe our new
-domain decomposition scheme deisgned to enable very large problems. We
-then apply this preconditioning scheme and parallel algorithm to the
-criticality problems and compare the performance of the preconditioned
-MCSA method to preconditioned Krylov methods. We then finish with
-conclusions and indication of future work.
+work. Next, we present our new preconditioning scheme consisting of an
+approximate inverse algorithm combined with solving an approximate
+Monte Carlo problem for the acceleration. We then parallelize the MCSA
+algorithm and describe our new domain decomposition scheme for the
+Neumann-Ulam Monte Carlo algorithm designed to enable very large
+problems. We then apply the preconditioning scheme and the parallel
+algorithm to the criticality problems and compare the performance of
+the preconditioned MCSA method to preconditioned Krylov methods. We
+then finish with conclusions and indication of future work.
 
 %%---------------------------------------------------------------------------%%
 \section{Simplified $P_N$ Approximation}
@@ -395,10 +396,20 @@ be entirely bound by the spectral radius of $\ve{H}^T$
 (e.g. \cite{spanier_monte_1969}), was recently identified as a only a
 subset of the convergence criteria. In particular, Ji, Mascagni, and
 Li demonstrate in \cite{ji_2013} that a necessary and sufficient
-condition for convergence of this algorithm is $\rho(\ve{H^*}) < 1$
+condition for convergence of this algorithm is 
+\begin{equation}
+  \rho(\ve{H^*}) < 1
+  \label{eq:necessary_condition}
+\end{equation} 
 with $\ve{H^*}$ defined element-wise as:
 \begin{equation}
   h^*_{ij} = \frac{(h^T_{ij})^2}{p_{ij}}\:,
+  \label{eq:condition_values}
+\end{equation}
+or for our choice of probabilities via
+Eq~(\ref{eq:adjoint_neumann_ulam})
+\begin{equation}
+  h^*_{ij} = h_{ij} w_{ij}\:,
   \label{eq:h_star}
 \end{equation}
 which is indicative that both the structure of $\ve{H}^T$ and the
@@ -509,25 +520,21 @@ Steven or Tom....
 
 %%---------------------------------------------------------------------------%%
 \section{Preconditioning Algorithm}
+In this section we present our preconditioning algorithm.
 
 \subsection{Preconditioned MCSA}
 \label{subsec:preconditioning}
-In most cases, at least a minimal amount of \textit{preconditioning}
-of the linear system will be required in order to use the class of
-stochastic methods described. Although these methods have no symmetry
-requirements for convergence, they do require that the spectral radius
-of the iteration matrix be less than one. Preconditioning serves as a
-means of achieving this by altering the eigenvalue spectrum of the
-iteration matrix. It is possible to use general left, right, and left/right
-preconditioning with MCSA by carefully considering the underlying
-Monte Carlo problem that will be solved with the Neumann-Ulam
-method. We consider here the general left/right preconditioned method
-as the left or right preconditioned methods can be inferred from its
-formulation. 
-
-We consider a left preconditioner $\ve{M_L}$ and a right
-preconditioner $\ve{M_R}$. The left/right preconditioned linear
-problem is then:
+In most cases, at least a minimal amount of preconditioning of the
+linear system will be required in order to satisfy the necessary
+convergence condition given in Eq~(\ref{eq:necessary_condition}) for
+the Neumann-Ulam algorithm. Preconditioning serves as a means of
+achieving this by altering the eigenvalue spectrum of the adjoint
+iteration matrix and subsequently $\ve{H}^*$. It is possible to use
+general left and right preconditioning with MCSA by carefully
+considering the underlying Monte Carlo problem that will be solved
+with the Neumann-Ulam algorithm. We consider a left preconditioner,
+$\ve{M_L}$, and a right preconditioner, $\ve{M_R}$. The left/right
+preconditioned linear problem is then:
 \begin{equation}
   \ve{M}_L^{-1}\ve{A}\ve{M}_R^{-1}\ve{M}_R\ve{x} = \ve{M}_L^{-1}\ve{b}\:.
   \label{eq:left_right_linear_problem}
@@ -543,15 +550,15 @@ with
   \ve{x} = \ve{M}_R^{-1}\ve{u}\:.
   \label{eq:left_right_recover}
 \end{equation}
-To apply such a method to MCSA, we solve for the substituted variable
-$\ve{u}$ during the iteration sequence:
+To apply this preconditioning to MCSA, we solve for the substituted
+variable $\ve{u}$ during the iteration sequence:
 \begin{subequations}
   \begin{gather}
-    \ve{u}^{k+1/2} = \ve{u}^k + \ve{r}^k\:,\\
-    \ve{r}^{k+1/2} = \ve{M}_L^{-1}(\ve{b}-\ve{A}\ve{M}_R^{-1}\ve{u}^{k+1/2})\:,\\ 
-    \ve{M}_L^{-1}\ve{A}\ve{M}_R^{-1}\delta\ve{u}^{k+1/2} = \ve{r}^{k+1/2}\:,\\ 
+    \ve{u}^{k+1/2} = \ve{u}^k + \ve{M}_L^{-1}\ve{r}^k\:,\\
+    \ve{r}^{k+1/2} = \ve{b}-\ve{A}\ve{M}_R^{-1}\ve{u}^{k+1/2}\:,\\ 
+    \ve{M}_L^{-1}\ve{A}\ve{M}_R^{-1}\delta\ve{u}^{k+1/2} = \ve{M}_L^{-1}\ve{r}^{k+1/2}\:,\\ 
     \ve{u}^{k+1} = \ve{u}^{k+1/2} + \delta \ve{u}^{k+1/2}\:,\\
-    \ve{r}^{k+1} = \ve{M}_L^{-1}(\ve{b}-\ve{A}\ve{M}_R^{-1}\ve{u}^{k+1})\:,
+    \ve{r}^{k+1} = \ve{b}-\ve{A}\ve{M}_R^{-1}\ve{u}^{k+1}\:,
   \end{gather}
   \label{eq:left_right_mcsa}
 \end{subequations}
@@ -559,20 +566,24 @@ and then recover the original solution vector with
 Eq~(\ref{eq:left_right_recover}). For the Monte Carlo problem, we
 isolate the generation of the correction:
 \begin{equation}
-  \ve{M}_L^{-1}\ve{A}\ve{M}_R^{-1}\delta\ve{u}^{k+1/2} = \ve{r}^{k+1/2}\:,
+  \ve{M}_L^{-1}\ve{A}\ve{M}_R^{-1}\delta\ve{u}^{k+1/2} =
+  \ve{M}_L^{-1}\ve{r}^{k+1/2}\:,
   \label{eq:left_right_correction}
 \end{equation}
 and note that the preconditioned residual of the substituted variable
-is now serving as the source and the new iteration matrix is:
+is now serving as the source and the new adjoint iteration matrix is:
 \begin{equation}
-  \ve{H} = \ve{I} - \ve{M}_L^{-1}\ve{A}\ve{M}_R^{-1}\:.
+  \ve{H}^T = \big(\ve{I} - \ve{M}_L^{-1}\ve{A}\ve{M}_R^{-1}\big)^T\:.
   \label{eq:left_right_iteration_matrix}
 \end{equation}
-As we require $(i,j)$ element-wise access to the iteration matrix in
-order to construct probabilities and weights for the Monte Carlo
-procedure from the Neumann-Ulam decomposition, the \textit{composite
-  operator}, $\ve{M}_L^{-1}\ve{A}\ve{M}_R^{-1}$, must be formed via
-matrix-matrix multiplication. 
+As we require element-wise access to the iteration matrix in order to
+construct probabilities and weights from the Neumann-Ulam
+decomposition for the Monte Carlo procedure, the composite operator,
+$\ve{M}_L^{-1}\ve{A}\ve{M}_R^{-1}$, must be formed via matrix-matrix
+multiplication. Provided that $\ve{M}_L^{-1}$, $\ve{A}$, and
+$\ve{M}_R^{-1}$ are relatively sparse, then we can readily leverage
+sparse matrix-matrix multiplication algorithms that are in wide use in
+scalable algebraic multigrid implementations.
 
 Several possible shortcomings of this preconditioning approach are
 readily observed. First, the matrix-matrix multiplication operation
@@ -588,15 +599,15 @@ operation. It is also interesting to note that the Monte Carlo problem
 in the general left/right preconditioned scheme given by
 Eq~(\ref{eq:left_right_correction}) is not fully left/right
 preconditioned (meaning that we do not recover $\ve{x}$), but instead
-part of a sequence for finding the substituted variable $\ve{u}$. We
-do, however, gain the benefits of this general preconditioning by
-building the iteration matrix in
+is part of a sequence for finding the substituted variable,
+$\ve{u}$. We do, however, gain the benefits of this general
+preconditioning by building the iteration matrix in
 Eq~(\ref{eq:left_right_iteration_matrix}) from the fully
 preconditioned linear operator.
 
-\subsubsection{Block Jacobi Preconditioning}
+\subsection{Sparse Approximate Inverse Preconditioning}
 
-\subsubsection{Sparse Approximate Inverse Preconditioning}
+\subsection{Approximate Monte Carlo Problem}
 
 %%---------------------------------------------------------------------------%%
 \section{Parallel Algorithm}
