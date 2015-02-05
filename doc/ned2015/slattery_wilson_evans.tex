@@ -120,11 +120,12 @@ leveraged the Monte Carlo algorithm in an iterative refinement scheme where a
 residual Monte Carlo solution serves as a correction to a fixed point
 iteration \cite{halton_sequential_1962}. In recent years, the adjoint
 Neumann-Ulam method has been leveraged in Monte Carlo Synthetic Acceleration
-(MCSA) methods that are competitive with conventional methods including Krylov
-methods and are applicable to a wide variety of linear systems
-\cite{evans_monte_2009,evans_monte_2014}. To advance the applicability of
-these new MCSA methods, we therefore aim to apply the underlying Monte Carlo
-methods to large-scale problems in parallel computing environments.
+(MCSA) methods that, for certain classes of problems, are competitive with
+conventional methods including Krylov methods and are applicable to a wide
+variety of linear systems \cite{evans_monte_2009,evans_monte_2014}. To advance
+the applicability of these new MCSA methods, we therefore aim to apply the
+underlying Monte Carlo methods to large-scale problems in parallel computing
+environments.
 
 To date, parallel Neumann-Ulam methods have been limited to full domain
 replication with parallelism exploited through individual histories
@@ -638,7 +639,7 @@ points computed within the tolerance of the iterative eigenvalue
 solver.
 \begin{figure}[ht!]
   \begin{center}
-    \includegraphics[width=4in,clip]{measured_spec_rad.png}
+    \includegraphics[width=\textwidth]{measured_spec_rad.png}
   \end{center}
   \caption{Measured and analytic preconditioned diffusion operator
     spectral radius as a function of the absorption cross section to
@@ -672,7 +673,7 @@ agreement between the measured and analytic results. However, we
 observe a larger relative error for both long and short random walks.
 \begin{figure}[ht!]
   \begin{center}
-    \includegraphics[width=6.5in,clip]{measured_length.png}
+    \includegraphics[width=\textwidth]{measured_length.png}
   \end{center}
   \caption{Measured and analytic random walk length as a function of
     the iteration matrix spectral radius. The weight cutoff was
@@ -739,7 +740,7 @@ Eqs~(\ref{eq:wigner_domain_leakage}) and
 matrix spectral radius.
 \begin{figure}[ht!]
   \begin{center}
-    \includegraphics[width=4.5in,clip]{leakage_variation.png}
+    \includegraphics[width=\textwidth]{leakage_variation.png}
   \end{center}
   \caption{Measured and analytic domain leakage as a function of the
     iteration matrix spectral radius. To test the behavior with
@@ -762,7 +763,7 @@ plotted in Figure~\ref{fig:leakage_error} for all domain sizes
 tested. 
 \begin{figure}[ht!]
   \begin{center}
-    \includegraphics[width=4.5in,clip]{leakage_error.png}
+    \includegraphics[width=\textwidth]{leakage_error.png}
   \end{center}
   \caption{Measured and analytic domain leakage absolute error as a
     function of the iteration matrix spectral radius.  To test the
