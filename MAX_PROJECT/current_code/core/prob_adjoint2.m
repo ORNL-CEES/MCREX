@@ -23,29 +23,24 @@ function [Pb, cdfb, P, cdf]=prob_adjoint2(A, b, p1, p2)
         cdf=zeros(size(A));
         for i=1:size(P,1)
             Prow_ind=find(A(:,i));
-            num_elem=length(find(A(:,i)));   
-            if ~isempty(find(A(:,i)))
-               aux=find(A(:,i));
-                for j=1:1:num_elem
-                    P(i,Prow_ind(j))=(A(Prow_ind(j),i)~=0)/num_elem;
-                    cdf(i,Prow_ind(j))=j/num_elem;
-                end
-            end
+            num_elem=length(Prow_ind);   
+            for j=1:1:num_elem
+                P(i,Prow_ind(j))=1/num_elem;
+                cdf(i,Prow_ind(j))=j/num_elem;
+            end       
         end
 
    else
         P=zeros(size(A));
         cdf=zeros(size(A));
         for i=1:size(P,1)
-           Prow_ind=find(A(:,i));
-            num_elem=length(find(A(:,i)));  
-            sump=(sum(abs(A(:,i)).^p));
+            Prow_ind=find(A(:,i));
+            num_elem=length(Prow_ind);  
+            sump=(sum(abs(A(:,i)).^p2));
             for j=1:1:num_elem
-                if ~isempty(find(A(:,i)))
-                    P(i,Prow_ind(j))=abs(A(Prow_ind(j),i)).^p/sump;
-                    cdf(i,Prow_ind(j))=sum(abs(A(Prow_ind(1:j),i)))/sump;
-                end
-            end
+                P(i,Prow_ind(j))=abs(A(Prow_ind(j),i)).^p2/sump;
+                cdf(i,Prow_ind(j))=sum(abs(A(Prow_ind(1:j),i)))/sump;
+            end        
         end
    end
     

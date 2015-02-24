@@ -21,7 +21,7 @@ if ~ strcmp(fp.precond, 'alternating')
 
     H=fp.H;
     rhs=fp.rhs;
-    sol=rand*ones(size(H,1),1);
+    sol=rand(size(H,1),1);
 
     %matrix to be used for the computation of the residual at each Richardson
     %iteration
@@ -37,8 +37,13 @@ if ~ strcmp(fp.precond, 'alternating')
              sol=sol+r; 
              r=rhs-B*sol;
              [Pb, cdfb]=prob_adjoint_rhs(r, dist);
-             [dx, dvar, X, aux, resid, rej]=MC_adjoint_adapt2(H, r, P, cdf, Pb, cdfb, stat);
-             NWALKS=[NWALKS size(X,1)];
+             
+             if stat.adapt_walks==1 && count>1 && R(end)>R(end-1) 
+                 stat.varcut=stat.varcut/ceil(R(end)/min(R));
+             end
+             
+             [dx, dvar, tot_walks, aux, resid, rej]=MC_adjoint_adapt2(H, r, P, cdf, Pb, cdfb, stat);
+             NWALKS=[NWALKS tot_walks];
              tally=[tally aux];
              reject=[reject rej];
              sol=sol+dx;
@@ -56,8 +61,8 @@ if ~ strcmp(fp.precond, 'alternating')
              sol=sol+r; 
              r=rhs-B*sol;
              [Pb, cdfb]=prob_adjoint_rhs(r, dist);
-             [dx, dvar, X, aux, rej]=MC_adjoint(H, r, P, cdf, Pb, cdfb, n_walks, max_step);
-             NWALKS=[NWALKS size(X,1)];
+             [dx, dvar, tot_walks, aux, rej]=MC_adjoint(H, r, P, cdf, Pb, cdfb, n_walks, max_step);
+             NWALKS=[NWALKS tot_walks];
              tally=[tally aux];
              reject=[reject rej];
              sol=sol+dx;
@@ -110,8 +115,13 @@ else
                 sol=sol+r; 
                 r=rhs1-B1*sol;
                 [Pb, cdfb]=prob_adjoint_rhs(r, dist);
-                [dx, dvar, X, aux, resid, rej]=MC_adjoint_adapt2(H1, r, P.P1, cdf.cdf1, Pb, cdfb, stat);
-                NWALKS=[NWALKS size(X,1)];
+                
+                if stat.adapt_walks==1 && count>1 && R(end)>R(end-1) 
+                   stat.varcut=stat.varcut/ceil(R(end)/min(R));
+                end               
+                
+                [dx, dvar, tot_walks, aux, resid, rej]=MC_adjoint_adapt2(H1, r, P.P1, cdf.cdf1, Pb, cdfb, stat);
+                NWALKS=[NWALKS tot_walks];
                 tally=[tally aux];
                 reject=[reject rej];
                 sol=sol+dx;
@@ -124,8 +134,13 @@ else
                 sol=sol+r; 
                 r=rhs2-B2*sol;
                 [Pb, cdfb]=prob_adjoint_rhs(r, dist);
-                [dx, dvar, X, aux, resid, rej]=MC_adjoint_adapt2(H2, r, P.P2, cdf.cdf2, Pb, cdfb, stat);
-                NWALKS=[NWALKS size(X,1)];
+                
+                if stat.adapt_walks==1 && count>1 && R(end)>R(end-1) 
+                   stat.varcut=stat.varcut/ceil(R(end)/min(R));
+                end           
+                
+                [dx, dvar, tot_walks, aux, resid, rej]=MC_adjoint_adapt2(H2, r, P.P2, cdf.cdf2, Pb, cdfb, stat);
+                NWALKS=[NWALKS tot_walks];
                 tally=[tally aux];
                 reject=[reject rej];
                 sol=sol+dx;
@@ -145,8 +160,8 @@ else
                 sol=sol+r; 
                 r=rhs1-B1*sol;
                 [Pb, cdfb]=prob_adjoint_rhs(r, dist);
-                [dx, dvar, X, aux]=MC_adjoint(H1, r, P.P1, cdf.cdf1, Pb, cdfb, n_walks, max_step);
-                NWALKS=[NWALKS size(X,1)];
+                [dx, dvar, tot_walks, aux]=MC_adjoint(H1, r, P.P1, cdf.cdf1, Pb, cdfb, n_walks, max_step);
+                NWALKS=[NWALKS tot_walks];
                 tally=[tally aux];
                 sol=sol+dx;
                 r=rhs1-B1*sol;
@@ -157,8 +172,8 @@ else
                 sol=sol+r; 
                 r=rhs2-B2*sol;
                 [Pb, cdfb]=prob_adjoint_rhs(r, dist);
-                [dx, dvar, X, aux]=MC_adjoint(H2, r, P.P2, cdf.cdf2, Pb, cdfb, n_walks, max_step);
-                NWALKS=[NWALKS size(X,1)];
+                [dx, dvar, tot_walks, aux]=MC_adjoint(H2, r, P.P2, cdf.cdf2, Pb, cdfb, n_walks, max_step);
+                NWALKS=[NWALKS tot_walks];
                 tally=[tally aux];
                 sol=sol+dx;
                 r=rhs2-B2*sol;

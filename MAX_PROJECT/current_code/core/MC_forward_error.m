@@ -9,7 +9,7 @@ function [x, y, err]=MC_forward_error(u_ex, A, b, P, cdf, n_walks, max_step)
     for l=1:L
         X=zeros(n_walks(l),size(b,1));
        for k=1:size(b,1)
-            parfor walk=1:n_walks(l)
+            for walk=1:n_walks(l)
             previous=k;
             W=1;
             current=k;
@@ -19,7 +19,7 @@ function [x, y, err]=MC_forward_error(u_ex, A, b, P, cdf, n_walks, max_step)
                     aux=rand;
                     cdfrow_ind=find(cdf(previous,:));
                     if ~isempty(cdfrow_ind)
-                        current=min(find(cdf(previous,cdfrow_ind)>aux));
+                        current=find(cdf(previous,cdfrow_ind)>aux, 1 );
                         current=cdfrow_ind(current);
 
                         W=W*A(previous,current)/P(previous,current);

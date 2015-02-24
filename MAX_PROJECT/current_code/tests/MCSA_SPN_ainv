@@ -1,0 +1,113 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2014 The MathWorks, Inc.
+                    R2014a (8.3.0.532) 64-bit (glnxa64)
+                             February 11, 2014
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> Building of transition matrix
+>> >> >> >> {Undefined function or variable 'u'.
+} 
+>> >> >> >> >> >> >> >> >> >>     'Adjoint MCSA with ainv preconditioning started'
+
+    'iteration number 1'
+
+Updating of the initial probability
+residual norm:0.32583
+    'iteration number 2'
+
+Updating of the initial probability
+residual norm:0.12914
+    'iteration number 3'
+
+Updating of the initial probability
+residual norm:0.067455
+    'iteration number 4'
+
+Updating of the initial probability
+residual norm:0.039343
+    'iteration number 5'
+
+Updating of the initial probability
+residual norm:0.024893
+    'iteration number 6'
+
+Updating of the initial probability
+residual norm:0.012896
+    'iteration number 7'
+
+Updating of the initial probability
+residual norm:0.0064562
+    'iteration number 8'
+
+Updating of the initial probability
+residual norm:0.0033402
+    'iteration number 9'
+
+Updating of the initial probability
+residual norm:0.0020457
+    'iteration number 10'
+
+Updating of the initial probability
+residual norm:0.00099959
+    'iteration number 11'
+
+Updating of the initial probability
+residual norm:0.00047719
+    'iteration number 12'
+
+Updating of the initial probability
+residual norm:0.00024435
+    'iteration number 13'
+
+Updating of the initial probability
+residual norm:0.00013069
+    'iteration number 14'
+
+Updating of the initial probability
+residual norm:6.6509e-05
+    'iteration number 15'
+
+Updating of the initial probability
+residual norm:3.5179e-05
+    'iteration number 16'
+
+Updating of the initial probability
+residual norm:1.8016e-05
+    'iteration number 17'
+
+Updating of the initial probability
+residual norm:7.7533e-06
+    'iteration number 18'
+
+Updating of the initial probability
+residual norm:3.6628e-06
+    'iteration number 19'
+
+Updating of the initial probability
+residual norm:2.1428e-06
+    'iteration number 20'
+
+Updating of the initial probability
+residual norm:1.0796e-06
+    'iteration number 21'
+
+Updating of the initial probability
+residual norm:5.1421e-07
+>> >> >> >> >> >> {Error using gcf
+This functionality is no longer supported under the -nojvm startup option. For
+more information, see "Changes to -nojvm Startup Option" in the MATLAB Release
+Notes. To view the release note in your system browser, run
+web('http://www.mathworks.com/help/matlab/release-notes.html#btsurqv-6',
+'-browser').
+
+Error in newplot (line 60)
+    fig = gcf;
+
+Error in bar (line 79)
+            cax = newplot(cax);
+} 
+>> >> >> 

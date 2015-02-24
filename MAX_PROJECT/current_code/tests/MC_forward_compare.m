@@ -2,30 +2,11 @@ addpath('../core')
 addpath('../utils')
 
 % 'jpwh_991'; 'fs_680_1'; 'ifiss_convdiff'; 'shifted_laplacian_1d';
-% 'thermal_eq_diff'; 'laplacian_2d'
-matrix='ifiss_convdiff';
+% 'thermal_eq_diff'; 'laplacian_2d'; 'SPN'; 'sp1'; 'SPN_shift';
+% 'sp1_shift'; 'sp5_shift'; 'sp3_shift'; 'sp1_ainv': 'SPN_ainv';
 
-if ~strcmp(matrix, 'simple')
-    addpath(strcat('../utils/model_problems/', matrix));
-end
-
-if strcmp(matrix, 'simple')
-    dimen=500;
-    A=4*diag(ones(dimen,1)) - diag(ones(dimen-1,1),1) - diag(ones(dimen-1,1),-1);
-    rhs=[1:dimen]';
-    u=A\rhs;
-
-else
-     [A, dimen, ~, ~] = mmread('A.mtx');
-     rhs=mmread('b.mtx');
-     u=mmread('x.mtx');
-end
-
-Prec=diag(diag(A));
-
-H=eye(size(A))-Prec\A;
-rhs=Prec\rhs;
-
+matrix='SPN_ainv';
+[H,rhs, precond, Prec]=fixed_point(matrix);
 max_step=100;
 walkcut=10^(-6);
 dist_un=0;
@@ -41,14 +22,14 @@ n_walks=[10^1 10^2 10^3 10^4 10^5];
 
 rel_error_un=[];
 for i=1:length(n_walks)
-    rel_error_un=[rel_error_un sqrt(sum((u-sol_un(:,i)).^2))/sqrt(sum((u.^2)))];
+    rel_error_un=[rel_error_un norm(u-sol_un(:,i))/norm(u)];
 end
 
 [sol_mao, var_mao, err_mao, time_mao]=MC_forward_error2(u, H, rhs, P_mao, cdf_mao, n_walks, max_step, walkcut);
 
 rel_error_mao=[];
 for i=1:length(n_walks)
-    rel_error_mao=[rel_error_mao sqrt(sum((u-sol_mao(:,i)).^2))/sqrt(sum((u.^2)))];
+    rel_error_mao=[rel_error_mao norm(u-sol_mao(:,i))/norm(u)];
 end
 
 norm_var_un=[];

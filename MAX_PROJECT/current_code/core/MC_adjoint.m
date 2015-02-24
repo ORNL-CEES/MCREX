@@ -1,14 +1,15 @@
-function [x, y, X, tally]=MC_adjoint(A, b, P, cdf, Pb, cdfb, n_walks, max_step)
+function [x, y, tot_walks, tally]=MC_adjoint(A, b, P, cdf, Pb, cdfb, n_walks, max_step)
 
     X=zeros(n_walks,size(b,1));
     tally=zeros(size(b));
+    norm_b=norm(b,1);
 
    for walk=1:n_walks
     aux=rand;
     
     %it detects what is the inital status of the chain
-    previous=min(find(cdfb>aux));
-    W=norm(b,1)*sign(b(previous));
+    previous=find(cdfb>aux, 1 );
+    W=norm_b*sign(b(previous));
     tally(previous)=tally(previous)+1;
 %    W=b(previous)*length(find(P(previous,:)));
     X(walk,previous)=X(walk,previous)+W;
@@ -16,7 +17,7 @@ function [x, y, X, tally]=MC_adjoint(A, b, P, cdf, Pb, cdfb, n_walks, max_step)
         while i<=max_step
               aux=rand;
               if sum(abs(P(previous,:)))>0
-                current=min(find(cdf(previous,:)>aux));
+                current=find(cdf(previous,:)>aux, 1 );
                 W=W*A(current,previous)/P(previous,current);
               else
                  W=0;
@@ -36,7 +37,7 @@ function [x, y, X, tally]=MC_adjoint(A, b, P, cdf, Pb, cdfb, n_walks, max_step)
               previous=current;
         end
     end
-    
+    tot_walks=n_walks;
     %computation of the expected value for the updating vector
    x=mean(X,1)';
    Y=X.^2;

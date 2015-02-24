@@ -2,8 +2,8 @@ function [x, y, TALLY, time]=MC_adjoint_error2(A, b, P, cdf, Pb, cdfb, n_walks, 
 
     L=length(n_walks);
     
-    x=[];
-    y=[];
+    x=zeros(size(A,1),L);
+    y=zeros(size(A,1),L);
     time=[];
     TALLY=[];
 
@@ -18,7 +18,7 @@ function [x, y, TALLY, time]=MC_adjoint_error2(A, b, P, cdf, Pb, cdfb, n_walks, 
            aux=rand;
 
            %it detects what is the inital status of the chain
-           previous=min(find(cdfb>aux));
+           previous=find(cdfb>aux, 1 );
            W=sum(abs(b))*sign(b(previous));
            Wf=W;
            tally(previous)=tally(previous)+1;
@@ -29,7 +29,7 @@ function [x, y, TALLY, time]=MC_adjoint_error2(A, b, P, cdf, Pb, cdfb, n_walks, 
               aux=rand;
               cdfrow_ind=find(cdf(previous,:));
               if ~isempty(cdfrow_ind)
-                current=min(find(cdf(previous,cdfrow_ind)>aux));
+                current=find(cdf(previous,cdfrow_ind)>aux, 1 );
                 current=cdfrow_ind(current);
                 W=W*A(current,previous)/P(previous,current);
               else
@@ -39,7 +39,7 @@ function [x, y, TALLY, time]=MC_adjoint_error2(A, b, P, cdf, Pb, cdfb, n_walks, 
                   % if I reach a null state, I will never move away from
                   % there and the related permutation will not give any
                   % contribution to the estimation of the updating vector,
-                  % thus this permutation can be neglected
+%                   % thus this permutation can be neglected
                  break;
               end
 
@@ -52,9 +52,9 @@ function [x, y, TALLY, time]=MC_adjoint_error2(A, b, P, cdf, Pb, cdfb, n_walks, 
        end
        finish=cputime;
        %computation of the expected value for the updating vector
-       x=[ x mean(X,1)'];
+       x(:,l)=mean(X,1)';
        Y=X.^2;
-       y=[ y sqrt((mean(Y,1)'-(mean(X,1)'.^2))./(size(X,1))) ]; 
+       y(:,l)=sqrt((mean(Y,1)'-(mean(X,1)'.^2))./(size(X,1))); 
        time=[time finish-start];
        TALLY=[TALLY; tally];
     end
