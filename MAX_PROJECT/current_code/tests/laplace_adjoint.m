@@ -5,7 +5,7 @@ addpath('../utils')
 %poolobj=parpool('local');
 
 shape = 'S'; % Other possible shapes include L,S,N,C,D,A,H,B
-n=14;
+n=32;
 
 % creation of te grid
 G=gridgen(shape, n);

@@ -1,10 +1,10 @@
 addpath('../core')
 addpath('../utils')
 
-parjob=parpool('local');
+% parjob=parpool('local');
 
 % 'jpwh_991'; 'fs_680_1'; 'ifiss_convdiff'; 'shifted_laplacian_1d';
-% 'thermal_eq_diff'; 'laplacian_2d'
+% 'thermal_eq_diff'; 'laplacian_2d';
 matrix='laplacian_2d';
 
 if ~strcmp(matrix, 'simple')
@@ -49,7 +49,7 @@ for i=1:length(n_walks)
 end
 
 
-walkcut2=10^(-3);
+walkcut2=10^(-2);
 start2=cputime;
 [sol2, var2, err2]=MC_forward_error2(u, H, rhs, P, cdf, n_walks, max_step, walkcut2);
 finish2=cputime;
@@ -59,7 +59,7 @@ for i=1:length(n_walks)
     rel_error2=[rel_error2 sqrt(sum((u-sol2(:,i)).^2))/sqrt(sum((u.^2)))];
 end
 
-walkcut3=10^(-6);
+walkcut3=10^(-4);
 start3=cputime;
 [sol3, var3, err3]=MC_forward_error2(u, H, rhs, P, cdf, n_walks, max_step, walkcut3);
 finish3=cputime;
@@ -69,7 +69,7 @@ for i=1:length(n_walks)
     rel_error3=[rel_error3 sqrt(sum((u-sol3(:,i)).^2))/sqrt(sum((u.^2)))];
 end
 
-walkcut4=10^(-9);
+walkcut4=10^(-6);
 start4=cputime;
 [sol4, var4, err4]=MC_forward_error2(u, H, rhs, P, cdf, n_walks, max_step, walkcut4);
 finish4=cputime;
@@ -79,7 +79,7 @@ for i=1:length(n_walks)
     rel_error4=[rel_error4 sqrt(sum((u-sol4(:,i)).^2))/sqrt(sum((u.^2)))];
 end
 
-delete(parjob)
+% delete(parjob)
 
 hold off
 loglog(n_walks, sqrt(1./n_walks), 'k');
@@ -91,6 +91,6 @@ loglog(n_walks, rel_error4, '-oc');
 title('RELATIVE ERROR - FORWARD MONTE CARLO - SHIFTED LAPLACIAN');
 xlabel('Nb. Random Walks');
 ylabel('Relative Error');
-legend('1/sqrt(N)', 'W_c=1', 'W_c=0.01', 'W_c=0.001', 'W_c=10^(-6)');
+legend('1/sqrt(N)', 'W_c=1', 'W_c=0.01', 'W_c=10^(-4)', 'W_c=10^(-6)');
 
 save(strcat('../results/MC_forward_plain2/MC_forward_plain2_p=', num2str(dist), '_', matrix))

@@ -1,8 +1,6 @@
-function [answer]=asyn_check(A)
+function [answer]=asyn_check(A,b)
 
 B=abs(A);
 if max(eigs(B))<1
-    answer=true;
-else
-    answer=false;
+    answer=MC_converge(A,b);
 end

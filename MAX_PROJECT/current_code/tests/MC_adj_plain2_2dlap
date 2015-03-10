@@ -1,0 +1,112 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2014 The MathWorks, Inc.
+                    R2014a (8.3.0.532) 64-bit (glnxa64)
+                             February 11, 2014
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> Building of transition matrix
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> {Error using gcf
+This functionality is no longer supported under the -nojvm startup option. For
+more information, see "Changes to -nojvm Startup Option" in the MATLAB Release
+Notes. To view the release note in your system browser, run
+web('http://www.mathworks.com/help/matlab/release-notes.html#btsurqv-6',
+'-browser').
+
+Error in newplot (line 60)
+    fig = gcf;
+} 
+>> {Error using gca
+This functionality is no longer supported under the -nojvm startup option. For
+more information, see "Changes to -nojvm Startup Option" in the MATLAB Release
+Notes. To view the release note in your system browser, run
+web('http://www.mathworks.com/help/matlab/release-notes.html#btsurqv-6',
+'-browser').
+
+Error in hold (line 34)
+    ax = gca;
+} 
+>> {Error using gcf
+This functionality is no longer supported under the -nojvm startup option. For
+more information, see "Changes to -nojvm Startup Option" in the MATLAB Release
+Notes. To view the release note in your system browser, run
+web('http://www.mathworks.com/help/matlab/release-notes.html#btsurqv-6',
+'-browser').
+
+Error in newplot (line 60)
+    fig = gcf;
+} 
+>> {Error using gcf
+This functionality is no longer supported under the -nojvm startup option. For
+more information, see "Changes to -nojvm Startup Option" in the MATLAB Release
+Notes. To view the release note in your system browser, run
+web('http://www.mathworks.com/help/matlab/release-notes.html#btsurqv-6',
+'-browser').
+
+Error in newplot (line 60)
+    fig = gcf;
+} 
+>> {Error using gcf
+This functionality is no longer supported under the -nojvm startup option. For
+more information, see "Changes to -nojvm Startup Option" in the MATLAB Release
+Notes. To view the release note in your system browser, run
+web('http://www.mathworks.com/help/matlab/release-notes.html#btsurqv-6',
+'-browser').
+
+Error in newplot (line 60)
+    fig = gcf;
+} 
+>> {Error using gcf
+This functionality is no longer supported under the -nojvm startup option. For
+more information, see "Changes to -nojvm Startup Option" in the MATLAB Release
+Notes. To view the release note in your system browser, run
+web('http://www.mathworks.com/help/matlab/release-notes.html#btsurqv-6',
+'-browser').
+
+Error in newplot (line 60)
+    fig = gcf;
+} 
+>> {Error using gca
+This functionality is no longer supported under the -nojvm startup option. For
+more information, see "Changes to -nojvm Startup Option" in the MATLAB Release
+Notes. To view the release note in your system browser, run
+web('http://www.mathworks.com/help/matlab/release-notes.html#btsurqv-6',
+'-browser').
+
+Error in legend (line 207)
+        ha = gca;
+} 
+>> {Error using gca
+This functionality is no longer supported under the -nojvm startup option. For
+more information, see "Changes to -nojvm Startup Option" in the MATLAB Release
+Notes. To view the release note in your system browser, run
+web('http://www.mathworks.com/help/matlab/release-notes.html#btsurqv-6',
+'-browser').
+
+Error in title (line 22)
+    ax = gca;
+} 
+>> {Error using gca
+This functionality is no longer supported under the -nojvm startup option. For
+more information, see "Changes to -nojvm Startup Option" in the MATLAB Release
+Notes. To view the release note in your system browser, run
+web('http://www.mathworks.com/help/matlab/release-notes.html#btsurqv-6',
+'-browser').
+
+Error in xlabel (line 22)
+    ax = gca;
+} 
+>> {Error using gca
+This functionality is no longer supported under the -nojvm startup option. For
+more information, see "Changes to -nojvm Startup Option" in the MATLAB Release
+Notes. To view the release note in your system browser, run
+web('http://www.mathworks.com/help/matlab/release-notes.html#btsurqv-6',
+'-browser').
+
+Error in ylabel (line 22)
+    ax = gca;
+} 
+>> >> >> >> 

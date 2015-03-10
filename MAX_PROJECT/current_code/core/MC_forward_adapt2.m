@@ -32,7 +32,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
                     aux=rand;
                     cdfrow_ind=find(cdf(previous,:));
                     if ~isempty(cdfrow_ind)
-                        current=min(find(cdf(previous,cdfrow_ind)>aux));
+                        current=find(cdf(previous,cdfrow_ind)>aux, 1 );
                         current=cdfrow_ind(current);
                         W=W*A(previous,current)/P(previous,current);
                     else 
@@ -57,15 +57,15 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
             VAR{k}=[VAR{k} dvar];
        end
        
-       %while   ratio > var_cut || ( ratio > 0 && abs((VAR{k}(end)-VAR{k}(end-1)))/abs(mean(x)) > var_diff ) 
-       while   ( ratio > 0 && abs((VAR{k}(end)-VAR{k}(end-1)))/(VAR{k}(end)*sqrt(length(x))) > var_diff ) 
+       while   ratio > var_cut || ( ratio > 0 && abs((VAR{k}(end)-VAR{k}(end-1)))/abs(mean(x)) > var_diff ) 
+       %while   ( ratio > 0 && abs((VAR{k}(end)-VAR{k}(end-1)))/(VAR{k}(end)*sqrt(length(x))) > var_diff ) 
                
                %display(strcat('ratio =', num2str(ratio), '   ', num2str(count)))
                %display(strcat('ratio =', num2str(abs((VAR{k}(end)-VAR{k}(end-1)))/abs(mean(x)))))
                if ratio < var_cut 
                    reject(k)=reject(k)+1;
                end
-
+                x2=zeros(n_walks,1);
                for walk=1:n_walks
                     estim=0;
                     previous=k;
@@ -78,7 +78,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
                     aux=rand;
                     cdfrow_ind=find(cdf(previous,:));
                     if ~isempty(cdfrow_ind)
-                        current=min(find(cdf(previous,cdfrow_ind)>aux));
+                        current=find(cdf(previous,cdfrow_ind)>aux, 1 );
                         current=cdfrow_ind(current);
                         W=W*A(previous,current)/P(previous,current);
                     else 
@@ -92,14 +92,15 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
                         i=i+1;
                         previous=current;
                     end
-                    x=[x; estim];
-                    dvar=sqrt(var(x)/size(x,1));
-                    if abs(mean(x))~=0
-                        ratio=dvar/abs(mean(x));
-                    else
-                        ratio=0;
-                    end
                end
+               x2(walk)=estim;
+               x=[x; x2];
+               dvar=sqrt(var(x)/size(x,1));
+               if abs(mean(x))~=0
+                  ratio=dvar/abs(mean(x));
+               else
+                   ratio=0;
+               end            
               count=count+n_walks;
               VAR{k}=[VAR{k} dvar];
        end
@@ -170,6 +171,7 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
                    reject(k)=reject(k)+1;
                 end          
 
+                x2=zeros(n_walks,1);
                 for walk=1:n_walks
                     estim=0;
                     previous=k;
@@ -195,7 +197,8 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
                         i=i+1;
                         previous=current;
                     end
-                    x=[x; estim];
+                    x2(walk)=estim;
+                    x=[x; x2];
                     dvar=sqrt(var(x)/size(x,1));
                     if abs(mean(x))~=0
                         ratio=dvar/abs(mean(x));
@@ -224,7 +227,7 @@ elseif stat.adapt_cutoff==1 && stat.adapt_walks==0
 
    for k=1:size(b,1)
        count=0;
-       x=[];
+       x=zeros(n_walks,1);
 
        for walk=1:n_walks
            estim=0;
@@ -252,7 +255,7 @@ elseif stat.adapt_cutoff==1 && stat.adapt_walks==0
                i=i+1;
                previous=current;
            end
-           x=[x; estim];
+           x(walk)=estim;
            dvar=sqrt(var(x)/size(x,1));
        end
        count=count+n_walks;
@@ -272,7 +275,7 @@ else
 
    for k=1:size(b,1)
        count=0;
-       x=[];
+       x=zeros(n_walks,1);
 
        for walk=1:n_walks
            estim=0;
@@ -299,7 +302,7 @@ else
                i=i+1;
                previous=current;
            end
-           x=[x; estim];
+           x(walk)=estim;
            dvar=sqrt(var(x)/size(x,1));
        end
        count=count+n_walks;

@@ -1,9 +1,9 @@
-function [x, y, X]=MC_forward(A, b, P, cdf, n_walks, max_step)
+function [x, y, tot_walks]=MC_forward(A, b, P, cdf, n_walks, max_step)
 
     X=zeros(n_walks,size(b,1));
 
    for k=1:size(b,1)
-        parfor walk=1:n_walks
+        for walk=1:n_walks
         previous=k;
         W=1;
         current=k;
@@ -13,7 +13,7 @@ function [x, y, X]=MC_forward(A, b, P, cdf, n_walks, max_step)
                 aux=rand;
                 cdfrow_ind=find(cdf(previous,:));
                 if ~isempty(cdfrow_ind)
-                    current=min(find(cdf(previous,cdfrow_ind)>aux));
+                    current=find(cdf(previous,cdfrow_ind)>aux, 1 );
                     current=cdfrow_ind(current);
                     W=W*A(previous,current)/P(previous,current);
                 else 
@@ -28,7 +28,7 @@ function [x, y, X]=MC_forward(A, b, P, cdf, n_walks, max_step)
             end
         end
    end
-
+    tot_walks=n_walks;
    %computation of the expected value for the updating vector
    x=mean(X,1)';
    y=sqrt(var(X,1)'./(size(X,1))); 

@@ -1,27 +1,13 @@
 addpath('../core')
 addpath('../utils')
 
-% 'jpwh_991'; 'fs_680_1', 'ifiss_convdiff'; 'shifted_laplacian_1d'; 'thermal_eq_diff'
+% 'jpwh_991'; 'fs_680_1'; 'ifiss_convdiff'; 'shifted_laplacian_1d';
+% 'thermal_eq_diff'; 'laplacian_2d'; 'SPN'; 'sp1'; 'SPN_shift';
+% 'sp1_shift'; 'sp5_shift'; 'sp3_shift'; 'sp1_ainv': 'SPN_ainv';
+
 matrix='thermal_eq_diff';
 
-addpath(strcat('../utils/model_problems/', matrix))
-
-if strcmp(matrix, 'simple')
-    dimen=50;
-    A=4*diag(ones(dimen,1)) - diag(ones(dimen-1,1),1) - diag(ones(dimen-1,1),-1);
-    rhs=ones(dimen,1);
-    u=A\rhs;
-    
-else
-     [A, dimen, ~, ~] = mmread('A.mtx');
-     rhs=mmread('b.mtx');
-     u=mmread('x.mtx');
-end
-
-Prec=diag(diag(A));
-
-H=eye(size(A))-Prec\A;
-rhs=Prec\rhs;
+[H,rhs, precond, Prec]=fixed_point(matrix);
 
 %% Numerical setting
 

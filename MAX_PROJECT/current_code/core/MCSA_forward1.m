@@ -11,15 +11,15 @@ rich_it=numer.rich_it;
 
 if ~ strcmp(fp.precond, 'alternating')
 
-    if ~ asyn_check(fp.H)
-        error('Iteration matrix does not have spectral radius less than 1');
-    end 
+%     if ~ asyn_check(fp.H, 1)
+%         error('Iteration matrix does not have spectral radius less than 1');
+%     end 
 
     display(strcat('Forward MCSA with', {' '},  fp.precond, ' preconditioning started'));
 
     H=fp.H;
     rhs=fp.rhs;
-    sol=rand*ones(size(H,1),1);
+    sol=rand(size(H,1),1);
 
     %matrix to be used for the computation of the residual at each Richardson
     %iteration

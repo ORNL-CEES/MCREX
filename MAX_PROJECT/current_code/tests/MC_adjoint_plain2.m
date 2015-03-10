@@ -2,30 +2,11 @@ addpath('../core')
 addpath('../utils')
 
 % 'jpwh_991'; 'fs_680_1'; 'ifiss_convdiff'; 'shifted_laplacian_1d';
-% 'thermal_eq_diff'; 'laplacian_2d'
-matrix='laplacian_2d';
+% 'thermal_eq_diff'; 'laplacian_2d'; 'SPN'; 'sp1'; 'SPN_shift';
+% 'sp1_shift'; 'sp5_shift'; 'sp3_shift'; 'sp1_ainv': 'SPN_ainv';
 
-if ~strcmp(matrix, 'simple')
-    addpath(strcat('../utils/model_problems/', matrix));
-end
-
-
-if strcmp(matrix, 'simple')
-    dimen=500;
-    A=4*diag(ones(dimen,1)) - diag(ones(dimen-1,1),1) - diag(ones(dimen-1,1),-1);
-    rhs=[1:dimen]';
-    u=A\rhs;
-
-else
-     [A, dimen, ~, ~] = mmread('A.mtx');
-     rhs=mmread('b.mtx');
-     u=mmread('x.mtx');
-end
-
-Prec=diag(diag(A));
-
-H=eye(size(A))-Prec\A;
-rhs=Prec\rhs;
+matrix='SPN_ainv';
+[H,rhs, precond, Prec]=fixed_point(matrix);
 
 eps=10^(-3);
 dist1=1;
@@ -40,13 +21,13 @@ max_step=1000;
 walkcut1=1;
 [sol1, var1, tally1, time1]=MC_adjoint_error2(H, rhs, P, cdf, Pb, cdfb, n_walks, max_step, walkcut1);
 
-walkcut2=10^(-4);
+walkcut2=10^(-2);
 [sol2, var2, tally2, time2]=MC_adjoint_error2(H, rhs, P, cdf, Pb, cdfb, n_walks, max_step, walkcut2);
 
-walkcut3=10^(-8);
+walkcut3=10^(-4);
 [sol3, var3, tally3, time3]=MC_adjoint_error2(H, rhs, P, cdf, Pb, cdfb, n_walks, max_step, walkcut3);
 
-walkcut4=10^(-12);
+walkcut4=10^(-6);
 [sol4, var4, tally4, time4]=MC_adjoint_error2(H, rhs, P, cdf, Pb, cdfb, n_walks, max_step, walkcut4);
     
 rel_error1=[];
@@ -76,7 +57,7 @@ loglog(n_walks, 1./sqrt(n_walks), 'k');
 loglog(n_walks, rel_error2, '-og');
 loglog(n_walks, rel_error3,'-ob');
 loglog(n_walks, rel_error4,'-oc')
-legend('W_c=1', '1/sqrt(N)', 'W_c=0.1', 'W_c=0.01', 'W_c=0.001')
+legend('W_c=1', '1/sqrt(N)', 'W_c=0.01', 'W_c=10^(-4)', 'W_c=10^(-6)')
 title('RELATIVE ERROR - SHIFTED LAPLACIAN')
 xlabel('Nb. Random Walks');
 ylabel('Rel. Error')

@@ -13,7 +13,7 @@ display('Building of transition matrix');
         cdf=zeros(size(A));
         for i=1:size(P,1)
             Prow_ind=find(A(:,i));
-            num_elem=length(find(A(:,i)));            
+            num_elem=length(Prow_ind);            
             for j=1:1:num_elem
                 P(i,Prow_ind(j))=(A(Prow_ind(j),i)~=0)/num_elem;
                 cdf(i,Prow_ind(j))=j/num_elem;
@@ -36,10 +36,8 @@ display('Building of transition matrix');
             num_elem=length(find(A(:,i)));  
             sump=(sum(abs(A(:,i)).^p));
             for j=1:1:num_elem
-                if ~isempty(find(A(:,i)))
-                    P(i,Prow_ind(j))=abs(A(Prow_ind(j),i)).^p/sump;
-                    cdf(i,Prow_ind(j))=sum(abs(A(Prow_ind(1:j),i)))/sump;
-                end
+                P(i,Prow_ind(j))=abs(A(Prow_ind(j),i)).^p/sump;
+                cdf(i,Prow_ind(j))=sum(abs(A(Prow_ind(1:j),i)))/sump;
             end
         end
     
@@ -48,7 +46,7 @@ display('Building of transition matrix');
     %computation of the cumulative initial probability: 
     cdfb=Pb;
     for i=2:size(cdfb)
-        aux=max(find(cdfb(1:i-1)));
+        aux=find(cdfb(1:i-1), 1, 'last' );
         if(cdfb(i)~=0 && ~isempty(aux))
             cdfb(i)=cdfb(i)+cdfb(aux);
         end

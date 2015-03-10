@@ -11,7 +11,8 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
     NWALKS=zeros(size(b));
     VAR=zeros(size(b));
 
-   parfor k=1:size(b,1)
+   for k=1:size(b,1)
+       %display(strcat('k= ',num2str(k)))
        count=0;
        x=[];
        ratio=10^6;
@@ -28,7 +29,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
                 aux=rand;
                 cdfrow_ind=find(cdf(previous,:));
                 if ~isempty(cdfrow_ind)
-                    current=min(find(cdf(previous,cdfrow_ind)>aux));
+                    current=find(cdf(previous,cdfrow_ind)>aux, 1 );
                     current=cdfrow_ind(current);
                     W=W*A(previous,current)/P(previous,current);
                 else 
@@ -66,7 +67,7 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
     NWALKS=zeros(size(b));
     VAR=zeros(size(b));
 
-   parfor k=1:size(b,1)
+   for k=1:size(b,1)
        count=0;
        x=[];
        ratio=1;
@@ -82,7 +83,7 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
                 aux=rand;
                 cdfrow_ind=find(cdf(previous,:));
                 if ~isempty(cdfrow_ind)
-                    current=min(find(cdf(previous,cdfrow_ind)>aux));
+                    current=find(cdf(previous,cdfrow_ind)>aux, 1 );
                     current=cdfrow_ind(current);
                     W=W*A(previous,current)/P(previous,current);
                 else 
@@ -121,9 +122,9 @@ elseif stat.adapt_cutoff==1 && stat.adapt_walks==0
     NWALKS=zeros(size(b));
     VAR=zeros(size(b));
 
-   parfor k=1:size(b,1)
+   for k=1:size(b,1)
        count=0;
-       x=[];
+       x=zeros(n_walks,1);
 
        for walk=1:n_walks
            estim=0;
@@ -137,7 +138,7 @@ elseif stat.adapt_cutoff==1 && stat.adapt_walks==0
                 aux=rand;
                 cdfrow_ind=find(cdf(previous,:));
                 if ~isempty(cdfrow_ind)
-                    current=min(find(cdf(previous,cdfrow_ind)>aux));
+                    current=find(cdf(previous,cdfrow_ind)>aux, 1 );
                     current=cdfrow_ind(current);
                     W=W*A(previous,current)/P(previous,current);
                 else 
@@ -150,13 +151,12 @@ elseif stat.adapt_cutoff==1 && stat.adapt_walks==0
                i=i+1;
                previous=current;
            end
-           x=[x; estim];
-           dvar=sqrt(var(x)/size(x,1));
+           x(walk)=estim;          
        end
        count=count+n_walks;
-
        X(k)=mean(x);
        NWALKS(k)=count;
+       dvar=sqrt(var(x)/size(x,1));
        VAR(k)=dvar;
    end
 
@@ -168,9 +168,9 @@ else
     NWALKS=zeros(size(b));
     VAR=zeros(size(b));
 
-   parfor k=1:size(b,1)
+   for k=1:size(b,1)
        count=0;
-       x=[];
+       x=zseros(n_walks);
 
        for walk=1:n_walks
            estim=0;
@@ -183,7 +183,7 @@ else
                 aux=rand;
                 cdfrow_ind=find(cdf(previous,:));
                 if ~isempty(cdfrow_ind)
-                    current=min(find(cdf(previous,cdfrow_ind)>aux));
+                    current=find(cdf(previous,cdfrow_ind)>aux, 1 );
                     current=cdfrow_ind(current);
                     W=W*A(previous,current)/P(previous,current);
                 else 
@@ -196,12 +196,12 @@ else
                i=i+1;
                previous=current;
            end
-           x=[x; estim];
-            dvar=sqrt(var(x)/size(x,1));
+           x(walk)=estim;
+            
        end
-       count=count+n_walks;
-
+       count=count+n_walks;       
        X(k)=mean(x);
+       dvar=sqrt(var(x)/size(x,1));
        NWALKS(k)=count;
        VAR(k)=dvar;
    end
