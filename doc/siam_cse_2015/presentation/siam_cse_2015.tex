@@ -492,49 +492,43 @@
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\begin{frame}{Parallel Test Application -- Nuclear Reactor Analysis}
-  \small
-  The simplified $P_N$ ($SP_N$) equations are an approximation
-  to the Boltzmann neutron transport equation used to simulate nuclear
-  reactors
-
-  \vspace*{-0.1in}
-
-  \begin{multline}
-    \hat{\Omega} \cdot \vec{\nabla} \psi(\vec{r},\hat{\Omega},E) +
-    \sigma(\vec{r},E) \psi(\vec{r},\hat{\Omega},E) = \\ \iint
-    \sigma_s(\vec{r},E' \rightarrow E,\hat{\Omega}' \cdot \hat{\Omega})
-    \psi(\vec{r},\hat{\Omega}',E') d\Omega' dE' +
-    q(\vec{r},\hat{\Omega},E)
-  \end{multline}
-
-  \begin{multline}
-    -\nabla \cdot \Bigg[\frac{n}{2n+1}\frac{1}{\Sigma_{n-1}} \nabla
-      \Big(\frac{n-1}{2n-1} \phi_{n-2} + \frac{n}{2n-1}\phi_n \Big) \\+
-      \frac{n+1}{2n+1}\frac{1}{\Sigma_{n+1}} \nabla
-      \Big(\frac{n+1}{2n+3}\phi_n + \frac{n+2}{2n+3}\phi_{n+2}\Big)
-      \Bigg] \\+ \Sigma_n \phi_n = q \delta_{n0}\ \ \ \ \ \ \ \ \ n =
-    0,2,4,\cdots,N
-  \end{multline}
-
-  \begin{equation}
-  \hspace*{-0.75in}
-    -\nabla \cdot \mathbb{D}_n \nabla \mathbb{U}_n + \sum_{m=1}^4
-    \mathbb{A}_{nm} \mathbb{U}_m = \frac{1}{k} \sum_{m=1}^4
-    \mathbb{F}_{nm} \mathbb{U}_m\ \ \ \ \ \ \ n = 1,2,3,4
-  \end{equation}
-
-\end{frame}
-
-%%---------------------------------------------------------------------------%%
-\begin{frame}{$SP_N$ Assembly Problem}
+\begin{frame}{Parallel Test - Simplified $P_N$ ($SP_N$) Assembly Problem}
 \small
-  \begin{columns}
-    \begin{column}{0.4\textwidth}
+\begin{columns}
+  
+    \begin{column}{0.55\textwidth}
+
+      \vspace{-0.2in}
+      \begin{figure}
+        \centering
+        \includegraphics[width=2.0in]{prob4}
+        \vspace{-0.2in}
+        \caption{$SP_N$ solution example}
+      \end{figure}
+
+      The ($SP_N$) equations are an approximation to the Boltzmann neutron
+      transport equation used to simulate nuclear reactors
+
+      \vspace{-0.2in}
+      
+      \[
+        \small
+        -\nabla \cdot \mathbb{D}_n \nabla \mathbb{U}_n + \sum_{m=1}^4
+        \mathbb{A}_{nm} \mathbb{U}_m = \frac{1}{k} \sum_{m=1}^4
+        \mathbb{F}_{nm} \mathbb{U}_m
+      \]
+
+    \end{column}
+
+    \begin{column}{0.45\textwidth}
       Scaling problem -- $1 \times 1$ to $17 \times 17$ array of fuel
-      assemblies with pins resolved by a $2 \times 2$ spatial mesh
+      assemblies with 289 pins each resolved by a $2 \times 2$ spatial mesh
+      and 200 axial zones
+
+      \vfill
+      
       \begin{itemize}
-      \item 23 energy groups, 1 angular moment, 1.6M to 273.5M degrees of
+      \item 7 energy groups, 1 angular moment, 1.6M to 273.5M degrees of
         freedom
       \item 64 to 10,800 computational cores via domain decomposition
       \item We are usually interested in solving generalized eigenvalue
@@ -542,15 +536,7 @@
         scaling 
       \end{itemize}
     \end{column}
-    \begin{column}{0.6\textwidth}
-      \vspace*{-0.45in}
-      \begin{figure}
-        \centering
-        \includegraphics[width=3in]{prob4}
-        \vspace{-0.2in}
-        \caption{$SP_N$ solution example}
-      \end{figure}
-    \end{column}
+    
   \end{columns}
 
 \end{frame}
@@ -587,7 +573,6 @@
       \end{tabular}
     \end{center}
   \end{table} 
-
   
   \begin{itemize}
   \item 64 cores, 1.6M DOFs, history length of 15, 3 histories per DOF
@@ -612,20 +597,16 @@
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\begin{frame}
+\begin{frame}{Monte Carlo Replication Scaling}
 
-  \center Algorithm Variations
   
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\begin{frame}{Matrix-Free Algorithm}
+\begin{frame}
 
-\end{frame}
-
-%%---------------------------------------------------------------------------%%
-\begin{frame}{Stochastic Approximate Inverse Algorithm}
-
+  \center Algorithm Variations
+  
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
@@ -649,6 +630,68 @@
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
+\begin{frame}{Matrix-Free Algorithm}
+
+  \begin{itemize}
+    \small
+    \item At each application of $\mathbf{M_{MC}}$, execute the Monte
+      Carlo process
+    \item Must perform Monte Carlo every time you want to apply with a better
+      approximation requiring more time and more operations
+    \item Variations in random number streams are amortized over iterations
+  \end{itemize}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Stochastic Approximate Inverse Algorithm}
+
+  \begin{itemize}
+    \small
+    \item Construct $\mathbf{M_{MC}}$ as a sparse matrix by executing the
+      Monte Carlo process once and tallying the row entries
+    \item Use this operator as a stochastic approximation to the inverse
+    \item A better approximation to the inverse requires more setup time and
+      more storage
+    \item Will investigate a drop tolerance strategy
+  \end{itemize}
+
+  \vfill
+
+  \begin{table}[htb!]
+    \tiny
+    \begin{center}
+      \begin{tabular}{ccccccc}
+        \toprule
+        \multicolumn{1}{c}{$L$} &
+        \multicolumn{1}{c}{$N_S$} &
+        \multicolumn{1}{c}{$NNZ$} &
+        \multicolumn{1}{c}{$NNZ$ Ratio} &
+        \multicolumn{1}{c}{MC Time (s)} &
+        \multicolumn{1}{c}{Setup Time (s)} &
+        \multicolumn{1}{c}{MCSA Iters}
+        \\ \midrule
+        %%
+        3 & 2 & 484,714 & 0.41 & 0.104 & 0.671 & 255 \\
+        3 & 3 & 622,123 & 0.52 & 0.145 & 0.705 & 255 \\
+        5 & 2 & 783,153 & 0.66 & 0.158 & 0.737 & 185 \\
+        5 & 3 & 1,032,573 & 0.87 & 0.237 & 0.831 & 171 \\
+        5 & 4 & 1,241,442 & 1.05 & 0.302 & 0.906 & 171 \\
+        10 & 3 & 1,969,540 & 1.66 & 0.433 & 1.061 & 95 \\
+        10 & 4 & 2,416,572 & 2.04 & 0.570 & 1.214 & 95 \\
+        15 & 3 & 2,867,005 & 2.42 & 0.645 & 1.317 & 132 \\
+        15 & 4 & 3,544,181 & 2.99 & 0.833 & 1.534 & 67 \\
+        15 & 5 & 4,157,269 & 3.50 & 1.029 & 1.765 & 66 \\
+        \bottomrule
+      \end{tabular}
+    \end{center}
+    \caption{MCSA Performance. $A$ had $115,600$ rows and $1,186,464$ non-zero
+      entries.}
+  \end{table} 
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
 \begin{frame}{Unpreconditioned Algorithm Comparison}
 
 \end{frame}
@@ -666,13 +709,29 @@
   \item Monte Carlo methods offer great potential for both resilient and
     highly parallel solvers
     \vfill
-  \item For certain classes of problems, Monte Carlo methods can be
-    competitive with leading modern solvers
+  \item A fully asynchronous algorithm provides a scheme without collectives 
     \vfill
-    \item Extending methods to broader problem areas is significant challenge
-      and an attractive area for continued research
-      \vfill
-    \item Performance modeling and resiliency simulations this FY
+  \item Good scaling demonstrated so far on reasonably load balanced problems
+    \vfill
+  \item Replication a potential resiliency strategy with some overhead
+    \vfill
+  \item Matrix-free and stochastic approximate inverse algorithms are
+    complementary - trade operations for storage
+  \end{itemize}
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Conclusions}
+  \begin{itemize}
+  \item Vectorization an area of active research with a focus on heterogenous
+    architectures (Titan and Summit)
+    \vfill
+  \item Multiple threading models are being explored (Kokkos, HPX, etc.)
+    \vfill
+  \item Extending methods to broader problem areas is significant algorithmic
+    challenge and an attractive area for continued research
+    \vfill
+  \item Performance modeling and resiliency simulations this FY
   \end{itemize}
 \end{frame}
 
