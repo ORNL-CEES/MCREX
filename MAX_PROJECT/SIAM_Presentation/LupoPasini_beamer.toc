@@ -1,0 +1,7 @@
+\beamer@endinputifotherversion {3.24pt}
+\select@language {english}
+\beamer@sectionintoc {1}{Motivations}{7}{0}{1}
+\beamer@sectionintoc {2}{Standard MC vs. MCSA}{9}{0}{2}
+\beamer@sectionintoc {3}{Choice of preconditioners}{23}{0}{3}
+\beamer@sectionintoc {4}{Convergence conditions}{24}{0}{4}
+\beamer@sectionintoc {5}{Numerical results}{26}{0}{5}

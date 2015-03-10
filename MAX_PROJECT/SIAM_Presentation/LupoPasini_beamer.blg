@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2013/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: LupoPasini_beamer.aux
+The style file: alpha.bst
+Database file #1: library.bib
+You've used 9 entries,
+            2543 wiz_defined-function locations,
+            625 strings with 6087 characters,
+and the built_in function-call counts, 3510 in all, are:
+= -- 356
+> -- 174
+< -- 3
++ -- 60
+- -- 60
+* -- 272
+:= -- 610
+add.period$ -- 27
+call.type$ -- 9
+change.case$ -- 56
+chr.to.int$ -- 9
+cite$ -- 9
+duplicate$ -- 125
+empty$ -- 236
+format.name$ -- 72
+if$ -- 685
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 8
+newline$ -- 48
+num.names$ -- 27
+pop$ -- 38
+preamble$ -- 1
+purify$ -- 66
+quote$ -- 0
+skip$ -- 103
+stack$ -- 0
+substring$ -- 203
+swap$ -- 9
+text.length$ -- 3
+text.prefix$ -- 3
+top$ -- 0
+type$ -- 72
+warning$ -- 0
+while$ -- 35
+width$ -- 13
+write$ -- 117

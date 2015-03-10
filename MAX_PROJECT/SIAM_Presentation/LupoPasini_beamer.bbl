@@ -1,0 +1,58 @@
+\begin{thebibliography}{EMSH14}
+
+\bibitem[DAK01]{DVA2001}
+I.~Dimov, V.~Alexandrov, and A.~Karaivanova.
+\newblock {Parallel resolvent Monte Carlo algorithms for linear algebra
+  problems}.
+\newblock {\em Mathematics and Computers in Simulation}, 55(55):25--35, 2001.
+
+\bibitem[EMSH14]{EMSH2014}
+T.M Evans, S.W. Mosher, S.R. Slattery, and S.P. Hamilton.
+\newblock {A Monte Carlo synthetic-acceleration method for solving the thermal
+  radiation diffusion equation}.
+\newblock {\em Journal of Computational Physics}, 258(November 2013):338--358,
+  2014.
+
+\bibitem[ESW02]{ESW2002}
+T.M. Evans, S.R. Slattery, and P.P.H Wilson.
+\newblock {Mixed Monte Carlo parallel algorithms for matrix computation}.
+\newblock {\em International Conference on Computational Science 2002}, 2002.
+
+\bibitem[ESW13]{ESW2013}
+T.M. Evans, S.R. Slattery, and P.P.H Wilson.
+\newblock {A spectral analysis of the domain decomposed Monte Carlo method for
+  linear systems}.
+\newblock {\em International Conference on Mathematics and Computational
+  Methods Applied to Nuclear Science \& Engineering}, 2013.
+
+\bibitem[Hal62]{Hal1962}
+J.H. Halton.
+\newblock {Sequential Monte Carlo}.
+\newblock {\em Mathematical Proceeding of the Cambridge Philosophical Society},
+  58(1):57--58, 1962.
+
+\bibitem[Hal94]{Hal1994}
+J.H. Halton.
+\newblock {Sequential Monte Carlo techniques for the solution of linear
+  systems}.
+\newblock {\em Journal of Scientific Computing}, 9(2):213--257, 1994.
+
+\bibitem[HMY13]{MASC2013}
+J.~Hao, M.~Mascagni, and L.~Yaohang.
+\newblock {Convergence analysis of Markov chain Monte Carlo linear solvers
+  using Ulam-von Neumann algorithm}.
+\newblock {\em SIAM Journal on Numerical Analysis}, 51(4):2107--2122, 2013.
+
+\bibitem[MU49]{Ulam1949}
+N.~Metropolis and S.~Ulam.
+\newblock {The MOnte Carlo ethod}.
+\newblock {\em Journal of th American Statistical Association},
+  44(247):335--341, 1949.
+
+\bibitem[Sla13]{Slattery2013}
+S.~Slattery.
+\newblock {\em Parallel Monte Carlo Synthetic Acceleration Methods For Discrete
+  Transport Problems}.
+\newblock PhD thesis, University of Wisconsin-Madison, 2013.
+
+\end{thebibliography}
