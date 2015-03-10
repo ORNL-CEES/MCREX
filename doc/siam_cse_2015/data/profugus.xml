@@ -1,0 +1,46 @@
+<ParameterList name="main">
+  <ParameterList name="Problem">
+    <Parameter name="matrix_type" type="string" value="profugus"/>
+    <Parameter name="profugus_input" type="string" value="assembly_moderator.xml"/>
+    <Parameter name="scaling_type" type="string" value="block"/>
+    <Parameter name="block_size" type="int" value="2"/>
+    <Parameter name="verbosity" type="string" value="none"/>
+  </ParameterList>
+  <Parameter name="Solver Type" type="string" value="Temere"/>
+  <ParameterList name="MCLS">
+    <!--MCSA Solver Parameters--> 
+    <Parameter name="Maximum Iterations" type="int" value="1000"/>
+    <Parameter name="Iteration Print Frequency" type="int" value="100"/>
+    <Parameter name="Iteration Check Frequency" type="int" value="1"/>
+    <Parameter name="Convergence Tolerance" type="double" value="1.0e-8"/>
+    <!--Fixed Point Iteration Parameters--> 
+    <Parameter name="Fixed Point Type" type="string" value="Richardson"/>
+    <Parameter name="Smoother Steps" type="int" value="1"/>
+    <!--Parallel Monte Carlo Parameters--> 
+    <Parameter name="Transport Type" type="string" value="Global"/>
+    <Parameter name="MC Check Frequency" type="int" value="1024"/>
+    <Parameter name="MC Buffer Size" type="int" value="1024"/>
+    <Parameter name="Number of Sets" type="int" value="1"/>
+    <!--Local Monte Carlo Parameters--> 
+    <Parameter name="History Length" type="int" value="15"/>
+    <Parameter name="Sample Ratio" type="double" value="3.0"/>
+    <Parameter name="Source Sampling Type" type="string" value="Random"/>
+    <Parameter name="Composite Operator Threshold" type="double" value="0.0"/>
+    <Parameter name="Compute Convergence Criteria" type="bool" value="false"/>
+    <!--Anderson Acceleration Parameters--> 
+    <ParameterList name = "Anderson Parameters">
+      <Parameter name="Storage Depth" type="int" value="5"/>
+      <Parameter name="Mixing Parameter" type="double" value="1.0"/>
+      <Parameter name="Acceleration Start Iteration" type="int" value="1"/>
+      <Parameter name="Adjust Matrix for Condition Number" type="bool" value="false"/>
+      <ParameterList name = "Preconditioning">
+        <Parameter name="Precondition" type="bool" value="false"/>
+      </ParameterList>
+    </ParameterList>
+  </ParameterList>
+  <ParameterList name="Belos">
+    <Parameter name="Maximum Iterations" type="int" value="1000"/>
+    <Parameter name="Convergence Tolerance" type="double" value="1.0e-8"/>
+  </ParameterList>
+</ParameterList>
+
