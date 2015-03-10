@@ -1,0 +1,263 @@
+SLIDE 2:	
+at the very beginning I will declare the motivations that caught our interest in developing such linear solvers. Then 
+I will defie the Monte Carlo method in its standard formulation as it was initially introduced in the early 1940s. 
+Once this done I will introduce the Monte Carlo Synthetica Acceleration, a hybrid scheme which exploits both numerical
+and statistical devices,
+Next I will show a basic adaptive approach to select the number o random walks to run at each numerical iteration. 
+Numerical experiments willcome afterwards with some drawn conclusions and goals to reach in the future. 
+
+
+SLIDE 3:
+Nowadays applications come up with highly-dimensional problems that have to be solved in a reliable way and in a 
+reasonable amount of time. In order to reduce the time employed for the computation, if possible, a parallelization of the algorithm 
+to solve the problem may be applied. However, if the problem requires an amount of flops at the order of 10^(15)-10^(18), 
+it is very likely that some cores crash before completing their tasks. When this happens the effectiveness of the entire process 
+is compromised and we incur into a fault phenomenon. 
+The definition of fault is the one of an abnormal event which causes a wrong answer from the computer. 
+There are essentially two types of fault: soft fault and hard fault. The former happens when the simulation ends but the 
+solution obtained is not close to the extact one. 
+The latter occurs when the crash of some cores do not even enable the process to end. 
+Therefore the simulation is interrupted and the code terminates unexpectedly. 
+
+SLIDE 4:
+This induced the development of methods capable of coping with a likely disruption by some cores participating into the 
+process team. In particular these methods should be able to restore the situation as it was before the crash and give the 
+process the opportunity to keep on working till the end of the task is reached.
+Methods such as these are said to be "resilient". 
+Different approaches can be adopted in order to come up with a resilient method. For instance in literature it is very common 
+to find paperworks by people who readjusted Krylov subspace methods with restart-recover strategies. 
+Another approach is to abandon determinist paradigms and switch to stochastic methods. 
+
+SLIDE 5:
+Stochastic approaches such as Monte Carlo linear solvers have the avdantage to be embarassingly scalable, since each sampling 
+is independent of all the others. 
+Moreover algorithms such as this have the property of being robust to the crash of cores, since the lack of information coming from 
+some processors can be replaced by further samplings provided by other machiens involved in the parallelizaiton process. 
+Therefore the goal is to look for robust and resilient method. As it usually happens, the pursuit of this goal requires a compromise 
+with accuracy and efficiency. In fact efficiency and resiliency are sometimes orthogonal one to the other. Therefore to gain something 
+from one side we have to renonounce to something else on the other one. 
+
+
+SLIDE 6:
+I order to formulate the algorithm of Monte Carlo linear solvers, let us consider a linear system of the form $Ax=b$ which is assumed 
+to be sparse. With a left preconditioning we can reformulate the system as a fixed point scheme, where the iteration matrix H is 
+$H=1-P^{-1}A$ and $f=P^{-1}b$. Assuming that the spectral radius of the iteration matrix be less than 1, the fixed point iterations 
+converge to the exact solution to (1) regardless of the inital guess. 
+N.B.: It is very important to point out that for our purposes we need to explicitly 
+build the iteration martrix associated with the fixed point scheme. 
+
+SLIE 7:
+The solution to (3) can be interpreted as a power series in H. By focusing on a singleentry of the solution vector we want to estimate, 
+the Neumann seriesassumes the form shown in (4). The key of the Monte Carlo linear solvers is to reintepret such a formula as the 
+realization of statistical estimators defined on random walks. 
+
+SLIDE 8:
+Let us artificially introduce a functional defined on $R^n$. By introducing its Riesz representative, the action of J over a vector x can 
+be reinterpreted as the inner product between the ries representative of J and the vector x iteself. The intent is to define randoom walks 
+in order to estimate the value of J(x).
+To di this, we primarily have to define the state space over which to define random walks. This statse space S is taken as the set of 
+integers going from 1 to n, as the indexes ot the solution vector to (1).
+
+SLIDE 9:
+The definition of the random walks starts by introducing an initial probability in orderto decide where to kick off each history. 
+It is defined in terms of the magnitude of the entries of the Riesz representative. After this, the same must be doen for the 
+transition matrixwhich is stochastic by rows. 
+It is defined such that the support of the transition probability coincides with teh oneof the iteraito matrix. 
+In particular different opportunities may be considered in oder to build matrix P. One is to look at the magnitude of the entries of H, 
+another one is to define a uniform probability. 
+
+SLIDE 10:
+A sequence of weight is introduced afterwards and it is ausliary to define a second sequence of weights by a recursive definition.
+Once this done, we can eventually define a random variable whose domain is the set $Pi$which represents the set of all the possible 
+realizations (permutations) of a rando walk $\nu$. The random variable attains real value accordingly to the formula shown at the end 
+of the slide. The method we have coem up to takes the name of "Monte Carlo Forward Method".
+
+SLIDE 11:
+It is straightforward to provide the definition of the expected value of the rando variable $X$. 
+Each realization of a random eslk is a sampling point, therefore the mean is computed over the number of permutations computed. 
+It can be proved that the expected value of $W_l * f_kl$ is the inner product between the Riesz representative of J and $H^l * f$. Since 
+the Neumann series converges asolutely, then  we can introduce a sum over the idenx {l} and switch the order of computation between 
+infinite sum and expected value. 
+Therefore we have that the expected value of the randon variable is the inner product between the vector h and the solution vector. 
+
+SLIDE 12:
+By picking the vector h as a vector of the canonical basis, then the initial probability becomes a Kronecker delta. It means that 
+we detirministically decide where to start the random walks. By introducing the $h=e_j$into the formula of the expected value
+of the random variable X, we get the formula shown below. This implies that a set of samplings can be used just to estimate 
+the value of a single entry of the solution vector at a time. Therefore, if we aim at reconstructing the entire solution vector, we have to 
+run as many samplings as the number of entries we want to estimate. 
+
+SLIDE 13:
+This drawback urged the necessity to develop another Monte Carlo linear solver named "Adjoint Mone Carlo" for soem reasons I am gonna 
+show you now. 
+Assume to write the linear system adjoint to the original one we are interested in solving. 
+With a fixed point approach we get a fixed point formulation where the iteration matrix is the transpose of the one used for the
+Forward method.
+By selecting the forcing term as a vector of the canonical basis and by exploting the properties of the inner product with respect 
+to the transposition of the matrix, we get the following.
+
+SLIDE 14:
+Analogously to what we have already done for the Forward method, we introduce in this case as well the initial probability and the 
+transition matrix. Notice that the transition matrix is now defined in terms of the transpose of the iteration matrix associated with 
+the primal problem (which is why the method is called Adjoint indeed). 
+This allows us to come up with an estimator shown in this formula. Its expression is very similar to the one used for the Direct method. 
+However you have to notice that now there is a delta appearing into the sum. This delta is defined in terms of the last index associated 
+with a particular permutation. It entails that eac random walks provide an estimation of the entire solution vector. Therefore, differently 
+from the Forward method, the Adjoint method enables us to use a sampling set to omppute an approximation of the entire solution vector x.
+
+SLIDE 15:
+The two types of Monte Carlo linear sovlers I have just introduced provide an estimation of the soluton to (1) by resorting to the 
+Central Limit Theorem, which is a milestone in Statistics. 
+
+It states that if we have a sequence of independent identically distributed random variables with finite expected value $mu$and 
+finite variance $\sigma _ squared$, then the sequence of partial sums divided by the numerosity of the samplings converges in law to 
+a normal distribution. the parameter of the limit distribution are mean value = 0 and variance = sigma^2.
+
+SLIDE 16:
+As I have already said an important requirement for the Central Limit Theorem to be applied is taht the Expected value and the Variance 
+of the random variables must be finite. Let us consider the Forward and the Adjoint method. For both the approaches we define a matrix H* 
+as it is shoe in this slides. It can be proved with some algebraic tricks that the finiteness of the expected value and 
+variance of the estimator coincides with the spectral radia of H and H* be less than 1. 
+In particular the spectral radius of H < 1 coincides with the finiteness of the expected value, while the spactral radius of H* < 1 is 
+equivalent to the finiteness of the variance.
+In order to guarantee the convergence of the Monte Carlo linear solvers, we have to require that both the conditions be respected. 
+
+SLIDE 17:
+Concerning this issue I will show you some theoretical results taken from a paperwork by Hao Ji, Michael Mascagni and yaohang Li 
+related to the convergence of the Monte Carlo linear solver. 
+The first theorem states that if the fixed point iteration matrix H has infinity norm less thn one, then it is possible to
+find a transitin probability to make the Forward Method converges. 
+The same holds for the Adjoint method when it is the 1-norm of H to be less than one.
+
+Once this said, it may sound natural to ask ourselves the question: "how do I have to define the transition matrix that guarantees this?"
+Under the assumptions of the theorem I just stated, a definition of P as it is shown here guarantees alwasy to build an H* with specral 
+radius less than one, making the hypotheses of the CLT verified. 
+
+SLIDE 18:
+Examples of matrices that guarantees a priori the convergence of the Monte Carlo linear Solvers are strictly diagonallu dominant matrices. 
+In particular, if we assume to apply a diagonal preconditioner to a strictly diagonally dominant matrix by rows, the Forward method is 
+always guaranteed to converge. Instead, by doing the same on a strictly diagonally dominant matrix by columns, the Adjoint methos converges. 
+Crossed configuraitons with respect to the one I have already listed are not guaranteed to converge a priori.
+
+SLIDE 19:
+Hao Li et al provided also a Theorem that enables to detect when the Monte Carlo linear solver will never converge, regardless of the choice
+made for the transition probability. 
+The theorem starts considering the matrix H^+, defined as the matrix whose entries are the absolute values 
+of the etries of H. If H^+ has a spectral radius bigger than one, then the theorem states that there is no chance to find a 
+transition probability that provides convergence. 
+
+SLIDE 20: 
+In this slide I show you the Adjoint Monte Carlo lienar solver on a matrix associated with an AD problems discretized with finite 
+elements. The domain is a square with 32 nodes on each direction. Q1 polynomials are used for the discretization. 
+The matrix we come up to is a 1089 by 1089 has been preconditioned with a diagonal preconditioner on the left. As a result we have an 
+iteration matrix with spectral radius less than one, as much as H* does. Therefore the Monte Carlo linear solver converges. Here I reported
+the trend of the error of the MC method as the numbero of histores employed progresses for different lengths of the random walks. 
+We can notice that if the histories are cut too early, then the Monte Carlo error is characterized by a departure from 
+the Central Limit theorem. Instead, if we preserve a higher number of steps in each random walks, the CLT slope is reproduced pretty well.
+
+
+SLIDE 21:
+The standard Monte Carlo has advantages and drawbacks as well. In particular this algorithm has the good property of being embarassingly 
+parallelizable, since each sampling can be attributed to a single core. A drawback associated with it is the fact that it converges 
+to slowly. 
+This urged people in the mathematical field to develop hybrid methods, which combined stocatical devices (which are extremely resilient) with 
+deterministic ones (known to be efficient).
+
+SLIDE 22:
+A first move on this direction was taken by Halton in 1962. He introduced the so called Sequential Monte Carlo. It is an iterative 
+scheme where at each iteration an update of the solution is computed by the standard Monte Carlo. In this situation the stocastical method
+is relegated into a single numerical iteration. therefore the parallelization is started and stopped inside of each nuemrical step. 
+
+SLIDE 23:
+In the early 2000s Thomas Evans et al introduced a variant of the Sequential Monte Carlo, named Monte carlo Synthetic Acceleration. 
+The acceleration is represented by the first line of the iterative process, which reproduces a deterministc iteration of the fixed 
+point scheme.
+
+SLIDE 24:
+In this new setting it may be natural to ask ourselves the question: "How do I decide how many random walks to run at each 
+numerical iteration?" I tried to give an answer to this question by introducing an adaptive approach based on the magnitued of the 
+relative standard deviation. In particular what the adaptivity does, is running as many jistories as necessary in order to drop the relative 
+statistical error below a prescribed treshold. Once this respected, the algorithm goes to the next numerical iteration.
+
+SLIDE 25:
+In this section I will show you some numerical results associated with the discretization of SPN equations. This kind of equation is 
+extremely important in neuclear physics, since they can be used to estimate the power distribution across a nuclear reactor core. 
+The SPN equations are derived from the Boltzmann equation. In our case we started from the steady-state, one-dimensional, multi-group, 
+eigenvalue-form of the Boltzmann equation. 
+mu indicates the set of direction cosines that are incident on a given boundary
+psi_g is the angular flux for group g 
+sigma_g is the toal interaction cross section for group g 
+sigma_gg' is the scattering cross section from group g to group g'
+csi is the fission spectrum in group g 
+nu sigma is the number of neutrons produced per fission multiplied by the fission cross section
+
+The integrals are computed over 4*pi because the integration is over the steradian (or square radian)
+
+SLIDE 26:
+A pseudospectral decomposition of the flux is introduced and this bring to the formulation of PN equations. Further semplifications
+enable to simplify even more the equations assuming the form of an SPN. Then a Finite Volume discretization is applied. 
+
+SLIDE 27:
+One the problem is discretized the sparsity pattern of a matrix assumes a configuration such as this. By zooming into each diagonal 
+block we can see that each nlock is characterized by a particular structure. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

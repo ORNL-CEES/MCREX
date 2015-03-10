@@ -1,0 +1,41 @@
+
+\lstset {basicstyle=\tiny\ttfamily,language=C++,
+keywordstyle=\color{red}\bfseries,
+commentstyle=\color{blue},numberstyle=\tiny,
+numbers=left, numberstyle=\tiny,
+stepnumber=2, numbersep=5pt, frame=shadowbox}
+
+ \begin{lstlisting}
+void MCAdjoint::MC_solver()
+{ [...]
+#pragma omp parallel
+{
+#pragma omp for
+for(size_t walk=0; walk<max_histories; ++walk)
+{
+size_t previous, current, i;
+[...]
+W=norm1*(b[previous]/abs(b[previous]));
+X[walk][previous]+=W;
+vector<double> transition(max_steps,0);
+
+#pragma omp parallel for
+for (size_t n = 0; n < max_steps; ++n)
+transition[n] = dis(gen);
+i=1;
+while(i<=max_steps)
+{
+current=0;
+while( cdf(previous,current) <= transition[i] )
+current++;
+
+W *= A(current,previous)/(P(previous, current));
+X[walk][current]+=W;
+i++;
+previous=current;
+}
+} [...]
+}
+
+\end{lstlisting}
+
