@@ -341,7 +341,7 @@
     scheme for radiation diffusion problems (LANL)
     \vfill
   \item Can be abstracted as a general linear solver with Monte Carlo as a
-    preconditioner, $\mathbf{M_{mc}}$
+    preconditioner, $\mathbf{M_{MC}}$
     \vfill
   \item Combine with Richardson iteration as a ``smoother'' in between
     Monte Carlo steps:
@@ -399,7 +399,7 @@
   \begin{columns}
 
     \begin{column}{0.5\textwidth}
-
+      \vspace{-0.1in}
       \small
       \begin{itemize}
       \item General extension of the Milagro algorithm (LANL)
@@ -407,10 +407,10 @@
       \item System-tunable communciation parameters of buffer size and check
         frequency (performance impact)
       \item Need an asynchronous strategy for exiting the transport loop
-        without a collective
+        without a collective (running sum)
       \end{itemize}
 
-      \vspace{-0.25in}
+      \vspace{-0.1in}
       \begin{figure}[htpb!]
         \begin{center}
           \scalebox{0.45}{ \input{domain_to_domain.pdftex_t} }
@@ -480,7 +480,7 @@
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Replication}
 
-  Different batches of Monte Carlo samplescan be combined in summation via
+  Different batches of Monte Carlo samples can be combined in summation via
   superposition if they have different random number streams. For two
   different batches:
 
