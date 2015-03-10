@@ -1,0 +1,678 @@
+%%---------------------------------------------------------------------------%%
+%% SIAM CSE 2015 Presentation
+%%---------------------------------------------------------------------------%%
+
+\documentclass{beamer}
+\usefonttheme[onlymath]{serif}
+\usepackage{colortbl}
+\usepackage{longtable,ltcaption,array}
+%% The amssymb package provides various useful mathematical symbols
+\usepackage{amssymb}
+%% The amsthm package provides extended theorem environments
+\usepackage{amsthm} \usepackage{amsmath} \usepackage{tmadd,tmath}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage[labelformat=empty]{subcaption}
+\usepackage{tabularx}
+
+%%---------------------------------------------------------------------------%%
+%% THEME SETUP
+
+\usetheme{CambridgeUS}
+\usecolortheme{spruce}
+
+%%---------------------------------------------------------------------------%%
+%% SETUP STUFF
+%%---------------------------------------------------------------------------%%
+
+\logo{\includegraphics[width=2cm]{new_logo}}
+
+\setbeamercolor{item}{fg=MSUgreen}
+\setbeamertemplate{headline}{}
+\setbeamertemplate{navigation symbols}{}
+
+\newlength{\DUtablewidth} % internal use in tables
+
+%%---------------------------------------------------------------------------%%
+%% MATH STUFF
+%%---------------------------------------------------------------------------%%
+
+\newcommand{\Pn}{\textit{P}$\negthinspace_N$}
+\newcommand{\SPn}{\textit{SP}$\negthinspace_N$}
+
+\newcommand{\vOmega}{\ensuremath{\ve{\Omega}}}
+\newcommand{\hOmega}{\ensuremath{\hat{\ve{\Omega}}}}
+
+\newcommand{\sigs}{\ensuremath{\sigma_{\text{s}}}}
+\newcommand{\sigf}{\ensuremath{\sigma_{\text{f}}}}
+\newcommand{\sigsm}{\ensuremath{\sigma_{\text{s}m}}}
+\newcommand{\sigsn}{\ensuremath{\sigma_{\text{s}n}}}
+
+\newcommand{\phig}{\ensuremath{\Phi}}
+\newcommand{\Sigmag}{\ensuremath{\mathbf{\Sigma}}}
+\newcommand{\Dg}{\ensuremath{\mathbb{D}}}
+\newcommand{\Fg}{\ensuremath{\mathbb{F}}}
+\newcommand{\Qg}{\ensuremath{\mathbb{Q}}}
+\newcommand{\ug}{\ensuremath{\mathbb{U}}}
+\newcommand{\Ag}{\ensuremath{\mathbb{A}}}
+\newcommand{\Bg}{\ensuremath{\mathbb{B}}}
+\newcommand{\Cg}{\ensuremath{\mathbb{C}}}
+\newcommand{\Jg}{\ensuremath{\mathbb{J}}}
+\newcommand{\sg}{\ensuremath{\mathbb{S}}}
+
+\newcommand{\aphig}{\ensuremath{\Phi^{\dagger}}}
+\newcommand{\aSigmag}{\ensuremath{\mathbf{\Sigma}^{\dagger}}}
+
+\newcommand{\apsi}[1]{\ensuremath{\psi^{\dagger\,#1}}}
+\newcommand{\aphi}[1]{\ensuremath{\phi^{\dagger\,#1}}}
+\newcommand{\aq}[1]{\ensuremath{q^{\dagger\,#1}}}
+\newcommand{\ak}{\ensuremath{k^{\dagger}}}
+
+\newcommand{\normal}{\ensuremath{\hat{\ve{n}}}}
+
+% Phantom minus sign for helping with alignment of matrices
+\newcommand{\phmin}{\ensuremath{\phantom{-}}}
+
+\DeclareMathOperator{\diag}{diag}
+
+
+%%---------------------------------------------------------------------------%%
+%% TITLE
+
+\title[Parallel Monte Carlo Solvers]{Parallel Algorithms for Monte Carlo
+  Linear Solvers}
+\author[Slattery, Hamilton, Evans]{Stuart Slattery
+  \\ Steven Hamilton \\ Tom Evans}
+\date[3/17/15]{March 17, 2015}
+\institute[ORNL]{\small Oak Ridge National Laboratory}
+\titlegraphic{\includegraphics[width=1.5in]{ORNL_Balls.pdf}}
+
+\defbeamertemplate{footline}{titlefoot}{
+    \vspace{-0.5cm}
+    \hspace*{0.25cm}
+    \includegraphics[width=2cm]{doe_logo}
+    \hfill
+    \includegraphics[width=3.25cm]{WordMarkLeaf}
+    \hspace*{0.5cm}
+}
+
+\setbeamertemplate{title page}
+{
+  \begin{tabular}{cr}
+    \begin{minipage}{4.7cm}
+      {\bf \Large\textcolor{MSUgreen}{\inserttitle}}\\
+
+      \vspace{2\baselineskip}
+      \insertauthor\\
+
+      \insertinstitute\\
+
+      \insertdate
+    \end{minipage}
+    &
+    \begin{minipage}{5cm}
+      \raggedright
+      \vspace{-0.75cm}
+      \includegraphics[height=9.8cm]{combined_background}
+    \end{minipage}
+  \end{tabular}
+}
+
+%%---------------------------------------------------------------------------%%
+\begin{document}
+
+%%---------------------------------------------------------------------------%%
+
+{
+\setbeamertemplate{logo}{}
+\setbeamertemplate{footline}[titlefoot]
+\begin{frame}
+\titlepage
+\end{frame}
+}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Acknowledgements}
+
+  This material is based upon work supported by the U.S. Department of
+  Energy, Office of Science, Advanced Scientific Computing Research
+  program.
+
+  \vfill
+
+  This research used resources of the Oak Ridge Leadership Computing
+  Facility at the Oak Ridge National Laboratory, which is supported by the
+  Office of Science of the U.S. Department of Energy under Contract No.
+  DE-AC05-00OR22725.
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Motivation}
+  \vfill
+\begin{itemize}
+  \item As we move towards exascale computing, the rate of errors is expected
+  to increase dramatically
+  \vfill
+  \begin{itemize}
+  \item The probability that a compute node will fail during the course
+    of a large scale calculation may be near 1
+  \end{itemize}
+  \vfill
+\item Algorithms need to not only have increased concurrency/scalability
+  but have the ability to recover from hardware faults
+  \begin{itemize}
+  \item Lightweight machines
+  \item Heterogeneous machines
+  \item Both characterized by low power and high concurrency
+  \end{itemize}
+  \vfill
+\end{itemize}
+\vfill
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Towards Exascale Concurrency and Resiliency}
+  \begin{itemize}
+    \item Two basic strategies:
+      \vfill
+      \begin{enumerate}
+        \item State with current ``state of the art'' methods and make
+          incremental modifications to improve scalability and fault
+          tolerance
+          \begin{itemize}
+            \item Many efforts are heading in this direction, attempting
+              to find additional concurrency to exploit
+          \end{itemize}
+        \vfill
+        \item Start with methods having natural scalability and resiliency
+          aspects and work at improving performance (e.g. Monte Carlo)
+          \begin{itemize}
+            \item Soft failures a component of the tally variance
+            \item Hard failures potentially mitigated by replication
+            \item Concurrency enabled by several levels of parallelism
+          \end{itemize}
+      \end{enumerate}
+  \end{itemize}
+  \vfill
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Outline}
+
+  \begin{itemize}
+  \item Monte Carlo Linear Solvers
+    \vfill
+  \item Domain Decomposition and Replication
+    \vfill
+  \item Scaling Studies
+    \vfill
+  \item Matrix-Free and Stochastic Approximate Inverse Algorithms
+  \end{itemize}
+  
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}
+
+  \center Monte Carlo Methods
+  
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Monte Carlo for Linear Systems}
+  \begin{itemize}
+    \item Suppose we want to solve $\mathbf{Ax}=\mathbf{b}$
+    \vfill
+    \item If $\rho(\mathbf{I-A})<1$, we can write the solution using the
+      Neumann series
+      \begin{equation*}
+        \mathbf{x} = \sum_{n=0}^{\infty} (\mathbf{I-A})^n \mathbf{b}
+         = \sum_{n=0}^{\infty} \mathbf{H}^n \mathbf{b}
+      \end{equation*}
+      where $\mathbf{H} \equiv ( \mathbf{I-A} )$ is the Richardson
+      iteration matrix 
+      \vfill
+    \item Build the Neumann series stochastically
+  \end{itemize}
+
+  \[
+  x_i = \sum_{k=0}^{\infty}\sum_{i_1}^{N}\sum_{i_2}^{N}\ldots
+  \sum_{i_k}^{N}h_{i,i_1}h_{i_1,i_2}\ldots h_{i_{k-1},i_k}b_{i_k}
+  \]
+
+  \begin{itemize}
+  \item Define a sequence of state transitions
+  \end{itemize}
+  \vspace*{-0.1in}
+  \[
+  \nu = i \rightarrow i_1 \rightarrow \cdots \rightarrow i_{k-1}
+  \rightarrow i_{k}
+  \]
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Forward Monte Carlo}
+\begin{itemize}
+  \item Choose a row-stochastic matrix $\mathbf{P}$ and weight matrix
+    $\mathbf{W}$ such that $\mathbf{H} = \mathbf{P} \circ \mathbf{W}$
+  \item Typical choice (Monte Carlo Almost-Optimal):
+    \begin{equation*}
+      \mathbf{P}_{ij} = \frac{| \mathbf{H}_{ij}| }
+      {\sum_{j=1}^{N} | \mathbf{H}_{ij} | }
+    \end{equation*}
+  \item To compute solution component $\mathbf{x}_i$:
+    \begin{itemize}
+      \item Start a history in state $i$ (with initial weight of 1)
+      \item Transition to new state $j$ based probabilities determined by
+        $\mathbf{P}_i$
+      \item Modify history weight based on corresponding entry in
+        $\mathbf{W}_{ij}$
+      \item Add contribution to $\mathbf{x}_i$ based on current history weight
+        and value of $\mathbf{b}_j$
+    \end{itemize}
+  \item A given random walk can only contribute to a single component of
+    the solution vector
+\end{itemize}
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Sampling Example (Forward Monte Carlo)}
+  \begin{itemize}
+    \item Suppose
+  \begin{equation*}
+    \mathbf{A} = \begin{bmatrix}
+      \phmin 1.0 & -0.2 & -0.6 \\
+      -0.4 & \phmin 1.0 & -0.4 \\
+      -0.1 & -0.4 & \phmin 1.0 \end{bmatrix} \to
+    \mathbf{H} \equiv (\mathbf{I-A}) = \begin{bmatrix}
+       0.0 &  0.2 &  0.6 \\
+       0.4 &  0.0 &  0.4 \\
+       0.1 &  0.4 &  0.0 \end{bmatrix}
+  \end{equation*}
+    then
+  \begin{equation*}
+    \mathbf{P} = \begin{bmatrix}
+       0.0 & 0.25 & 0.75 \\
+       0.5 &  0.0 & 0.5 \\
+       0.2 &  0.8 & 0.0 \end{bmatrix}, \quad
+    \mathbf{W} = \begin{bmatrix}
+       0.0 &  0.8 &  0.8 \\
+       0.8 &  0.0 &  0.8 \\
+       0.5 &  0.5 &  0.0 \end{bmatrix}
+  \end{equation*}
+    \vfill
+    \item If a history is started in state $3$, there is a $20\%$ chance of
+      it transitioning to state $1$ and an $80\%$ chance of moving to state
+      $2$
+  \end{itemize}
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Solving the Heat Equation: Forward Method}
+
+  \begin{figure}[h!]
+    \begin{center}
+      \includegraphics<1>[width=4in]{direct_1.png}
+      \includegraphics<2>[width=4in]{direct_10.png}
+      \includegraphics<3>[width=4in]{direct_100.png}
+      \includegraphics<4>[width=4in]{direct_1000.png}
+    \end{center}
+    \caption{
+      \only<1>{\textbf{Forward solution.}
+        \textit{\sn{2.5}{3} total histories.} }
+      \only<2>{\textbf{Forward solution.}
+        \textit{\sn{2.5}{4} total histories.} }
+      \only<3>{\textbf{Forward solution.}
+        \textit{\sn{2.5}{5} total histories.} }
+      \only<4>{\textbf{Forward solution.}
+        \textit{\sn{2.5}{6} total histories.} }
+    }
+  \end{figure}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Monte Carlo Synthetic Acceleration}
+  \begin{itemize}
+  \item Devised by Evans and Mosher in the 2000's as an acceleration
+    scheme for radiation diffusion problems (LANL)
+    \vfill
+  \item Can be abstracted as a general linear solver with Monte Carlo as a
+    preconditioner, $M_{MC}$
+    \vfill
+  \item Combine with Richardson iteration as a ``smoother'' in between
+    Monte Carlo steps:
+    \begin{align*}
+      \mathbf{r}^k &= \mathbf{b} - \mathbf{Ax}^k \\
+      \mathbf{x}^{k+1/2} &= \mathbf{x}^k + \mathbf{r}^k \\
+      \mathbf{r}^{k+1/2} &= \mathbf{b} - \mathbf{Ax}^{k+1/2} \\
+      \mathbf{\delta} &= \mathbf{M_{MC}} \mathbf{r}^{k+1/2} \\
+      \mathbf{x}^{k+1} &= \mathbf{x}^{k+1/2} + \delta
+    \end{align*}
+  \end{itemize}
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}
+
+  \center Domain Decomposition and Replication
+  
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Domain Decomposed Monte Carlo}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+      \item Each parallel process owns a piece of the domain (linear
+        system)
+        \bigskip
+      \item Random walks must be transported between adjacent domains
+        through parallel communication
+        \bigskip
+      \item Domain decomposition determined by the input system
+        \bigskip
+      \item Load balancing straightforward for the forward method
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+      \begin{figure}[htpb!]
+        \begin{center}
+          \scalebox{0.75}{ \input{ddnu_example.pdftex_t} }
+        \end{center}
+        \caption{\small Domain decomposition example illustrating
+          how domain-to-domain transport creates communication costs.}
+      \end{figure}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Asynchronous Monte Carlo Transport Kernel}
+
+  \begin{columns}
+
+    \begin{column}{0.5\textwidth}
+
+      \small
+      \begin{itemize}
+      \item General extension of the Milagro algorithm (LANL)
+      \item Asynchronous nearest neighbor communication of histories
+      \item System-tunable communciation parameters of buffer size and check
+        frequency (performance impact)
+      \item Need an asynchronous strategy for exiting the transport loop
+        without a collective
+      \end{itemize}
+
+      \vspace{-0.25in}
+      \begin{figure}[htpb!]
+        \begin{center}
+          \scalebox{0.45}{ \input{domain_to_domain.pdftex_t} }
+        \end{center}
+      \end{figure}
+
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+
+      \vspace{-0.3in}
+      \begin{figure}[htpb!]
+        \begin{center}
+          \scalebox{0.85}{ \input{transport_loop.pdftex_t} }
+        \end{center}
+      \end{figure}
+
+    \end{column}
+
+  \end{columns}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Stopping the Asynchronous Kernel}
+
+  \vspace{-0.25in}
+
+  \begin{figure}[htpb!]
+    \begin{center}
+      \scalebox{0.4}{ \input{master_comm_tree.pdftex_t} }
+    \end{center}
+    \caption{Master/Slave}
+  \end{figure}
+
+  \begin{columns}
+
+    \begin{column}{0.5\textwidth}
+      \vspace{-0.75in}
+      \begin{figure}[htpb!]
+        \begin{center}
+          \scalebox{0.4}{ \input{binary_comm_tree.pdftex_t} }
+        \end{center}
+        \caption{Binary Tree}
+      \end{figure}
+
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+
+      \vspace{-0.5in}
+      
+      \begin{figure}[t!]
+        \begin{center}
+          \includegraphics[width=0.99\textwidth]{titan_weak_bvsm.pdf}
+        \end{center}
+        \caption{Weak scaling absolute efficiency}
+        \label{fig:titan_weak_bvsm}
+      \end{figure}
+
+    \end{column}
+
+  \end{columns}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Replication}
+
+  Different batches of Monte Carlo samplescan be combined in summation via
+  superposition if they have different random number streams. For two
+  different batches:
+
+  \[
+  \mathbf{M_{MC}} \mathbf{x} =
+  \frac{1}{2}(\mathbf{M_1}+\mathbf{M_2})\mathbf{x} 
+  \]
+
+  Consider each of these batches independent \textit{subsets} of a Monte Carlo
+  operator where now the operator can be formed as a general additive
+  decomposition of $N_S$ subsets: 
+
+  \[
+  \mathbf{M_{MC}} = \frac{1}{N_S}\sum_{n=1}^{N_s}{\mathbf{M_n}}
+  \]
+
+  We replicate the linear problem and form each subset on a different group of
+  parallel processes. Applying the subsets to a vector requires an AllReduce
+  to form the sum. Each subset is domain decomposed.
+  
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}
+
+  \center Scaling Studies
+  
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Parallel Test Application -- Nuclear Reactor Analysis}
+  \small
+  The simplified $P_N$ ($SP_N$) equations are an approximation
+  to the Boltzmann neutron transport equation used to simulate nuclear
+  reactors
+
+  \vspace*{-0.1in}
+
+  \begin{multline}
+    \hat{\Omega} \cdot \vec{\nabla} \psi(\vec{r},\hat{\Omega},E) +
+    \sigma(\vec{r},E) \psi(\vec{r},\hat{\Omega},E) = \\ \iint
+    \sigma_s(\vec{r},E' \rightarrow E,\hat{\Omega}' \cdot \hat{\Omega})
+    \psi(\vec{r},\hat{\Omega}',E') d\Omega' dE' +
+    q(\vec{r},\hat{\Omega},E)
+  \end{multline}
+
+  \begin{multline}
+    -\nabla \cdot \Bigg[\frac{n}{2n+1}\frac{1}{\Sigma_{n-1}} \nabla
+      \Big(\frac{n-1}{2n-1} \phi_{n-2} + \frac{n}{2n-1}\phi_n \Big) \\+
+      \frac{n+1}{2n+1}\frac{1}{\Sigma_{n+1}} \nabla
+      \Big(\frac{n+1}{2n+3}\phi_n + \frac{n+2}{2n+3}\phi_{n+2}\Big)
+      \Bigg] \\+ \Sigma_n \phi_n = q \delta_{n0}\ \ \ \ \ \ \ \ \ n =
+    0,2,4,\cdots,N
+  \end{multline}
+
+  \begin{equation}
+  \hspace*{-0.75in}
+    -\nabla \cdot \mathbb{D}_n \nabla \mathbb{U}_n + \sum_{m=1}^4
+    \mathbb{A}_{nm} \mathbb{U}_m = \frac{1}{k} \sum_{m=1}^4
+    \mathbb{F}_{nm} \mathbb{U}_m\ \ \ \ \ \ \ n = 1,2,3,4
+  \end{equation}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{$SP_N$ Assembly Problem}
+\small
+  \begin{columns}
+    \begin{column}{0.4\textwidth}
+      Test problem -- $3 \times 3$ array of fuel assemblies with
+      control rod in center location (Profugus)
+      \begin{itemize}
+      \item 23 energy groups, 2 angular moments, 25M degrees of freedom
+      \item 1,000 computational cores via domain decomposition
+      \item We are interested in solving generalized eigenvalue problem,
+        for this study we use Arnoldi as the eigensolver and compare
+        different methods for solving linear systems
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.6\textwidth}
+      \vspace*{-0.5in}
+      \begin{figure}
+        \centering
+        \includegraphics[width=3in]{prob4}
+      \end{figure}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Parallel $SP_N$ Results}
+\begin{table}
+\centering
+\begin{tabular}{cccc}
+\toprule
+%Method & Total GMRES Iterations & Setup Time (s) & Solve Time (s) \\
+\multirow{2}{*}{\bfseries Method} &
+\bfseries Total Linear & \bfseries Setup & \bfseries Solve \\
+& \bfseries Iteration & \bfseries Time (s) & \bfseries Time (s) \\
+\midrule
+GMRES-ILUT      & 1675 & 0.7  & 18.4 \\
+GMRES-AMG       & 626  & 0.7  & 46.0 \\
+GMRES-MGE       & 498  & 1.5  & 33.7 \\
+Richardson-AINV & 5208 & 20.6 & 52.0 \\
+MCSA-AINV       & 1268 & 25.5 & 46.6 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\begin{itemize}
+  \item ILUT preconditioning is winner here, but known to have issues
+    with parallel scaling on large core counts
+  \item Solve times for MCSA are competitive, but setup times are very large
+    due to construction of sparse approximate inverse
+\end{itemize}
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}
+
+  \center Matrix-Free and Stochastic Approximate Inverse Algorithms
+  
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Alternative Parallelism -- Additive Schwarz}
+  \begin{itemize}
+    \item Instead of performing Monte Carlo on full problem, another
+      possibility is to apply Monte Carlo as an additive Schwarz approach
+    \vfill
+    \item Decompose problem into (possibly overlapping) domains
+    \vfill
+    \item Perform Monte Carlo on individual subdomains
+      \begin{itemize}
+        \item No communication costs in Monte Carlo problem!
+      \end{itemize}
+    \vfill
+    \item With domain decomposed Monte Carlo, iteration counts are effectively
+      independent of the number of processors
+    \vfill
+    \item In an additive Schwarz approach, the preconditioner will become
+      less effective as processor counts grow -- algorithmic scalability
+      may be an issue
+      \vfill
+    \item \textbf{Replication for resiliency and performance}
+  \end{itemize}
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{More Parallelism -- Threading}
+  \begin{itemize}
+    \item Within a Monte Carlo solve, every history is independent of other
+      histories -- great potential for highly concurrent hardware
+      (GPU, Xeon Phi)
+    \vfill
+    \item Polynomial formulation enables a priori determination of
+      operation counts per thread
+      \vfill
+    \item Memory locality an issue due to random access via random
+      walks (block formulation?)
+      \vfill
+    \item Early experiments using the Trilinos Kokkos library show promising
+      performance for multi-core CPUs
+    \vfill
+    \item Team members recently took part in OLCF ``Hackathon'' in
+      late October to begin implementing computation kernels in
+      OpenACC to allow for GPU capability on Titan with early results
+      indicating \textbf{1.3-9.4x} speedup for MCSA (largely dependent
+      on random number generation)
+  \end{itemize}
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Conclusions}
+  \begin{itemize}
+  \item Monte Carlo methods offer great potential for both resilient and
+    highly parallel solvers
+    \vfill
+  \item For certain classes of problems, Monte Carlo methods can be
+    competitive with leading modern solvers
+    \vfill
+    \item Extending methods to broader problem areas is significant challenge
+      and an attractive area for continued research
+      \vfill
+    \item Performance modeling and resiliency simulations this FY
+  \end{itemize}
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\end{document}
+%%---------------------------------------------------------------------------%%
+
+%%---------------------------------------------------------------------------%%
+%% end of pres.tex
+%%---------------------------------------------------------------------------%%

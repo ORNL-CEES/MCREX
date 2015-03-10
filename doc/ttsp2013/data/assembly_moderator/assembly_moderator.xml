@@ -3,42 +3,43 @@
   <ParameterList name="CORE">
     <Parameter name="axial list" type="Array(string)" value="{Core}"/>
     <Parameter name="axial height" type="Array(double)" value="{360.0}"/>
-    <Parameter name="Core" type="TwoDArray(int)" value="2x2:{0,1,1,1}"/>
+    <Parameter name="Core" type="TwoDArray(int)" value="1x1:{0}"/>
   </ParameterList>
   <ParameterList name="ASSEMBLIES">
     <Parameter name="pin pitch" type="double" value="1.26"/>
     <Parameter name="assembly list" type="Array(string)" value="{Fuel Assembly, Water Assembly}"/>
     <Parameter name="Fuel Assembly" type="TwoDArray(int)" value="17x17:{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}"/>
-    <Parameter name="Water Assembly" type="TwoDArray(int)" value="17x17:{2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2}"/>
   </ParameterList>
   <ParameterList name="MATERIAL">
-    <Parameter name="xs library" type="string" value="xs_23G.xml"/>
+    <Parameter name="xs library" type="string" value="xs_2G.xml"/>
     <Parameter name="mat list" type="Array(string)" value="{Guide Tube,Fuel Pin,Moderator}"/>
-  </ParameterList>
-  <ParameterList name="SOURCE">
-    <Parameter name="source list" type="Array(string)" value="{Fuel Source}"/>
-    <Parameter name="source map" type="TwoDArray(int)" value="2x2:{0,-1,-1,-1}"/>
-    <Parameter name="axial source" type="Array(double)" value="{1.0e+00}"/>
-    <ParameterList name="Fuel Source">
-      <Parameter name="strength" type="TwoDArray(double)" value="17x17:{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}"/>
-      <Parameter name="shape" type="Array(double)" value="{1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0}"/>
-    </ParameterList>
   </ParameterList>
   <ParameterList name="PROBLEM">
     <Parameter name="num_blocks_i" type="int" value="1"/>
     <Parameter name="num_blocks_j" type="int" value="1"/>
     <Parameter name="radial mesh" type="int" value="2"/>
-    <Parameter name="axial mesh" type="Array(int)" value="{2}"/>
+    <Parameter name="axial mesh" type="Array(int)" value="{50}"/>
     <Parameter name="symmetry" type="string" value="full"/>
     <Parameter name="boundary" type="string" value="reflect"/>
     <ParameterList name="boundary_db">
-      <Parameter name="reflect" type="Array(int)" value="{1, 0, 1, 0, 0, 0}"/>
+      <Parameter name="reflect" type="Array(int)" value="{1, 1, 1, 1, 1, 1}"/>
     </ParameterList>
     <Parameter name="Pn_order" type="int" value="0"/>
     <Parameter name="SPn_order" type="int" value="1"/>
     <Parameter name="problem_name" type="string" value="assembly_moderator"/>
     <Parameter name="max_itr" type="int" value="1000"/>
-    <Parameter name="trilinos_implementation" type="string" value="epetra"/>
-    <Parameter name="linear_solver_xml_file" type="string" value="mcls.xml"/>
+    <Parameter name="trilinos_implementation" type="string" value="tpetra"/>
+    <ParameterList name="eigenvalue_db">
+      <Parameter name="diagnostic_level" type="int" value="2"/>
+      <Parameter name="eigensolver" type="string" value="Arnoldi"/>
+      <Parameter name="Convergence Tolerance" type="double" value="1e-6"/>
+      <Parameter name="Preconditioner" type="string" value="Multilevel"/>
+      <ParameterList name="Anasazi">
+	<Parameter name="Convergence Tolerance" type="double" value="1e-6"/>
+      </ParameterList>
+      <ParameterList name="operator_db">
+	<Parameter name="max_itr" type="int" value="1000"/>
+      </ParameterList>
+    </ParameterList>
   </ParameterList>
 </ParameterList>
