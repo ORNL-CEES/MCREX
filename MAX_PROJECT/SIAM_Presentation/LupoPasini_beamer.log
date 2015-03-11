@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.9.3)  10 MAR 2015 15:10
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.9.3)  11 MAR 2015 16:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1404,7 +1404,7 @@ File: t1cmtt.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 ] [38
 
 ]
-Overfull \hbox (20.76009pt too wide) detected at line 866
+Overfull \hbox (20.76009pt too wide) detected at line 867
 [] []
  []
 
@@ -1416,10 +1416,10 @@ Overfull \hbox (20.76009pt too wide) detected at line 866
 File: imago/sparsity.jpg Graphic file (type jpg)
 
 <use imago/sparsity.jpg>
-Package pdftex.def Info: imago/sparsity.jpg used on input line 911.
+Package pdftex.def Info: imago/sparsity.jpg used on input line 912.
 (pdftex.def)             Requested size: 265.49652pt x 133.85764pt.
 
-Overfull \hbox (86.27327pt too wide) in paragraph at lines 911--911
+Overfull \hbox (86.27327pt too wide) in paragraph at lines 912--912
  |  [] 
  []
 
@@ -1427,17 +1427,17 @@ Overfull \hbox (86.27327pt too wide) in paragraph at lines 911--911
 File: imago/sparsity2.jpg Graphic file (type jpg)
 
 <use imago/sparsity2.jpg>
-Package pdftex.def Info: imago/sparsity2.jpg used on input line 911.
+Package pdftex.def Info: imago/sparsity2.jpg used on input line 912.
 (pdftex.def)             Requested size: 265.49652pt x 139.52786pt.
 
-Overfull \hbox (117.9987pt too wide) in paragraph at lines 911--911
+Overfull \hbox (117.9987pt too wide) in paragraph at lines 912--912
  [] 
  []
 
 [41
 
  <./imago/sparsity.jpg> <./imago/sparsity2.jpg>]
-Overfull \hbox (23.14296pt too wide) in paragraph at lines 945--945
+Overfull \hbox (23.14296pt too wide) in paragraph at lines 946--946
  |  [] 
  []
 
@@ -1449,16 +1449,16 @@ Overfull \hbox (23.14296pt too wide) in paragraph at lines 945--945
 File: imago/nwalks1.jpg Graphic file (type jpg)
 
 <use imago/nwalks1.jpg>
-Package pdftex.def Info: imago/nwalks1.jpg used on input line 1001.
+Package pdftex.def Info: imago/nwalks1.jpg used on input line 1002.
 (pdftex.def)             Requested size: 162.24849pt x 112.43167pt.
  <imago/nwalks2.jpg, id=1488, 1284.8pt x 890.32625pt>
 File: imago/nwalks2.jpg Graphic file (type jpg)
 
 <use imago/nwalks2.jpg>
-Package pdftex.def Info: imago/nwalks2.jpg used on input line 1001.
+Package pdftex.def Info: imago/nwalks2.jpg used on input line 1002.
 (pdftex.def)             Requested size: 162.24849pt x 112.43167pt.
 
-Overfull \hbox (14.75067pt too wide) in paragraph at lines 1001--1001
+Overfull \hbox (14.75067pt too wide) in paragraph at lines 1002--1002
  [] 
  []
 
@@ -1467,7 +1467,7 @@ Overfull \hbox (14.75067pt too wide) in paragraph at lines 1001--1001
  <./imago/nwalks1.jpg> <./imago/nwalks2.jpg>] [45
 
 ]
-Overfull \hbox (1.88518pt too wide) in paragraph at lines 1056--1056
+Overfull \hbox (1.88518pt too wide) in paragraph at lines 1057--1057
  |  [] 
  []
 
@@ -1476,7 +1476,7 @@ Overfull \hbox (1.88518pt too wide) in paragraph at lines 1056--1056
 ] [47
 
 ]
-Overfull \hbox (1.88518pt too wide) in paragraph at lines 1118--1118
+Overfull \hbox (1.88518pt too wide) in paragraph at lines 1119--1119
  |  [] 
  []
 
@@ -1501,11 +1501,11 @@ Package movie15 Warning: @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 (movie15)                @@ superseded by `media9'.           @@
 (movie15)                @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1147.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1147.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1148.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1148.
 (./LupoPasini_beamer.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1147.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1147.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1148.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1148.
 
 Package rerunfilecheck Info: File `LupoPasini_beamer.out' has not changed.
 (rerunfilecheck)             Checksum: EE2AAAC97C873CC5AA1286D9623CCEDD;270.
@@ -1514,7 +1514,10 @@ Package rerunfilecheck Info: File `LupoPasini_beamer.out' has not changed.
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 4.5pt have occurred.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1147.
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1148.
  ) 
 Here is how much of TeX's memory you used:
  23344 strings out of 493304
@@ -1556,7 +1559,7 @@ fb></usr/share/texmf/fonts/type1/public/cm-super/sfss1095.pfb></usr/share/texmf
 cm-super/sfsx0800.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfsx1000.pf
 b></usr/share/texmf/fonts/type1/public/cm-super/sfsx1095.pfb></usr/share/texmf/
 fonts/type1/public/cm-super/sftt1000.pfb>
-Output written on LupoPasini_beamer.pdf (49 pages, 673893 bytes).
+Output written on LupoPasini_beamer.pdf (49 pages, 673934 bytes).
 PDF statistics:
  1831 PDF objects out of 2073 (max. 8388607)
  1698 compressed objects within 17 object streams
