@@ -83,7 +83,7 @@
 \title[Parallel Monte Carlo Solvers]{Parallel Algorithms for Monte Carlo
   Linear Solvers}
 \author[Slattery, Hamilton, Evans]{Stuart Slattery
-  \\ Steven Hamilton \\ Tom Evans}
+  \\ Steven Hamilton \\ Tom Evans (PI) }
 \date[3/17/15]{March 17, 2015}
 \institute[ORNL]{\small Oak Ridge National Laboratory}
 \titlegraphic{\includegraphics[width=1.5in]{ORNL_Balls.pdf}}
@@ -544,39 +544,40 @@
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Monte Carlo Communication Parameters}
 
-  \vspace{-0.25in}
+  \vspace{-0.15in}
   
   \begin{table}[htb!]
     \begin{center}
       \small
-      \begin{tabular}{rl|rrrr}
+      \begin{tabular}{rr|rrrr}
         \toprule
         \multicolumn{6}{r}{Message Check Frequency} \\
-        \multicolumn{1}{l}{} &
-        \multicolumn{1}{l}{} &
+        \multicolumn{1}{r}{} &
+        \multicolumn{1}{r}{} &
         \multicolumn{1}{r}{\textbf{128}} &
         \multicolumn{1}{r}{\textbf{256}} &
         \multicolumn{1}{r}{\textbf{512}} &
-        \multicolumn{1}{r}{\textbf{1024}}
+        \multicolumn{1}{r}{\textbf{1\,024}}
         \\ \midrule
         \multirow{7}{*}{{Mesage Buffer Size}}
         %%
         & \textbf{256}	& 1.054	& 1.061	& 1.076	& 1.076 \\
         & \textbf{512}	& 1.103	& 1.146	& 1.211	& \framebox[1.1\width]{1.270} \\
-        & \textbf{1024}	& 1.062	& 1.088	& 1.133	& 1.176 \\
-        & \textbf{2048}	& 1.030	& 1.042	& 1.072	& 1.107 \\
-        & \textbf{4096}	& 1.010	& 1.012	& 1.025	& 1.050 \\
-        & \textbf{8192}	& 1.001	& \framebox[1.1\width]{1.000}	& 1.008	& 1.018 \\
-        & \textbf{16384}	& 1.017	& 1.003	& 1.010	& 1.009 \\
+        & \textbf{1\,024}	& 1.062	& 1.088	& 1.133	& 1.176 \\
+        & \textbf{2\,048}	& 1.030	& 1.042	& 1.072	& 1.107 \\
+        & \textbf{4\,096}	& 1.010	& 1.012	& 1.025	& 1.050 \\
+        & \textbf{8\,192}	& 1.001	& \framebox[1.1\width]{1.000}	& 1.008	& 1.018 \\
+        & \textbf{16\,384}	& 1.017	& 1.003	& 1.010	& 1.009 \\
         %%
         \bottomrule
       \end{tabular}
     \end{center}
   \end{table} 
-  
+  \vspace{-0.2in}
   \begin{itemize}
+  \item OLCF Eos: 736-node Cray XC30, Intel® Xeon® E5-2670, 11,776
+    cores, 47 TB memory, Cray Aries interconnect
   \item 64 cores, 1.6M DOFs, history length of 15, 3 histories per DOF
-  \item Buffer size dominates the trend
   \item 27\% decrease in runtime observed for bad parameter choices
   \item Worth the time to do this parameter study when running on new
     hardware
@@ -585,21 +586,95 @@
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\begin{frame}{Monte Carlo Strong Scaling}
+\begin{frame}{Monte Carlo Scaling}
 
+  \vspace{-0.1in}
   
-\end{frame}
+  \begin{table}[htb!]
+    \tiny
+    \begin{center}
+      \begin{tabular}{rrrrrrr}
+        \toprule
+        \multicolumn{1}{r}{Cores} &
+        \multicolumn{1}{r}{DOFs} &
+        \multicolumn{1}{r}{DOFs/Core} &
+        \multicolumn{1}{r}{Time Min (s)} &
+        \multicolumn{1}{r}{Time Max (s)} &
+        \multicolumn{1}{r}{Time Ave (s)} &
+        \multicolumn{1}{r}{Efficiency}
+        \\ \midrule
+        %%
+        256 & 273\,509\,600 & 1\,068\,397 & 260.53 & 260.54 & 260.54 & 1.00 \\
+        1\,024 & 273\,509\,600 & 267\,099 & & & & \\
+        4\,096 & 273\,509\,600 & 66\,775 & & & & \\
+        7\,744 & 273\,509\,600 & 35\,319 & & & & \\
+        10\,816 & 273\,509\,600 & 25\,288 & & & & \\
+        %%
+        \bottomrule
+      \end{tabular}
+    \end{center}
+    \vspace{-0.09in}
+    \caption{\small Strong Scaling}
+  \end{table} 
 
-%%---------------------------------------------------------------------------%%
-\begin{frame}{Monte Carlo Weak Scaling}
-
+  \vspace{-0.2in}
   
-\end{frame}
+  \begin{table}[htb!]
+    \tiny
+    \begin{center}
+      \begin{tabular}{rrrrrrr}
+        \toprule
+        \multicolumn{1}{r}{Cores} &
+        \multicolumn{1}{r}{DOFs} &
+        \multicolumn{1}{r}{DOFs/Core} &
+        \multicolumn{1}{r}{Time Min (s)} &
+        \multicolumn{1}{r}{Time Max (s)} &
+        \multicolumn{1}{r}{Time Ave (s)} &
+        \multicolumn{1}{r}{Efficiency}
+        \\ \midrule
+        %%
+        64 & 1\,618\,400 & 25\,288 & 6.432 & 6.432 & 6.432 & 1.00 \\
+        256 & 6\,473\,600 & 25\,288 & 6.493 & 6.493 & 6.493 & 0.99 \\
+        1\,024 & & 25\,288 & & & & \\
+        4\,096 & & 25\,288 & & & & \\
+        7\,744 & & 25\,288 & & & & \\
+        10\,816 & & 25\,288 & & & & \\
+        %
+        \bottomrule
+      \end{tabular}
+    \end{center}
+    \vspace{-0.09in}
+    \caption{\small Weak Scaling}
+  \end{table}
 
-%%---------------------------------------------------------------------------%%
-\begin{frame}{Monte Carlo Replication Scaling}
+  \vspace{-0.2in}
 
-  
+  \begin{table}[htb!]
+    \tiny
+    \begin{center}
+      \begin{tabular}{rrrrrrr}
+        \toprule
+        \multicolumn{1}{r}{Sets} &
+        \multicolumn{1}{r}{DOFs} &
+        \multicolumn{1}{r}{DOFs/Core} &
+        \multicolumn{1}{r}{Time Min (s)} &
+        \multicolumn{1}{r}{Time Max (s)} &
+        \multicolumn{1}{r}{Time Ave (s)} &
+        \multicolumn{1}{r}{Efficiency}
+        \\ \midrule
+        %%
+        1 & 6\,473\,600 & 25\,288 & 6.493 & 6.493 & 6.493 & 1.00 \\
+        2 & 6\,473\,600 & 25\,288 &  &  & & 1.00 \\
+        3 & 6\,473\,600 & 25\,288 &  &  & & 1.00 \\
+        4 & 6\,473\,600 & 25\,288 &  &  & & 1.00 \\
+        %
+        \bottomrule
+      \end{tabular}
+    \end{center}
+    \vspace{-0.09in}
+    \caption{\small Replication Scaling. 256 cores per set.}
+  \end{table} 
+
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
@@ -632,20 +707,67 @@
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Matrix-Free Algorithm}
 
-  \begin{itemize}
-    \small
-    \item At each application of $\mathbf{M_{MC}}$, execute the Monte
-      Carlo process
-    \item Must perform Monte Carlo every time you want to apply with a better
-      approximation requiring more time and more operations
-    \item Variations in random number streams are amortized over iterations
-  \end{itemize}
+  \begin{columns}
+    
+    \begin{column}{0.4\textwidth}
+      
+      \begin{itemize}
+        \small
+      \item At each application of $\mathbf{M_{MC}}$, execute the Monte
+        Carlo process
+        \vfill
+      \item Must perform Monte Carlo every time you want to apply with a better
+        approximation requiring more time and more operations
+        \vfill
+      \item Variations in random number streams are amortized over iterations
+        \vfill
+      \item Vast majority of solve time spent doing Monte Carlo
+      \end{itemize}
 
+    \end{column}
+
+    \begin{column}{0.6\textwidth}
+      \begin{table}[htb!]
+        \tiny
+        \begin{center}
+          \begin{tabular}{rrrrr}
+            \toprule
+            \multicolumn{1}{r}{$L$} &
+            \multicolumn{1}{r}{$N_S$} &
+            \multicolumn{1}{r}{MC Time (s)} &
+            \multicolumn{1}{r}{MC Fraction} &
+            \multicolumn{1}{r}{MCSA Iters}
+            \\ \midrule
+            %%
+            3 & 1 & 30.885 & 0.96 & 266 \\
+            3 & 2 & 60.869 & 0.98 & 261 \\
+            5 & 1 & 27.422 & 0.97 & 180 \\
+            5 & 2 & 54.319 & 0.98 & 175 \\
+            10 & 1 & 23.871 & 0.98 & 102 \\
+            10 & 2 & 45.551 & 0.99 & 97 \\
+            15 & 1 & 50.395 & 0.98 & 164 \\
+            15 & 2 & 42.951 & 0.99 & 69 \\
+            15 & 3 & 65.292 & 0.99 & 68 \\
+            25 & 1 & - & - & - \\
+            25 & 2 & 70.505 & 0.99 & 78 \\
+            25 & 3 & 63.677 & 1.00 & 47 \\
+            %
+            \bottomrule
+          \end{tabular}
+        \end{center}
+        \caption{\small MCSA performance. $A$ had $115\,600$ rows.}
+      \end{table} 
+
+    \end{column}
+  \end{columns}
+  
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Stochastic Approximate Inverse Algorithm}
 
+  \vspace{-0.1in}
+  
   \begin{itemize}
     \small
     \item Construct $\mathbf{M_{MC}}$ as a sparse matrix by executing the
@@ -653,39 +775,39 @@
     \item Use this operator as a stochastic approximation to the inverse
     \item A better approximation to the inverse requires more setup time and
       more storage
-    \item Will investigate a drop tolerance strategy
+    \item We will investigate a drop tolerance strategy to control sparsity
   \end{itemize}
 
-  \vfill
+  \vspace{-0.1in}
 
   \begin{table}[htb!]
     \tiny
     \begin{center}
-      \begin{tabular}{ccccccc}
+      \begin{tabular}{rrrrrrr}
         \toprule
-        \multicolumn{1}{c}{$L$} &
-        \multicolumn{1}{c}{$N_S$} &
-        \multicolumn{1}{c}{$NNZ$} &
-        \multicolumn{1}{c}{$NNZ$ Ratio} &
-        \multicolumn{1}{c}{MC Time (s)} &
-        \multicolumn{1}{c}{Setup Time (s)} &
-        \multicolumn{1}{c}{MCSA Iters}
+        \multicolumn{1}{r}{$L$} &
+        \multicolumn{1}{r}{$N_S$} &
+        \multicolumn{1}{r}{$NNZ$} &
+        \multicolumn{1}{r}{$NNZ$ Ratio} &
+        \multicolumn{1}{r}{MC Time (s)} &
+        \multicolumn{1}{r}{Setup Time (s)} &
+        \multicolumn{1}{r}{MCSA Iters}
         \\ \midrule
         %%
-        3 & 2 & 484,714 & 0.41 & 0.104 & 0.671 & 255 \\
-        3 & 3 & 622,123 & 0.52 & 0.145 & 0.705 & 255 \\
-        5 & 2 & 783,153 & 0.66 & 0.158 & 0.737 & 185 \\
-        5 & 3 & 1,032,573 & 0.87 & 0.237 & 0.831 & 171 \\
-        5 & 4 & 1,241,442 & 1.05 & 0.302 & 0.906 & 171 \\
-        10 & 3 & 1,969,540 & 1.66 & 0.433 & 1.061 & 95 \\
-        10 & 4 & 2,416,572 & 2.04 & 0.570 & 1.214 & 95 \\
-        15 & 3 & 2,867,005 & 2.42 & 0.645 & 1.317 & 132 \\
-        15 & 4 & 3,544,181 & 2.99 & 0.833 & 1.534 & 67 \\
-        15 & 5 & 4,157,269 & 3.50 & 1.029 & 1.765 & 66 \\
+        3 & 2 & 484\,714 & 0.41 & 0.104 & 0.671 & 255 \\
+        3 & 3 & 622\,123 & 0.52 & 0.145 & 0.705 & 255 \\
+        5 & 2 & 783\,153 & 0.66 & 0.158 & 0.737 & 185 \\
+        5 & 3 & 1\,032\,573 & 0.87 & 0.237 & 0.831 & 171 \\
+        5 & 4 & 1\,241\,442 & 1.05 & 0.302 & 0.906 & 171 \\
+        10 & 3 & 1\,969\,540 & 1.66 & 0.433 & 1.061 & 95 \\
+        10 & 4 & 2\,416\,572 & 2.04 & 0.570 & 1.214 & 95 \\
+        15 & 3 & 2\,867\,005 & 2.42 & 0.645 & 1.317 & 132 \\
+        15 & 4 & 3\,544\,181 & 2.99 & 0.833 & 1.534 & 67 \\
+        15 & 5 & 4\,157\,269 & 3.50 & 1.029 & 1.765 & 66 \\
         \bottomrule
       \end{tabular}
     \end{center}
-    \caption{MCSA Performance. $A$ had $115,600$ rows and $1,186,464$ non-zero
+    \caption{MCSA Performance. $A$ had $115\,600$ rows and $1\,186\,464$ non-zero
       entries.}
   \end{table} 
 
@@ -693,6 +815,36 @@
 
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Unpreconditioned Algorithm Comparison}
+
+  \begin{itemize}
+  \item No preconditioning, serial computation
+  \item GMRES easier to preconditioner - perfomance here only indicates Monte
+    Carlo potential
+  \item These results indicate good stochastic approximate inverse performance
+    for traditional CPU architectures
+  \item Matrix-free approach may be more effective when vectorized for new
+    architectures by favoring operations over storage - 95\%+ of the runtime
+    spent in Monte Carlo
+  \end{itemize}
+
+    \begin{table}[htb!]
+    \begin{center}
+      \begin{tabular}{lrrr}
+        \toprule
+        \multicolumn{1}{l}{Solver} &
+        \multicolumn{1}{r}{Iters} &
+        \multicolumn{1}{r}{Time (s)} &
+        \multicolumn{1}{r}{Time/Iter (s)}
+        \\ \midrule
+        %%
+        MCSA Matrix-Free & 102 & 24.414 & 0.239 \\
+        MCSA Approximate Inverse & 67 & 0.611 & 0.009 \\
+        Belos GMRES & 81 & 0.974 & 0.012 \\
+        \bottomrule
+      \end{tabular}
+    \end{center}
+    \caption{$A$ had $115\,600$ rows and $1\,186\,464$ non-zero entries.}
+  \end{table} 
 
 \end{frame}
 
