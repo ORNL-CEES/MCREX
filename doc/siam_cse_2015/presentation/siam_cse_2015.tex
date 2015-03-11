@@ -178,7 +178,7 @@
     \item Two basic strategies:
       \vfill
       \begin{enumerate}
-        \item State with current ``state of the art'' methods and make
+        \item Start with current ``state of the art'' methods and make
           incremental modifications to improve scalability and fault
           tolerance
           \begin{itemize}
@@ -189,7 +189,8 @@
         \item Start with methods having natural scalability and resiliency
           aspects and work at improving performance (e.g. Monte Carlo)
           \begin{itemize}
-            \item Soft failures a component of the tally variance
+            \item Soft failures introduce an additional stochastic error
+              component
             \item Hard failures potentially mitigated by replication
             \item Concurrency enabled by several levels of parallelism
           \end{itemize}
@@ -654,7 +655,7 @@
     \begin{center}
       \begin{tabular}{rrrrrrr}
         \toprule
-        \multicolumn{1}{r}{Sets} &
+        \multicolumn{1}{r}{Subsets} &
         \multicolumn{1}{r}{Cores} &
         \multicolumn{1}{r}{DOFs} &
         \multicolumn{1}{r}{Time Min (s)} &
@@ -672,7 +673,7 @@
       \end{tabular}
     \end{center}
     \vspace{-0.09in}
-    \caption{\small Replication Scaling. 256 cores per set.}
+    \caption{\small Replication Scaling. 256 cores per subset.}
   \end{table} 
 
 \end{frame}
@@ -817,7 +818,8 @@
 \begin{frame}{Unpreconditioned Algorithm Comparison}
 
   \begin{itemize}
-  \item No preconditioning, serial computation
+    \small
+  \item No preconditioning, serial computation, fastest MCSA times reported
   \item GMRES easier to preconditioner - performance here only indicates Monte
     Carlo potential
   \item These results indicate good stochastic approximate inverse performance
@@ -827,20 +829,23 @@
     spent in Monte Carlo
   \end{itemize}
 
-    \begin{table}[htb!]
+  \begin{table}[htb!]
+    \tiny
     \begin{center}
-      \begin{tabular}{lrrr}
+      \begin{tabular}{lrrrr}
         \toprule
         \multicolumn{1}{l}{Solver} &
-        \multicolumn{1}{r}{Iters} &
-        \multicolumn{1}{r}{Time (s)} &
-        \multicolumn{1}{r}{Time/Iter (s)}
+        \multicolumn{1}{r}{Setup Time (s)} &
+        \multicolumn{1}{r}{Solve Time (s)} &
+        \multicolumn{1}{r}{Total Time (s)} &
+        \multicolumn{1}{r}{Iters}
         \\ \midrule
         %%
-        MCSA Matrix-Free & 102 & 24.414 & 0.239 \\
-        MCSA Approximate Inverse & 67 & 0.611 & 0.009 \\
-        Belos GMRES & 81 & 0.974 & 0.012 \\
-        \bottomrule
+        MCSA Matrix-Free & 2.104 & 24.389 & 26.493 & 102 \\
+        MCSA Approximate Inverse & 3.376 & 0.618 & 3.994 & 67 \\
+        Belos GMRES & 1.791 & 1.021 & 2.812 & 81\\
+        %
+        \bottomrule 
       \end{tabular}
     \end{center}
     \caption{$A$ had $115\,600$ rows and $1\,186\,464$ non-zero entries.}
