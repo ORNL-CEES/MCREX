@@ -133,7 +133,7 @@
 }
 
 %%---------------------------------------------------------------------------%%
-\begin{frame}{Acknowledgements}
+\begin{frame}{Acknowledgments}
 
   This material is based upon work supported by the U.S. Department of
   Energy, Office of Science, Advanced Scientific Computing Research
@@ -385,7 +385,7 @@
       \begin{itemize}
       \item General extension of the Milagro algorithm (LANL)
       \item Asynchronous nearest neighbor communication of histories
-      \item System-tunable communciation parameters of buffer size and check
+      \item System-tunable communication parameters of buffer size and check
         frequency (performance impact)
       \item Need an asynchronous strategy for exiting the transport loop
         without a collective (running sum)
@@ -559,7 +559,7 @@
         \multicolumn{1}{r}{\textbf{512}} &
         \multicolumn{1}{r}{\textbf{1\,024}}
         \\ \midrule
-        \multirow{7}{*}{{Mesage Buffer Size}}
+        \multirow{7}{*}{{Message Buffer Size}}
         %%
         & \textbf{256}	& 1.054	& 1.061	& 1.076	& 1.076 \\
         & \textbf{512}	& 1.103	& 1.146	& 1.211	& \framebox[1.1\width]{1.270} \\
@@ -818,7 +818,7 @@
 
   \begin{itemize}
   \item No preconditioning, serial computation
-  \item GMRES easier to preconditioner - perfomance here only indicates Monte
+  \item GMRES easier to preconditioner - performance here only indicates Monte
     Carlo potential
   \item These results indicate good stochastic approximate inverse performance
     for traditional CPU architectures
@@ -875,7 +875,7 @@
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Conclusions}
   \begin{itemize}
-  \item Vectorization an area of active research with a focus on heterogenous
+  \item Vectorization an area of active research with a focus on heterogeneous
     architectures (Titan and Summit)
     \vfill
   \item Multiple threading models are being explored (Kokkos, HPX, etc.)
