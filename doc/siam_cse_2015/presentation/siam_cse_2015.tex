@@ -686,7 +686,7 @@
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\begin{frame}{Monte Carlo Synthetic Acceleration}
+\begin{frame}{Monte Carlo Synthetic Acceleration (MCSA)}
   \begin{itemize}
   \item Devised by Evans and Mosher in the 2000's as an acceleration
     scheme for radiation diffusion problems (LANL)
@@ -694,15 +694,16 @@
   \item Can be abstracted as a general linear solver with Monte Carlo as a
     preconditioner
     \vfill
-  \item Combine with Richardson iteration as a ``smoother'' in between
-    Monte Carlo steps:
-    \begin{align*}
-      \mathbf{r}^k &= \mathbf{b} - \mathbf{Ax}^k \\
-      \mathbf{x}^{k+1/2} &= \mathbf{x}^k + \mathbf{r}^k \\
-      \mathbf{r}^{k+1/2} &= \mathbf{b} - \mathbf{Ax}^{k+1/2} \\
-      \mathbf{x}^{k+1} &= \mathbf{x}^{k+1/2} + \mathbf{M_{MC}} \mathbf{r}^{k+1/2}
-    \end{align*}
+  \item First Richardson step hits the high frequency error modes and second
+    Monte Carlo step hits the low frequency error modes
   \end{itemize}
+  \vfill
+  \begin{align*}
+    \mathbf{r}^k &= \mathbf{b} - \mathbf{Ax}^k \\
+    \mathbf{x}^{k+1/2} &= \mathbf{x}^k + \mathbf{r}^k \\
+    \mathbf{r}^{k+1/2} &= \mathbf{b} - \mathbf{Ax}^{k+1/2} \\
+    \mathbf{x}^{k+1} &= \mathbf{x}^{k+1/2} + \mathbf{M_{MC}} \mathbf{r}^{k+1/2}
+  \end{align*}
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
@@ -756,7 +757,8 @@
             \bottomrule
           \end{tabular}
         \end{center}
-        \caption{\small MCSA performance. $A$ had $115\,600$ rows.}
+        \caption{\small MCSA performance. $A$ had $115\,600$ rows and
+          $1\,186\,464$ non-zero entries.}
       \end{table} 
 
     \end{column}
@@ -808,8 +810,8 @@
         \bottomrule
       \end{tabular}
     \end{center}
-    \caption{MCSA Performance. $A$ had $115\,600$ rows and $1\,186\,464$ non-zero
-      entries.}
+    \caption{MCSA Performance. $A$ had $115\,600$ rows and $1\,186\,464$
+      non-zero entries.}
   \end{table} 
 
 \end{frame}
@@ -842,7 +844,7 @@
         \\ \midrule
         %%
         MCSA Matrix-Free & 2.104 & 24.389 & 26.493 & 102 \\
-        MCSA Approximate Inverse & 3.376 & 0.618 & 3.994 & 67 \\
+        MCSA Approximate Inverse & 2.953 & 0.779 & 3.731 & 95 \\
         Belos GMRES & 1.791 & 1.021 & 2.812 & 81\\
         %
         \bottomrule 
