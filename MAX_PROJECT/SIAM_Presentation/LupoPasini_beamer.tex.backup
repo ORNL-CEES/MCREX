@@ -646,26 +646,37 @@ u(\mathbf{x},t)=0, \; \; \qquad \qquad \qquad \qquad \quad  \mathbf{x}\in
 \small where $\mu=\frac{3}{200}$, $\chi=3$, 
 $\boldsymbol{\beta}(\mathbf{x})=[x,-y]^T$.\\
 $\Gamma_R=\{\{x=1\}\times(1,2)\} \cup \{(1,2)\times\{y=1\}\}$,
-$\Gamma_D=\partial \Omega \setminus \Gamma_R$.\newline
+$\Gamma_D=\partial \Omega \setminus \Gamma_R$.
 
-Discretization (\texttt{FreeFem++} employed):
+\hspace{-1cm}
+\begin{minipage}[t]{0.5\linewidth}
+\small Discretization (\texttt{FreeFem++} employed):
 \begin{itemize}
  \item Triangular FEM
  \item spatial discretization step $h_{max}=0.018$, 37,177 d.o.f.'s
  \item time discretization step $\Delta t = h_{max}^2$
 \end{itemize}
+\end{minipage}
+\hspace{1cm}
+\begin{minipage}[t]{0.5\linewidth}
+  \begin{figure}
+  %\hspace*{3cm}
+\includegraphics[width=0.4\textwidth]{imago/domain.png}
+\end{figure}
+\end{minipage}
 \end{frame}
 
 \begin{frame}
 \frametitle{2D parabolic problems: test case 1}
 \underline{Preconditioning}: sparse factorized AINV 
-with drop tolerance $\tau=0.05$.
+with drop tolerance $\tau=0.05$. Code provided by courtesy by Miroslav Tuma.
+
 [M.~Benzi and M.~Tuma, SISC, 1998]\newline
 
 \underline{Numerical setting}:
 \begin{itemize}
  \item Adjoint MCSA employed as linear solver
-  \item residual relative tolerance: $\varepsilon_1=10^{-7}$
+  \item relative residual tolerance: $\varepsilon_1=10^{-7}$
   \item weighted transition probability
   \item maximal \# steps per history: $10$
   \item statistical error-based adaptive parameter: $\varepsilon_2=0.5$
@@ -677,21 +688,23 @@ with drop tolerance $\tau=0.05$.
 
 \begin{frame}
 \frametitle{2D parabolic problems: test case 1}
-Stiffness matrix: $A$ ($n=37177$).\newline 
-AINV preconditioner: $M$. \newline
+Stiffness matrix: $A$ ($n=37,177$), s.d.d. by rows and 
+columns.\newline 
+AINV preconditioner: $M$. Drop tolerance $\tau=0.05$ for both factors.\newline
 Iteration matrix: $H=I-MA$.\newline
 Solution computed just \underline{for a generic time step}.
 \vspace*{0.5cm}
 \begin{itemize}
 \item $\frac{nnz(H)}{nnz(A)}=2.984$  
 \vspace{0.2cm}
-\item $\lVert H \rVert_1=0.597$ 
+\item $\lVert H \rVert_1=0.597$ $\quad$ ( $\rho(H)\approx 0.286$, 
+$\rho(H^*)\approx 0.104$ )
 \vspace{0.2cm}
 \item \# iterations employed: 9 
 \vspace{0.2cm}
 \item relative error$=3.783\cdot 10^{-8}$
 \vspace{0.2cm}
-\item \# total random walks employed: 10700
+\item \# total random walks employed: 10,700
 \end{itemize}
 \end{frame}
 
@@ -724,8 +737,9 @@ Discretization (\texttt{FreeFem++} employed):
 
 \begin{frame}
 \frametitle{2D parabolic problems: test case 2}
-Stiffness matrix: $A$ ($n=40,501$).\newline 
-AINV preconditioner: $M$.\newline
+Stiffness matrix: $A$ ($n=40,501$), s.d.d. by rows and 
+columns.\newline 
+AINV preconditioner: $M$. Drop tolerance $\tau=0.05$ for both factors.\newline
 Iteration matrix: $H=I-MA$.\newline
 Solution computed just \underline{for a generic time step}.
 \vspace*{0.5cm}
@@ -733,13 +747,14 @@ Solution computed just \underline{for a generic time step}.
 \begin{itemize}
 \item $\frac{nnz(H)}{nnz(A)}=3.106$  
 \vspace{0.2cm}
-\item $\lVert H \rVert_1=0.185$ 
+\item $\lVert H \rVert_1=0.185$ $\quad$ ( $\rho(H)\approx 0.083$, 
+$\rho(H^*)\approx 0.017$ )
 \vspace{0.2cm}
 \item \# iterations employed: 9 
 \vspace{0.2cm}
 \item relative error$=6.904\cdot 10^{-8}$
 \vspace{0.2cm}
-\item \# total random walks employed: 4500
+\item \# total random walks employed: 4,500
 \end{itemize}
 \end{frame}
 
@@ -773,21 +788,22 @@ Discretization (\texttt{IFISS} toolbox employed):
 
 \begin{frame}
 \frametitle{2D parabolic problems: test case 3}
-Stiffness matrix: $A$ ($n=66,049$).\\ 
-AINV preconditioner: $M$.\\
+Stiffness matrix: $A$ ($n=66,049$). Not s.d.d.\\ 
+AINV preconditioner: $M$. Drop tolerance $\tau=0.05$ for both factors.\\
 Iteration matrix: $H=I-MA$.\\
 Solution computed just \underline{for a generic time step}.
 \vspace*{0.5cm}
 \begin{itemize}
 \item $\frac{nnz(H)}{nnz(A)}=4.736$  
 \vspace{0.2cm}
-\item $\lVert H \rVert_1=0.212$ 
+\item $\lVert H \rVert_1=0.212$ $\quad$ ( $\rho(H)\approx 0.171$, 
+$\rho(H^*)\approx 0.032$ )
 \vspace{0.2cm}
 \item \# iterations employed: $12$
 \vspace{0.2cm}
 \item relative error$=9.193\cdot 10^{-8}$
 \vspace{0.2cm}
-\item \# total random walks employed: $9300$
+\item \# total random walks employed: $9,300$
 \end{itemize}
 
 \end{frame}
@@ -932,9 +948,9 @@ Numerical treatment:
 \textbf{Kind of matrix} & \textbf{size} &
 \textbf{nnz}&\textbf{Prec. block size}& \textbf{nnz after prec}\\
 \hline
-$SP_1$ (a) & 18207 & 486438 & 63 & 2644523\\ 
+$SP_1$ (a) & 18,207 & 486,438 & 63 & 2,644,523\\ 
 \hline
-$SP_1$ (b) & 19941 & 998631 & 69 & 1774786\\
+$SP_1$ (b) & 19,941 & 998,631 & 69 & 1,774,786\\
 \hline
 \end{tabular}
 \label{tab:matrices}
@@ -954,7 +970,7 @@ Slattery, ORNL]}
   \item almost optimal transition probability
   \item maximal \# steps per history: $10$
   \item statistical error-based adaptive parameter: $\varepsilon_2=0.5$
-  \item granularity of the adaptive approach: $n_{histories}=1000$
+  \item granularity of the adaptive approach: $n_{histories}=1,000$
   \item simulations run in serial mode
  \end{itemize}
 \end{frame}
@@ -962,26 +978,24 @@ Slattery, ORNL]}
 \begin{frame}
 \frametitle{Numerical experiments}
 \framesubtitle{Simplified $P_N$ equations}
-\vspace*{-0.7cm}
+\vspace*{-0.6cm}
 \begin{table}[!h]
 \centering
 \hspace*{-0.5cm}
-\begin{tabular}{|c|c|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|}
 \hline
 \textbf{matrix} & $\rho(H)$ &
-$\rho(H^*)$&relative err.& \# iterations & CPU time (s)\\
+$\rho(H^*)$&relative err.& \# iterations \\
 \hline
-$SP_1$ (a) & 0.9779 & 0.9758 & $9.97\cdot 10^{-6}$ & 340 & 17035 ($\approx$ 
-5h)\\ 
+$SP_1$ (a) & 0.9779 & 0.9758 & $9.97\cdot 10^{-6}$ & 340 \\ 
 \hline
-$SP_1$ (b) & 0.9798 & 0.9439 & $3.89\cdot 10^{-5}$ & 209 & 11204 ($\approx$ 
-3h)\\
+$SP_1$ (b) & 0.9798 & 0.9439 & $3.89\cdot 10^{-5}$ & 209\\
 \hline
 \end{tabular}
 \label{tab:MCSA_SPN}
 \end{table}
 
-\vspace*{-0.5cm}
+\vspace*{-0.4cm}
 \begin{minipage}[t]{0.48\linewidth}
 \begin{figure}[!h]
 \hspace*{-1.1cm}
@@ -1072,13 +1086,13 @@ $SP_5$ & 1.6 & 0.5477 & 0.3790 & 0.3431\\
 \hline
 \textbf{matrix} & nnz & $s$ &relative err.& \# iterations \\
 \hline
-$SP_1$ (a) & 486438 & 0.3 & $6.277\cdot 10^{-7}$ & 36 \\ 
+$SP_1$ (a) & 486,438 & 0.3 & $6.277\cdot 10^{-7}$ & 36 \\ 
 \hline
-$SP_1$ (b) & 998631 & 0.4 & $9.885\cdot 10^{-7}$ & 21 \\
+$SP_1$ (b) & 998,631 & 0.4 & $9.885\cdot 10^{-7}$ & 21 \\
 \hline
-$SP_3$  & 846549 & 0.9 & $5.919\cdot 10^{-7}$ & 18 \\ 
+$SP_3$  & 846,549 & 0.9 & $5.919\cdot 10^{-7}$ & 18 \\ 
 \hline
-$SP_5$  & 1399134 & 1.6 & $4.031\cdot 10^{-7}$ & 19 \\
+$SP_5$  & 1,399,134 & 1.6 & $4.031\cdot 10^{-7}$ & 19 \\
 \hline
 \end{tabular}
 \label{tab:MCSA_diag_shift}

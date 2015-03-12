@@ -1,20 +1,20 @@
 \beamer@endinputifotherversion {3.24pt}
 \headcommand {\slideentry {0}{0}{1}{1/1}{}{0}}
 \headcommand {\beamer@framepages {1}{1}}
-\headcommand {\slideentry {0}{0}{2}{2/6}{}{0}}
-\headcommand {\beamer@framepages {2}{6}}
-\headcommand {\sectionentry {1}{Motivations}{7}{Motivations}{0}}
-\headcommand {\beamer@sectionpages {1}{6}}
-\headcommand {\beamer@subsectionpages {1}{6}}
-\headcommand {\slideentry {1}{0}{3}{7/7}{}{0}}
-\headcommand {\beamer@framepages {7}{7}}
+\headcommand {\slideentry {0}{0}{2}{2/2}{}{0}}
+\headcommand {\beamer@framepages {2}{2}}
+\headcommand {\slideentry {0}{0}{3}{3/7}{}{0}}
+\headcommand {\beamer@framepages {3}{7}}
+\headcommand {\sectionentry {1}{Motivations}{8}{Motivations}{0}}
+\headcommand {\beamer@sectionpages {1}{7}}
+\headcommand {\beamer@subsectionpages {1}{7}}
 \headcommand {\slideentry {1}{0}{4}{8/8}{}{0}}
 \headcommand {\beamer@framepages {8}{8}}
-\headcommand {\sectionentry {2}{Standard MC vs. MCSA}{9}{Standard MC vs. MCSA}{0}}
-\headcommand {\beamer@sectionpages {7}{8}}
-\headcommand {\beamer@subsectionpages {7}{8}}
-\headcommand {\slideentry {2}{0}{5}{9/9}{}{0}}
+\headcommand {\slideentry {1}{0}{5}{9/9}{}{0}}
 \headcommand {\beamer@framepages {9}{9}}
+\headcommand {\sectionentry {2}{Standard MC vs. MCSA}{10}{Standard MC vs. MCSA}{0}}
+\headcommand {\beamer@sectionpages {8}{9}}
+\headcommand {\beamer@subsectionpages {8}{9}}
 \headcommand {\slideentry {2}{0}{6}{10/10}{}{0}}
 \headcommand {\beamer@framepages {10}{10}}
 \headcommand {\slideentry {2}{0}{7}{11/11}{}{0}}
@@ -41,23 +41,23 @@
 \headcommand {\beamer@framepages {21}{21}}
 \headcommand {\slideentry {2}{0}{18}{22/22}{}{0}}
 \headcommand {\beamer@framepages {22}{22}}
-\headcommand {\sectionentry {3}{Choice of preconditioners}{23}{Choice of preconditioners}{0}}
-\headcommand {\beamer@sectionpages {9}{22}}
-\headcommand {\beamer@subsectionpages {9}{22}}
-\headcommand {\slideentry {3}{0}{19}{23/23}{}{0}}
+\headcommand {\slideentry {2}{0}{19}{23/23}{}{0}}
 \headcommand {\beamer@framepages {23}{23}}
-\headcommand {\sectionentry {4}{Convergence conditions}{24}{Convergence conditions}{0}}
-\headcommand {\beamer@sectionpages {23}{23}}
-\headcommand {\beamer@subsectionpages {23}{23}}
-\headcommand {\slideentry {4}{0}{20}{24/24}{}{0}}
+\headcommand {\sectionentry {3}{Choice of preconditioners}{24}{Choice of preconditioners}{0}}
+\headcommand {\beamer@sectionpages {10}{23}}
+\headcommand {\beamer@subsectionpages {10}{23}}
+\headcommand {\slideentry {3}{0}{20}{24/24}{}{0}}
 \headcommand {\beamer@framepages {24}{24}}
+\headcommand {\sectionentry {4}{Convergence conditions}{25}{Convergence conditions}{0}}
+\headcommand {\beamer@sectionpages {24}{24}}
+\headcommand {\beamer@subsectionpages {24}{24}}
 \headcommand {\slideentry {4}{0}{21}{25/25}{}{0}}
 \headcommand {\beamer@framepages {25}{25}}
-\headcommand {\sectionentry {5}{Numerical results}{26}{Numerical results}{0}}
-\headcommand {\beamer@sectionpages {24}{25}}
-\headcommand {\beamer@subsectionpages {24}{25}}
-\headcommand {\slideentry {5}{0}{22}{26/26}{}{0}}
+\headcommand {\slideentry {4}{0}{22}{26/26}{}{0}}
 \headcommand {\beamer@framepages {26}{26}}
+\headcommand {\sectionentry {5}{Numerical results}{27}{Numerical results}{0}}
+\headcommand {\beamer@sectionpages {25}{26}}
+\headcommand {\beamer@subsectionpages {25}{26}}
 \headcommand {\slideentry {5}{0}{23}{27/27}{}{0}}
 \headcommand {\beamer@framepages {27}{27}}
 \headcommand {\slideentry {5}{0}{24}{28/28}{}{0}}
@@ -74,14 +74,14 @@
 \headcommand {\beamer@framepages {33}{33}}
 \headcommand {\slideentry {5}{0}{30}{34/34}{}{0}}
 \headcommand {\beamer@framepages {34}{34}}
-\headcommand {\slideentry {5}{0}{30}{34/35}{}{0}}
-\headcommand {\beamer@framepages {34}{35}}
-\headcommand {\slideentry {5}{0}{30}{34/36}{}{0}}
-\headcommand {\beamer@framepages {34}{36}}
-\headcommand {\slideentry {5}{0}{30}{34/37}{}{0}}
-\headcommand {\beamer@framepages {34}{37}}
-\headcommand {\slideentry {5}{0}{31}{38/38}{}{0}}
-\headcommand {\beamer@framepages {38}{38}}
+\headcommand {\slideentry {5}{0}{31}{35/35}{}{0}}
+\headcommand {\beamer@framepages {35}{35}}
+\headcommand {\slideentry {5}{0}{31}{35/36}{}{0}}
+\headcommand {\beamer@framepages {35}{36}}
+\headcommand {\slideentry {5}{0}{31}{35/37}{}{0}}
+\headcommand {\beamer@framepages {35}{37}}
+\headcommand {\slideentry {5}{0}{31}{35/38}{}{0}}
+\headcommand {\beamer@framepages {35}{38}}
 \headcommand {\slideentry {5}{0}{32}{39/39}{}{0}}
 \headcommand {\beamer@framepages {39}{39}}
 \headcommand {\slideentry {5}{0}{33}{40/40}{}{0}}
@@ -104,8 +104,10 @@
 \headcommand {\beamer@framepages {48}{48}}
 \headcommand {\slideentry {5}{0}{42}{49/49}{}{0}}
 \headcommand {\beamer@framepages {49}{49}}
-\headcommand {\beamer@partpages {1}{49}}
-\headcommand {\beamer@subsectionpages {26}{49}}
-\headcommand {\beamer@sectionpages {26}{49}}
-\headcommand {\beamer@documentpages {49}}
-\headcommand {\def \inserttotalframenumber {45}}
+\headcommand {\slideentry {5}{0}{43}{50/50}{}{0}}
+\headcommand {\beamer@framepages {50}{50}}
+\headcommand {\beamer@partpages {1}{50}}
+\headcommand {\beamer@subsectionpages {27}{50}}
+\headcommand {\beamer@sectionpages {27}{50}}
+\headcommand {\beamer@documentpages {50}}
+\headcommand {\def \inserttotalframenumber {46}}

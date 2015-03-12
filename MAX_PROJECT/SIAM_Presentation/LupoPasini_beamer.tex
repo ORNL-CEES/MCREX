@@ -12,7 +12,6 @@
 \usepackage[]{algorithm2e}
 \usepackage{listings}
 \usepackage{chngpage}
-
 \setbeamertemplate{caption}[numbered]
 
 \tikzstyle{mybox} = [draw=green, very thick, rectangle, rounded corners, inner ysep=5pt, inner xsep=5pt, fill=green!20]
@@ -41,11 +40,12 @@
 
 \author[Massimiliano Lupo Pasini]{Massimiliano Lupo Pasini (Emory University)\\
 \institute{Emory University}
-\vspace{0.5cm}\tiny{In collaboration with: \\Michele Benzi (Emory 
+\vspace{0.5cm}\small{In collaboration with: \\Michele Benzi (Emory 
 University)\\Thomas 
-Evans (Oak Ridge National Laboratory), \\Steven Hamilton(Oak Ridge National 
-Laboratory), \\Stuart Slattery(Oak Ridge National Laboratory)} 
-\\\vspace{0.5cm}Research supported by DOE (Office of Science)}
+Evans (Oak Ridge National Laboratory) \\Steven Hamilton(Oak Ridge National 
+Laboratory)\\Stuart Slattery(Oak Ridge National Laboratory)} 
+%\\\vspace{0.5cm}Research supported by DOE (Office of Science)
+}
 \vspace{0.1cm}
 \institute{SIAM Conference on Computational Science and Engineering 2015}
 %Oak Ridge National Laboratory
@@ -54,8 +54,28 @@ Laboratory), \\Stuart Slattery(Oak Ridge National Laboratory)}
 \date[3.17.2015]{\small March 17, 2015}
 
 \usetheme{Berlin}
+\setbeamertemplate{footline}%{miniframes theme}
+  {%
+    \begin{beamercolorbox}[colsep=1.5pt]{upper separation line foot}
+    \end{beamercolorbox}
+    \begin{beamercolorbox}[ht=2.5ex,dp=1.125ex,%
+      leftskip=.3cm,rightskip=.3cm plus1fil]{author in head/foot}%
+      \leavevmode{\usebeamerfont{author in head/foot}\insertshortauthor}%
+      \hfill%
+      {\usebeamerfont{institute in head/foot}\usebeamercolor[fg]{institute in 
+head/foot}\insertshortinstitute}%
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[ht=2.5ex,dp=1.125ex,%
+      leftskip=.3cm,rightskip=.3cm plus1fil]{title in head/foot}%
+      {\usebeamerfont{title in head/foot}\insertshorttitle} \hfill     
+\insertframenumber%
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[colsep=1.5pt]{lower separation line foot}
+    \end{beamercolorbox}
+  }
 \useinnertheme{rounded}
-\setbeamercovered{dynamic}
+%\useoutertheme{infolines}
+%\setbeamercovered{dynamic}
 
 \begin{document}
 
@@ -72,6 +92,16 @@ Laboratory), \\Stuart Slattery(Oak Ridge National Laboratory)}
 % % % % % % % % % % % % % % % % %
 
 
+\begin{frame}{Acknowledgments}
+
+  This material is based upon work supported by the U.S. Department of
+  Energy, Office of Science, Advanced Scientific Computing Research
+  program.
+
+\end{frame}
+
+
+
 \begin{frame}
 \small\frametitle{Outline}
 \begin{itemize}[<+->]
@@ -86,7 +116,6 @@ Laboratory), \\Stuart Slattery(Oak Ridge National Laboratory)}
 \item Numerical results
 \end{itemize}
 \end{frame}
-
 
 \section{Motivations}
 
@@ -648,28 +677,39 @@ $\boldsymbol{\beta}(\mathbf{x})=[x,-y]^T$.\\
 $\Gamma_R=\{\{x=1\}\times(1,2)\} \cup \{(1,2)\times\{y=1\}\}$,
 $\Gamma_D=\partial \Omega \setminus \Gamma_R$.\newline
 
-Discretization (\texttt{FreeFem++} employed):
+\begin{minipage}[t]{1\linewidth}
+\small Discretization (\texttt{FreeFem++} employed):
 \begin{itemize}
  \item Triangular FEM
  \item spatial discretization step $h_{max}=0.018$, 37,177 d.o.f.'s
  \item time discretization step $\Delta t = h_{max}^2$
 \end{itemize}
+\end{minipage}
+\hspace*{-4.7cm}
+\begin{minipage}[t]{0.3\linewidth}
+  \begin{figure}
+  \vspace*{-0.5cm}
+  \hspace*{3cm}
+\includegraphics[width=0.7\textwidth]{imago/domain.png}
+\end{figure}
+\hspace{-2cm}
+\end{minipage}
 \end{frame}
 
 \begin{frame}
 \frametitle{2D parabolic problems: test case 1}
 \underline{Preconditioning}: sparse factorized AINV 
-with drop tolerance $\tau=0.05$. [Code provided by courtesy by Miroslav Tuma]
+with drop tolerance $\tau=0.05$. Code provided by courtesy by Miroslav Tuma.
 
 [M.~Benzi and M.~Tuma, SISC, 1998]\newline
 
 \underline{Numerical setting}:
 \begin{itemize}
  \item Adjoint MCSA employed as linear solver
-  \item residual relative tolerance: $\varepsilon_1=10^{-7}$
+  \item relative residual tolerance: $\varepsilon_1=10^{-7}$
   \item weighted transition probability
   \item maximal \# steps per history: $10$
-  \item statistical error-based adaptive parameter: $\varepsilon_2=0.5$
+  \item statistical error-based adaptive parameter: $\varepsilon_2=0.01$
   \item granularity of the adaptive approach: $n_{histories}=100$
   \item simulations run on laptop 
 \end{itemize}
@@ -678,21 +718,23 @@ with drop tolerance $\tau=0.05$. [Code provided by courtesy by Miroslav Tuma]
 
 \begin{frame}
 \frametitle{2D parabolic problems: test case 1}
-Stiffness matrix: $A$ ($n=37,177$).\newline 
-AINV preconditioner: $M$. \newline
+Stiffness matrix: $A$ ($n=37,177$), s.d.d. by rows and 
+columns.\newline 
+AINV preconditioner: $M$. Drop tolerance $\tau=0.05$ for both factors.\newline
 Iteration matrix: $H=I-MA$.\newline
 Solution computed just \underline{for a generic time step}.
 \vspace*{0.5cm}
 \begin{itemize}
 \item $\frac{nnz(H)}{nnz(A)}=2.984$  
 \vspace{0.2cm}
-\item $\lVert H \rVert_1=0.597$ 
+\item $\lVert H \rVert_1=0.597$ $\quad$ ( $\rho(H)\approx 0.286$, 
+$\rho(H^*)\approx 0.104$ )
 \vspace{0.2cm}
-\item \# iterations employed: 9 
+\item \# MCSA iterations: 8 $\quad$ 
 \vspace{0.2cm}
-\item relative error$=3.783\cdot 10^{-8}$
+\item relative error$=2.71\cdot 10^{-8}$
 \vspace{0.2cm}
-\item \# total random walks employed: 10,700
+\item \# total random walks employed: 90,000
 \end{itemize}
 \end{frame}
 
@@ -725,8 +767,9 @@ Discretization (\texttt{FreeFem++} employed):
 
 \begin{frame}
 \frametitle{2D parabolic problems: test case 2}
-Stiffness matrix: $A$ ($n=40,501$).\newline 
-AINV preconditioner: $M$.\newline
+Stiffness matrix: $A$ ($n=40,501$), s.d.d. by rows and 
+columns.\newline 
+AINV preconditioner: $M$. Drop tolerance $\tau=0.05$ for both factors.\newline
 Iteration matrix: $H=I-MA$.\newline
 Solution computed just \underline{for a generic time step}.
 \vspace*{0.5cm}
@@ -734,15 +777,18 @@ Solution computed just \underline{for a generic time step}.
 \begin{itemize}
 \item $\frac{nnz(H)}{nnz(A)}=3.106$  
 \vspace{0.2cm}
-\item $\lVert H \rVert_1=0.185$ 
+\item $\lVert H \rVert_1=0.185$ $\quad$ ( $\rho(H)\approx 0.083$, 
+$\rho(H^*)\approx 0.017$ )
 \vspace{0.2cm}
-\item \# iterations employed: 9 
+\item \# MCSA iterations: 6 
 \vspace{0.2cm}
-\item relative error$=6.904\cdot 10^{-8}$
+\item relative error$=5.148\cdot 10^{-8}$
 \vspace{0.2cm}
-\item \# total random walks employed: 4,500
+\item \# total random walks employed: 66,800
 \end{itemize}
 \end{frame}
+
+
 
 
 \begin{frame}
@@ -774,21 +820,22 @@ Discretization (\texttt{IFISS} toolbox employed):
 
 \begin{frame}
 \frametitle{2D parabolic problems: test case 3}
-Stiffness matrix: $A$ ($n=66,049$).\\ 
-AINV preconditioner: $M$.\\
+Stiffness matrix: $A$ ($n=66,049$). Not s.d.d.\\ 
+AINV preconditioner: $M$. Drop tolerance $\tau=0.05$ for both factors.\\
 Iteration matrix: $H=I-MA$.\\
 Solution computed just \underline{for a generic time step}.
 \vspace*{0.5cm}
 \begin{itemize}
 \item $\frac{nnz(H)}{nnz(A)}=4.736$  
 \vspace{0.2cm}
-\item $\lVert H \rVert_1=0.212$ 
+\item $\lVert H \rVert_1=0.212$ $\quad$ ( $\rho(H)\approx 0.171$, 
+$\rho(H^*)\approx 0.032$ )
 \vspace{0.2cm}
-\item \# iterations employed: $12$
+\item \# MCSA iterations: $8$ 
 \vspace{0.2cm}
-\item relative error$=9.193\cdot 10^{-8}$
+\item relative error$=1.7153\cdot 10^{-8}$
 \vspace{0.2cm}
-\item \# total random walks employed: $9,300$
+\item \# total random walks employed: $88,400$
 \end{itemize}
 
 \end{frame}
@@ -827,8 +874,9 @@ converge a priori
 
 \begin{frame}
 \frametitle{Monte Carlo Linear Solvers}
+\setbeamercolor{block title}{bg=blue,fg=white}
 \framesubtitle{The choice of the transition probability}
-\begin{Theorem}[Hao J. et al.]
+\begin{Theorem}[H. Ji, M. Mascagni and Y. Li]
  Let $H\in \mathbb{R}^{n\times n}$ with spectral radius $\rho(H)<1$. Let 
 $H^+\in \mathbb{R}^{n\times n}$ where $H_{i,j}^+=\lvert 
 H_{i,j}\rvert$. 
@@ -840,6 +888,7 @@ converges to zero as $k\rightarrow \infty$.
 \label{no_conv}
 \end{Theorem}
 \end{frame}
+
 
 
 \begin{frame}
