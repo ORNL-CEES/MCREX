@@ -822,7 +822,7 @@
   \begin{itemize}
     \small
   \item No preconditioning, serial computation, fastest MCSA times reported
-  \item GMRES easier to preconditioner - performance here only indicates Monte
+  \item GMRES easier to precondition - performance here only indicates Monte
     Carlo potential
   \item These results indicate good stochastic approximate inverse performance
     for traditional CPU architectures
@@ -843,7 +843,7 @@
         \multicolumn{1}{r}{Iters}
         \\ \midrule
         %%
-        Richardson & & & & \\
+        Richardson & 2.098 & 1.6709 & 3.769 & 1\,017 \\
         MCSA Matrix-Free & 2.104 & 24.389 & 26.493 & 102 \\
         MCSA Approximate Inverse & 2.953 & 0.779 & 3.731 & 95 \\
         Belos GMRES & 1.791 & 1.021 & 2.812 & 81\\
@@ -870,7 +870,7 @@
   \item We have implemented a Monte Carlo kernel using the Kokkos threading
     model (Trilinos)
     \begin{itemize}
-    \item The kernel supports multithreaded CPU, GPU, and Xeon Phi
+    \item The kernel supports multi-threaded CPU, GPU, and Xeon Phi
       architectures with a single implementation
     \end{itemize}
     \vfill
