@@ -211,7 +211,7 @@
     \vfill
   \item Algorithm Variations
     \vfill
-  \item Conclusions and Future Work
+  \item Current/Future Work and Conclusions
   \end{itemize}
   
 \end{frame}
@@ -843,6 +843,7 @@
         \multicolumn{1}{r}{Iters}
         \\ \midrule
         %%
+        Richardson & & & & \\
         MCSA Matrix-Free & 2.104 & 24.389 & 26.493 & 102 \\
         MCSA Approximate Inverse & 2.953 & 0.779 & 3.731 & 95 \\
         Belos GMRES & 1.791 & 1.021 & 2.812 & 81\\
@@ -858,39 +859,63 @@
 %%---------------------------------------------------------------------------%%
 \begin{frame}
 
-  \center Conclusions and Future Work
+  \center Current/Future Work and Conclusions
   
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\begin{frame}{Conclusions}
+\begin{frame}{Current Work - Vectorization and Threading}
+
   \begin{itemize}
-  \item Monte Carlo methods offer great potential for both resilient and
-    highly parallel solvers
+  \item We have implemented a Monte Carlo kernel using the Kokkos threading
+    model (Trilinos)
+    \begin{itemize}
+    \item The kernel supports multithreaded CPU, GPU, and Xeon Phi
+      architectures with a single implementation
+    \end{itemize}
     \vfill
-  \item A fully asynchronous algorithm provides a scheme without collectives 
+  \item Vectorization an area of active research with a focus on heterogeneous
+    architectures (Titan and Summit)
+    \begin{itemize}
+    \item Currently investigating event-based algorithms to enable
+      vectorization
+    \item Event-based algorithm concepts are based on vectorized Monte Carlo
+      algorithms from particle transport
+    \end{itemize}
     \vfill
-  \item Good scaling demonstrated so far on reasonably load balanced problems
+  \item We are exploring an additive-Schwarz formulation to eliminate
+    parallel communication in the Monte Carlo kernel
     \vfill
-  \item Replication a potential resiliency strategy with some overhead
-    \vfill
-  \item Matrix-free and stochastic approximate inverse algorithms are
-    complementary - trade operations for storage
+  \item Other threading models will be considered (e.g. HPX)
   \end{itemize}
+  
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\begin{frame}{Current and Future Work}
+\begin{frame}{Conclusions and Future Work}
   \begin{itemize}
-  \item Vectorization an area of active research with a focus on heterogeneous
-    architectures (Titan and Summit)
+    \small
+  \item Monte Carlo methods offer great potential for both resilient and
+    highly parallel solvers
+    \begin{itemize}
+    \item A fully asynchronous algorithm provides scalability without
+      collectives
+    \item Replication potentially offers resiliency with some overhead
+    \end{itemize}
     \vfill
-  \item Multiple threading models are being explored (Kokkos, HPX, etc.)
+  \item Matrix-free and stochastic approximate inverse algorithms are
+    complementary - trade operations for storage
     \vfill
-  \item Extending methods to broader problem areas is significant algorithmic
-    challenge and an attractive area for continued research
+  \item Extending methods to broader problem areas is a significant
+    algorithmic challenge and an attractive area for continued research
+    \begin{itemize}
+    \item Explicit preconditioners are required for all problems
+    \end{itemize}
     \vfill
   \item Performance modeling and resiliency simulations this FY
+    \begin{itemize}
+    \item Fault injection studies using the xSim simulator
+    \end{itemize}
   \end{itemize}
 \end{frame}
 
