@@ -32,6 +32,10 @@
 \setbeamertemplate{headline}{}
 \setbeamertemplate{navigation symbols}{}
 
+\setbeamertemplate{section in head/foot}{\hfill\insertsectionheadnumber.~\insertsectionhead}
+\setbeamertemplate{section in head/foot shaded}{\color{structure!50}\hfill\insertsectionheadnumber.~\insertsectionhead}
+\setbeamertemplate{section in toc}{\inserttocsectionnumber.~\inserttocsection}
+
 \newlength{\DUtablewidth} % internal use in tables
 
 %%---------------------------------------------------------------------------%%
@@ -149,6 +153,11 @@
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
+\frame{\tableofcontents}
+
+%%---------------------------------------------------------------------------%%
+\section{Motivation}
+%%---------------------------------------------------------------------------%%
 \begin{frame}{Motivation}
   \vfill
 \begin{itemize}
@@ -200,28 +209,7 @@
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\begin{frame}{Outline}
-
-  \begin{itemize}
-  \item Monte Carlo Linear Solvers
-    \vfill
-  \item Domain Decomposition and Replication
-    \vfill
-  \item Scaling Studies
-    \vfill
-  \item Algorithm Variations
-    \vfill
-  \item Current/Future Work and Conclusions
-  \end{itemize}
-  
-\end{frame}
-
-%%---------------------------------------------------------------------------%%
-\begin{frame}
-
-  \center Monte Carlo Methods
-  
-\end{frame}
+\section{Monte Carlo Methods}
 
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Monte Carlo for Linear Systems}
@@ -338,11 +326,7 @@
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\begin{frame}
-
-  \center Domain Decomposition and Replication
-  
-\end{frame}
+\section{Domain Decomposition and Replication}
 
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Domain Decomposed Monte Carlo}
@@ -486,11 +470,7 @@
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\begin{frame}
-
-  \center Scaling Studies
-  
-\end{frame}
+\section{Scaling Studies}
 
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Parallel Test - Simplified $P_N$ ($SP_N$) Assembly Problem}
@@ -679,11 +659,7 @@
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\begin{frame}
-
-  \center Algorithm Variations
-  
-\end{frame}
+\section{Algorithm Variations}
 
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Monte Carlo Synthetic Acceleration (MCSA)}
@@ -750,7 +726,6 @@
             15 & 1 & 50.395 & 0.98 & 164 \\
             15 & 2 & 42.951 & 0.99 & 69 \\
             15 & 3 & 65.292 & 0.99 & 68 \\
-            25 & 1 & - & - & - \\
             25 & 2 & 70.505 & 0.99 & 78 \\
             25 & 3 & 63.677 & 1.00 & 47 \\
             %
@@ -857,11 +832,7 @@
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\begin{frame}
-
-  \center Current/Future Work and Conclusions
-  
-\end{frame}
+\section{Current/Future Work and Conclusions}
 
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Current Work - Vectorization and Threading}
