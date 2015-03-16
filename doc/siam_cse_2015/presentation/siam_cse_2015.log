@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2013.5.30)  16 MAR 2015 15:29
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2013.5.30)  16 MAR 2015 16:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -821,29 +821,29 @@ Package: beamercolorthemespruce 2012/03/07  (rcs-revision adfc58636b1f)
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\\' on input line 90.
+(hyperref)                removing `\\' on input line 86.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\\' on input line 90.
+(hyperref)                removing `\\' on input line 86.
 
 (./siam_cse_2015.aux)
 \openout1 = `siam_cse_2015.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 127.
-LaTeX Font Info:    ... okay on input line 127.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 127.
-LaTeX Font Info:    ... okay on input line 127.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 127.
-LaTeX Font Info:    ... okay on input line 127.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 127.
-LaTeX Font Info:    ... okay on input line 127.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 127.
-LaTeX Font Info:    ... okay on input line 127.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 127.
-LaTeX Font Info:    ... okay on input line 127.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 127.
-LaTeX Font Info:    ... okay on input line 127.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 123.
+LaTeX Font Info:    ... okay on input line 123.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 123.
+LaTeX Font Info:    ... okay on input line 123.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 123.
+LaTeX Font Info:    ... okay on input line 123.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 123.
+LaTeX Font Info:    ... okay on input line 123.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 123.
+LaTeX Font Info:    ... okay on input line 123.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 123.
+LaTeX Font Info:    ... okay on input line 123.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 123.
+LaTeX Font Info:    ... okay on input line 123.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -909,7 +909,7 @@ e
 ))
 ABD: EveryShipout initializing macros
 \AtBeginShipoutBox=\box58
-Package hyperref Info: Link coloring OFF on input line 127.
+Package hyperref Info: Link coloring OFF on input line 123.
 
 (/usr/local/texlive/2013/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
@@ -919,9 +919,9 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
 \c@section@level=\count178
 )
-LaTeX Info: Redefining \ref on input line 127.
-LaTeX Info: Redefining \pageref on input line 127.
-LaTeX Info: Redefining \nameref on input line 127.
+LaTeX Info: Redefining \ref on input line 123.
+LaTeX Info: Redefining \pageref on input line 123.
+LaTeX Info: Redefining \nameref on input line 123.
 
 (./siam_cse_2015.out) (./siam_cse_2015.out)
 \@outlinefile=\write5
@@ -952,42 +952,42 @@ Dictionary: translator-numbers-dictionary, Language: English
 r-theorem-dictionary/translator-theorem-dictionary-English.dict
 Dictionary: translator-theorem-dictionary, Language: English 
 )
-LaTeX Info: Redefining \includegraphics on input line 127.
+LaTeX Info: Redefining \includegraphics on input line 123.
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
 
 (./siam_cse_2015.nav)
-LaTeX Font Info:    Try loading font information for U+msa on input line 136.
+LaTeX Font Info:    Try loading font information for U+msa on input line 132.
 
 (/usr/local/texlive/2013/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 136.
+LaTeX Font Info:    Try loading font information for U+msb on input line 132.
 
 (/usr/local/texlive/2013/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Underfull \hbox (badness 4217) in paragraph at lines 136--136
+Underfull \hbox (badness 4217) in paragraph at lines 132--132
 [][]\OT1/cmss/bx/n/14.4 Parallel Al-go-rithms
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 136--136
+Underfull \hbox (badness 10000) in paragraph at lines 132--132
 \OT1/cmss/bx/n/14.4 for Monte Carlo
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 136--136
+Underfull \hbox (badness 10000) in paragraph at lines 132--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 136--136
+Underfull \hbox (badness 10000) in paragraph at lines 132--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 136--136
+Underfull \hbox (badness 10000) in paragraph at lines 132--132
 
  []
 
@@ -995,27 +995,31 @@ Underfull \hbox (badness 10000) in paragraph at lines 136--136
 File: combined_background.png Graphic file (type png)
 
 <use combined_background.png>
-Package pdftex.def Info: combined_background.png used on input line 136.
+Package pdftex.def Info: combined_background.png used on input line 132.
 (pdftex.def)             Requested size: 206.07948pt x 278.83708pt.
 
-Overfull \hbox (63.8157pt too wide) in paragraph at lines 136--136
+Overfull \hbox (63.8157pt too wide) in paragraph at lines 132--132
 [][]  
  []
 
 
+Overfull \vbox (9.08414pt too high) detected at line 132
+ []
+
+
 LaTeX Font Warning: Font shape `OT1/cmss/m/n' in size <4> not available
-(Font)              size <5> substituted on input line 136.
+(Font)              size <5> substituted on input line 132.
 
 <doe_logo.png, id=40, 112.7412pt x 33.2442pt>
 File: doe_logo.png Graphic file (type png)
  <use doe_logo.png>
-Package pdftex.def Info: doe_logo.png used on input line 136.
+Package pdftex.def Info: doe_logo.png used on input line 132.
 (pdftex.def)             Requested size: 56.9055pt x 16.7798pt.
 
 <WordMarkLeaf.pdf, id=41, 361.35pt x 61.22874pt>
 File: WordMarkLeaf.pdf Graphic file (type pdf)
  <use WordMarkLeaf.pdf>
-Package pdftex.def Info: WordMarkLeaf.pdf used on input line 136.
+Package pdftex.def Info: WordMarkLeaf.pdf used on input line 132.
 (pdftex.def)             Requested size: 92.47145pt x 15.6687pt.
 
 [1
@@ -1026,7 +1030,7 @@ atex/WordMarkLeaf.pdf>] <new_logo.jpg, id=56, 2409.0pt x 903.375pt>
 File: new_logo.jpg Graphic file (type jpg)
 
 <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 153.
+Package pdftex.def Info: new_logo.jpg used on input line 149.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [2
 
@@ -1034,21 +1038,21 @@ Package pdftex.def Info: new_logo.jpg used on input line 153.
 File: new_logo.jpg Graphic file (type jpg)
 
 <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 156.
+Package pdftex.def Info: new_logo.jpg used on input line 152.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [3
 
 ]
 File: new_logo.jpg Graphic file (type jpg)
  <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 182.
+Package pdftex.def Info: new_logo.jpg used on input line 178.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [4
 
 ]
 File: new_logo.jpg Graphic file (type jpg)
  <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 209.
+Package pdftex.def Info: new_logo.jpg used on input line 205.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [5
 
@@ -1056,90 +1060,90 @@ Package pdftex.def Info: new_logo.jpg used on input line 209.
 File: new_logo.jpg Graphic file (type jpg)
 
 <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 245.
+Package pdftex.def Info: new_logo.jpg used on input line 241.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [6
 
 ]
 File: new_logo.jpg Graphic file (type jpg)
  <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 270.
+Package pdftex.def Info: new_logo.jpg used on input line 266.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [7
 
 ]
 File: new_logo.jpg Graphic file (type jpg)
  <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 302.
+Package pdftex.def Info: new_logo.jpg used on input line 298.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [8
 
 ]
-<direct_1.png, id=130, 1412.27625pt x 943.525pt>
+<direct_1.png, id=137, 1412.27625pt x 943.525pt>
 File: direct_1.png Graphic file (type png)
  <use direct_1.png>
-Package pdftex.def Info: direct_1.png used on input line 326.
-(pdftex.def)             Requested size: 289.07999pt x 193.12154pt.
+Package pdftex.def Info: direct_1.png used on input line 318.
+(pdftex.def)             Requested size: 271.0125pt x 181.05684pt.
 
-Overfull \vbox (2.05095pt too high) detected at line 326
+Overfull \vbox (1.05286pt too high) detected at line 318
  []
 
 File: new_logo.jpg Graphic file (type jpg)
 <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 326.
+Package pdftex.def Info: new_logo.jpg used on input line 318.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [9
 
  <./direct_1.png (PNG copy)>]
-<direct_10.png, id=139, 1412.27625pt x 943.525pt>
+<direct_10.png, id=146, 1412.27625pt x 943.525pt>
 File: direct_10.png Graphic file (type png)
  <use direct_10.png>
-Package pdftex.def Info: direct_10.png used on input line 326.
-(pdftex.def)             Requested size: 289.07999pt x 193.12154pt.
+Package pdftex.def Info: direct_10.png used on input line 318.
+(pdftex.def)             Requested size: 271.0125pt x 181.05684pt.
 
-Overfull \vbox (2.05095pt too high) detected at line 326
+Overfull \vbox (1.05286pt too high) detected at line 318
  []
 
 File: new_logo.jpg Graphic file (type jpg)
 <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 326.
+Package pdftex.def Info: new_logo.jpg used on input line 318.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [10
 
  <./direct_10.png (PNG copy)>]
-<direct_100.png, id=146, 1412.27625pt x 943.525pt>
+<direct_100.png, id=154, 1412.27625pt x 943.525pt>
 File: direct_100.png Graphic file (type png)
  <use direct_100.png>
-Package pdftex.def Info: direct_100.png used on input line 326.
-(pdftex.def)             Requested size: 289.07999pt x 193.12154pt.
+Package pdftex.def Info: direct_100.png used on input line 318.
+(pdftex.def)             Requested size: 271.0125pt x 181.05684pt.
 
-Overfull \vbox (2.05095pt too high) detected at line 326
+Overfull \vbox (1.05286pt too high) detected at line 318
  []
 
 File: new_logo.jpg Graphic file (type jpg)
 <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 326.
+Package pdftex.def Info: new_logo.jpg used on input line 318.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [11
 
  <./direct_100.png (PNG copy)>]
-<direct_1000.png, id=153, 1412.27625pt x 943.525pt>
+<direct_1000.png, id=162, 1412.27625pt x 943.525pt>
 File: direct_1000.png Graphic file (type png)
  <use direct_1000.png>
-Package pdftex.def Info: direct_1000.png used on input line 326.
-(pdftex.def)             Requested size: 289.07999pt x 193.12154pt.
+Package pdftex.def Info: direct_1000.png used on input line 318.
+(pdftex.def)             Requested size: 271.0125pt x 181.05684pt.
 
-Overfull \vbox (2.05095pt too high) detected at line 326
+Overfull \vbox (1.05286pt too high) detected at line 318
  []
 
 File: new_logo.jpg Graphic file (type jpg)
 <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 326.
+Package pdftex.def Info: new_logo.jpg used on input line 318.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [12
 
  <./direct_1000.png (PNG copy)>] (./ddnu_example.pdftex_t <ddnu_example.pdf, id
-=160, 197.73875pt x 176.66pt>
+=170, 197.73875pt x 176.66pt>
 File: ddnu_example.pdf Graphic file (type pdf)
  <use ddnu_example.pdf>
 Package pdftex.def Info: ddnu_example.pdf used on input line 3.
@@ -1148,94 +1152,89 @@ Package pdftex.def Info: ddnu_example.pdf used on input line 3.
 File: new_logo.jpg Graphic file (type jpg)
 
 <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 360.
+Package pdftex.def Info: new_logo.jpg used on input line 352.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [13
 
  <./ddnu_example.pdf>] (./domain_to_domain.pdftex_t
-<domain_to_domain.pdf, id=172, 196.735pt x 176.66pt>
+<domain_to_domain.pdf, id=184, 196.735pt x 176.66pt>
 File: domain_to_domain.pdf Graphic file (type pdf)
 
 <use domain_to_domain.pdf>
 Package pdftex.def Info: domain_to_domain.pdf used on input line 3.
 (pdftex.def)             Requested size: 196.7345pt x 176.65956pt.
 ) (./transport_loop.pdftex_t
-<transport_loop.pdf, id=173, 199.74625pt x 262.9825pt>
+<transport_loop.pdf, id=185, 199.74625pt x 262.9825pt>
 File: transport_loop.pdf Graphic file (type pdf)
 
 <use transport_loop.pdf>
 Package pdftex.def Info: transport_loop.pdf used on input line 3.
 (pdftex.def)             Requested size: 199.74576pt x 262.98184pt.
 )
-Overfull \hbox (4.54764pt too wide) in paragraph at lines 401--401
- [] 
- []
-
-
-Overfull \vbox (1.06052pt too high) detected at line 401
- []
-
 File: new_logo.jpg Graphic file (type jpg)
-<use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 401.
+ <use new_logo.jpg>
+Package pdftex.def Info: new_logo.jpg used on input line 393.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [14
 
- <./domain_to_domain.pdf> <./transport_loop.pdf>]
-(./master_comm_tree.pdftex_t
-<master_comm_tree.pdf, id=191, 557.08125pt x 187.70125pt>
+ <./domain_to_domain.pdf> <./transport_loop.pdf>] (./master_comm_tree.pdftex_t
+<master_comm_tree.pdf, id=203, 557.08125pt x 187.70125pt>
 File: master_comm_tree.pdf Graphic file (type pdf)
 
 <use master_comm_tree.pdf>
 Package pdftex.def Info: master_comm_tree.pdf used on input line 3.
 (pdftex.def)             Requested size: 557.0799pt x 187.70079pt.
 ) (./binary_comm_tree.pdftex_t
-<binary_comm_tree.pdf, id=192, 335.2525pt x 316.18124pt>
+<binary_comm_tree.pdf, id=204, 335.2525pt x 316.18124pt>
 File: binary_comm_tree.pdf Graphic file (type pdf)
 
 <use binary_comm_tree.pdf>
 Package pdftex.def Info: binary_comm_tree.pdf used on input line 3.
 (pdftex.def)             Requested size: 335.25168pt x 316.18047pt.
 )
-<titan_weak_bvsm.pdf, id=193, 500.87125pt x 275.0275pt>
+<titan_weak_bvsm.pdf, id=205, 500.87125pt x 275.0275pt>
 File: titan_weak_bvsm.pdf Graphic file (type pdf)
 
 <use titan_weak_bvsm.pdf>
-Package pdftex.def Info: titan_weak_bvsm.pdf used on input line 444.
+Package pdftex.def Info: titan_weak_bvsm.pdf used on input line 436.
 (pdftex.def)             Requested size: 169.4371pt x 93.03809pt.
 File: new_logo.jpg Graphic file (type jpg)
  <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 444.
+Package pdftex.def Info: new_logo.jpg used on input line 436.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [15
 
  <./master_comm_tree.pdf> <./binary_comm_tree.pdf> <./titan_weak_bvsm.pdf>]
 File: new_logo.jpg Graphic file (type jpg)
  <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 470.
+Package pdftex.def Info: new_logo.jpg used on input line 464.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [16
 
 ]
-<prob4.png, id=223, 1027.84pt x 939.51pt>
+<prob4.png, id=238, 1027.84pt x 939.51pt>
 File: prob4.png Graphic file (type png)
  <use prob4.png>
-Package pdftex.def Info: prob4.png used on input line 523.
+Package pdftex.def Info: prob4.png used on input line 519.
 (pdftex.def)             Requested size: 144.54pt x 132.11827pt.
 
 
-LaTeX Font Warning: Command \small invalid in math mode on input line 523.
+LaTeX Font Warning: Command \small invalid in math mode on input line 519.
 
 
-Overfull \hbox (0.81294pt too wide) detected at line 523
+Overfull \hbox (0.81294pt too wide) detected at line 519
 \OMS/cmsy/m/n/10 ^^@r ^^A \U/msb/m/n/10 D[]\OMS/cmsy/m/n/10 r\U/msb/m/n/10 U[] 
 \OT1/cmr/m/n/10 + [] \U/msb/m/n/10 A[]U[] \OT1/cmr/m/n/10 = [] [] \U/msb/m/n/10
  F[]U[]
  []
 
+
+Overfull \vbox (0.6145pt too high) detected at line 519
+ []
+
 File: new_logo.jpg Graphic file (type jpg)
 <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 523.
+Package pdftex.def Info: new_logo.jpg used on input line 519.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [17
 
@@ -1246,29 +1245,31 @@ Missing character: There is no Â in font cmss10!
 Missing character: There is no ® in font cmss10!
 File: new_logo.jpg Graphic file (type jpg)
  <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 567.
+Package pdftex.def Info: new_logo.jpg used on input line 566.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [18
 
 ]
-File: new_logo.jpg Graphic file (type jpg)
+Overfull \vbox (5.90706pt too high) detected at line 658
+ []
 
+File: new_logo.jpg Graphic file (type jpg)
 <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 659.
+Package pdftex.def Info: new_logo.jpg used on input line 658.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [19
 
 ]
 File: new_logo.jpg Graphic file (type jpg)
  <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 683.
+Package pdftex.def Info: new_logo.jpg used on input line 682.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [20
 
 ]
 File: new_logo.jpg Graphic file (type jpg)
  <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 742.
+Package pdftex.def Info: new_logo.jpg used on input line 741.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [21
 
@@ -1276,21 +1277,21 @@ Package pdftex.def Info: new_logo.jpg used on input line 742.
 File: new_logo.jpg Graphic file (type jpg)
 
 <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 792.
+Package pdftex.def Info: new_logo.jpg used on input line 791.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [22
 
 ]
 File: new_logo.jpg Graphic file (type jpg)
  <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 832.
+Package pdftex.def Info: new_logo.jpg used on input line 831.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [23
 
 ]
 File: new_logo.jpg Graphic file (type jpg)
  <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 863.
+Package pdftex.def Info: new_logo.jpg used on input line 862.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [24
 
@@ -1298,7 +1299,7 @@ Package pdftex.def Info: new_logo.jpg used on input line 863.
 File: new_logo.jpg Graphic file (type jpg)
 
 <use new_logo.jpg>
-Package pdftex.def Info: new_logo.jpg used on input line 891.
+Package pdftex.def Info: new_logo.jpg used on input line 890.
 (pdftex.def)             Requested size: 56.9055pt x 21.33821pt.
  [25
 
@@ -1312,11 +1313,11 @@ Package pdftex.def Info: new_logo.jpg used on input line 891.
 \tf@snm=\write8
 \openout8 = `siam_cse_2015.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 894.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 894.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 893.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 893.
  (./siam_cse_2015.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 894.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 894.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 893.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 893.
 Package rerunfilecheck Info: File `siam_cse_2015.out' has not changed.
 (rerunfilecheck)             Checksum: BABB82592DA556E327DEFE8858041F4C;345.
 
@@ -1324,16 +1325,16 @@ Package rerunfilecheck Info: File `siam_cse_2015.out' has not changed.
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 1.0pt have occurred.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 894.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 893.
  ) 
 Here is how much of TeX's memory you used:
- 17420 strings out of 493315
- 325160 string characters out of 6137904
- 409807 words of memory out of 5000000
- 20356 multiletter control sequences out of 15000+600000
- 17112 words of font info for 64 fonts, out of 8000000 for 9000
+ 17442 strings out of 493315
+ 325939 string characters out of 6137904
+ 411250 words of memory out of 5000000
+ 20378 multiletter control sequences out of 15000+600000
+ 17056 words of font info for 64 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
- 49i,16n,58p,428b,826s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 49i,17n,60p,428b,826s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb><
 /usr/local/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></u
@@ -1358,10 +1359,10 @@ dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/local/texlive/2013/texmf
 dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2013/texmf-di
 st/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2013/texmf-dist
 /fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on siam_cse_2015.pdf (25 pages, 2900079 bytes).
+Output written on siam_cse_2015.pdf (25 pages, 2901501 bytes).
 PDF statistics:
- 372 PDF objects out of 1000 (max. 8388607)
- 284 compressed objects within 3 object streams
+ 397 PDF objects out of 1000 (max. 8388607)
+ 307 compressed objects within 4 object streams
  58 named destinations out of 1000 (max. 500000)
- 178 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 184 words of extra memory for PDF output out of 10000 (max. 10000000)
 

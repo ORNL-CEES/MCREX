@@ -29,12 +29,8 @@
 \logo{\includegraphics[width=2cm]{new_logo}}
 
 \setbeamercolor{item}{fg=MSUgreen}
-\setbeamertemplate{headline}{}
+%\setbeamertemplate{headline}{}
 \setbeamertemplate{navigation symbols}{}
-
-\setbeamertemplate{section in head/foot}{\hfill\insertsectionheadnumber.~\insertsectionhead}
-\setbeamertemplate{section in head/foot shaded}{\color{structure!50}\hfill\insertsectionheadnumber.~\insertsectionhead}
-\setbeamertemplate{section in toc}{\inserttocsectionnumber.~\inserttocsection}
 
 \newlength{\DUtablewidth} % internal use in tables
 
@@ -89,7 +85,7 @@
 \author[Slattery, Hamilton, Evans]{Stuart Slattery
   \\ Steven Hamilton \\ Tom Evans (PI) }
 \date[3/17/15]{March 17, 2015}
-\institute[ORNL]{\small Oak Ridge National Laboratory}
+\institute[]{\small Oak Ridge National Laboratory}
 \titlegraphic{\includegraphics[width=1.5in]{ORNL_Balls.pdf}}
 
 \defbeamertemplate{footline}{titlefoot}{
@@ -306,20 +302,16 @@
 
   \begin{figure}[h!]
     \begin{center}
-      \includegraphics<1>[width=4in]{direct_1.png}
-      \includegraphics<2>[width=4in]{direct_10.png}
-      \includegraphics<3>[width=4in]{direct_100.png}
-      \includegraphics<4>[width=4in]{direct_1000.png}
+      \includegraphics<1>[width=3.75in]{direct_1.png}
+      \includegraphics<2>[width=3.75in]{direct_10.png}
+      \includegraphics<3>[width=3.75in]{direct_100.png}
+      \includegraphics<4>[width=3.75in]{direct_1000.png}
     \end{center}
     \caption{
-      \only<1>{\textbf{Forward solution.}
-        \textit{\sn{2.5}{3} total histories.} }
-      \only<2>{\textbf{Forward solution.}
-        \textit{\sn{2.5}{4} total histories.} }
-      \only<3>{\textbf{Forward solution.}
-        \textit{\sn{2.5}{5} total histories.} }
-      \only<4>{\textbf{Forward solution.}
-        \textit{\sn{2.5}{6} total histories.} }
+      \only<1>{\sn{2.5}{3} total histories.}
+      \only<2>{\sn{2.5}{4} total histories.}
+      \only<3>{\sn{2.5}{5} total histories.}
+      \only<4>{\sn{2.5}{6} total histories.}
     }
   \end{figure}
 
@@ -376,10 +368,10 @@
         without a collective (running sum)
       \end{itemize}
 
-      \vspace{-0.1in}
+      \vspace{-0.15in}
       \begin{figure}[htpb!]
         \begin{center}
-          \scalebox{0.45}{ \input{domain_to_domain.pdftex_t} }
+          \scalebox{0.4}{ \input{domain_to_domain.pdftex_t} }
         \end{center}
       \end{figure}
 
@@ -387,10 +379,10 @@
 
     \begin{column}{0.5\textwidth}
 
-      \vspace{-0.4in}
+      \vspace{-0.25in}
       \begin{figure}[htpb!]
         \begin{center}
-          \scalebox{0.85}{ \input{transport_loop.pdftex_t} }
+          \scalebox{0.825}{ \input{transport_loop.pdftex_t} }
         \end{center}
       \end{figure}
 
@@ -403,11 +395,11 @@
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Exiting the Transport Loop without Collectives}
 
-  \vspace{-0.25in}
+  \vspace{-0.2in}
 
   \begin{figure}[htpb!]
     \begin{center}
-      \scalebox{0.4}{ \input{master_comm_tree.pdftex_t} }
+      \scalebox{0.35}{ \input{master_comm_tree.pdftex_t} }
     \end{center}
     \caption{Master/Slave}
   \end{figure}
@@ -427,7 +419,7 @@
 
     \begin{column}{0.5\textwidth}
 
-      \vspace{-0.5in}
+      \vspace{-0.55in}
       
       \begin{figure}[t!]
         \begin{center}
@@ -446,6 +438,8 @@
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Replication}
 
+  \vspace{-0.1in}
+  
   Different batches of Monte Carlo samples can be combined in summation via
   superposition if they have different random number streams. For two
   different batches:
@@ -487,6 +481,8 @@
         \caption{$SP_N$ solution example}
       \end{figure}
 
+      \vspace{-0.1in}
+      
       The ($SP_N$) equations are an approximation to the Boltzmann neutron
       transport equation used to simulate nuclear reactors
 
@@ -525,7 +521,7 @@
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Monte Carlo Communication Parameters}
 
-  \vspace{-0.15in}
+  \vspace{-0.3in}
   
   \begin{table}[htb!]
     \begin{center}
@@ -554,8 +550,11 @@
       \end{tabular}
     \end{center}
   \end{table} 
+
   \vspace{-0.2in}
+  
   \begin{itemize}
+    \small
   \item OLCF Eos: 736-node Cray XC30, Intel® Xeon® E5-2670, 11,776
     cores, 47 TB memory, Cray Aries interconnect
   \item 64 cores, 1.6M DOFs, history length of 15, 3 histories per DOF
@@ -585,11 +584,11 @@
         \multicolumn{1}{r}{Efficiency}
         \\ \midrule
         %%
-        256 & 273\,509\,600 & 1\,068\,397 & 260.53 & 260.54 & 260.54 & 1.00 \\
-        1\,024 & 273\,509\,600 & 267\,099 & 61.92 & 61.92 & 61.92 & 1.05 \\
-        4\,096 & 273\,509\,600 & 66\,775 & & & & \\
-        7\,744 & 273\,509\,600 & 35\,319 & & & & \\
-        10\,816 & 273\,509\,600 & 25\,288 & & & & \\
+        256 & 273\,509\,600 & 1\,068\,397 & 515.51 & 515.52 & 515.52 & 1.00 \\
+        1\,024 & 273\,509\,600 & 267\,099 & 122.76 & 122.77 & 122.76 & 1.05 \\
+        4\,096 & 273\,509\,600 & 66\,775 & 27.96 & 27.97 & 27.96 & 1.15 \\
+        7\,744 & 273\,509\,600 & 35\,319 & 17.72 & 17.72 & 17.72 & 0.96 \\
+        10\,816 & 273\,509\,600 & 25\,288 & 13.72 & 13.72 & 13.72 & 0.89 \\
         %%
         \bottomrule
       \end{tabular}
@@ -614,12 +613,12 @@
         \multicolumn{1}{r}{Efficiency}
         \\ \midrule
         %%
-        64 & 1\,618\,400 & 25\,288 & 6.432 & 6.432 & 6.432 & 1.00 \\
-        256 & 6\,473\,600 & 25\,288 & 6.493 & 6.493 & 6.493 & 0.99 \\
-        1\,024 & & 25\,288 & & & & \\
-        4\,096 & & 25\,288 & & & & \\
-        7\,744 & & 25\,288 & & & & \\
-        10\,816 & & 25\,288 & & & & \\
+        64 & 1\,618\,400 & 25\,288 & 12.65 & 12.65 & 12.65 & 1.00 \\
+        256 & 6\,473\,600 & 25\,288 & 12.86 & 12.86 & 12.86 & 0.98 \\
+        1\,024 & 25\,894\,400 & 25\,288 & 14.59 & 14.59 & 14.59 & 0.87 \\
+        4\,096 & 103\,577\,600 & 25\,288 & 14.25 & 14.25 & 14.25 & 0.89 \\
+        7\,744 & 195\,826\,400 & 25\,288 & 14.75 & 14.78 & 14.75 & 0.86 \\
+        10\,816 & 273\,509\,600 & 25\,288 & 13.72 & 13.72 & 13.72 & 0.92 \\
         %
         \bottomrule
       \end{tabular}
@@ -644,10 +643,10 @@
         \multicolumn{1}{r}{Efficiency}
         \\ \midrule
         %%
-        1 & 256 & 6\,473\,600 & 6.493 & 6.493 & 6.493 & 1.00 \\
-        2 & 512 & 6\,473\,600 &  &  & & \\
-        3 & 768 & 6\,473\,600 &  &  & & \\
-        4 & 1\,024 & 6\,473\,600 & &  & & \\
+        1 & 256 & 6\,473\,600 & 12.65 & 12.65 & 12.65 & 1.00 \\
+        2 & 512 & 6\,473\,600 & 6.62 & 6.80 & 6.72 & 0.93 \\
+        3 & 768 & 6\,473\,600 & 4.50 & 4.73 & 4.66 & 0.89 \\
+        4 & 1\,024 & 6\,473\,600 & 3.62 & 3.81 & 3.71 & 0.83 \\
         %
         \bottomrule
       \end{tabular}
