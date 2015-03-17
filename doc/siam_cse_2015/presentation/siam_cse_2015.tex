@@ -566,10 +566,9 @@
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\begin{frame}{Monte Carlo Scaling}
+\begin{frame}{Domain Decomposition Scaling}
 
-  \vspace{-0.1in}
-  
+ 
   \begin{table}[htb!]
     \tiny
     \begin{center}
@@ -593,7 +592,6 @@
         \bottomrule
       \end{tabular}
     \end{center}
-    \vspace{-0.09in}
     \caption{\small Strong Scaling}
   \end{table} 
 
@@ -623,11 +621,22 @@
         \bottomrule
       \end{tabular}
     \end{center}
-    \vspace{-0.09in}
     \caption{\small Weak Scaling}
   \end{table}
 
   \vspace{-0.2in}
+  
+  \begin{itemize}
+    \small
+  \item Titan Cray XK7 was used with no GPUs
+  \item Results are consistent with transport literature
+  \item Need to further push work starvation in strong scaling study
+  \end{itemize}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\begin{frame}{Replication Scaling}
 
   \begin{table}[htb!]
     \tiny
@@ -651,183 +660,23 @@
         \bottomrule
       \end{tabular}
     \end{center}
-    \vspace{-0.09in}
-    \caption{\small Replication Scaling. 256 cores per subset.}
-  \end{table} 
+    \caption{\small Fixed algorithmic scaling}
+  \end{table}
 
-\end{frame}
-
-%%---------------------------------------------------------------------------%%
-\section{Algorithm Variations}
-
-%%---------------------------------------------------------------------------%%
-\begin{frame}{Monte Carlo Synthetic Acceleration (MCSA)}
-  \begin{itemize}
-  \item Devised by Evans and Mosher in the 2000's as an acceleration
-    scheme for radiation diffusion problems (LANL)
-    \vfill
-  \item Can be abstracted as a general linear solver with Monte Carlo as a
-    preconditioner
-    \vfill
-  \item First Richardson step hits the high frequency error modes and second
-    Monte Carlo step hits the low frequency error modes
-  \end{itemize}
   \vfill
-  \begin{align*}
-    \mathbf{r}^k &= \mathbf{b} - \mathbf{Ax}^k \\
-    \mathbf{x}^{k+1/2} &= \mathbf{x}^k + \mathbf{r}^k \\
-    \mathbf{r}^{k+1/2} &= \mathbf{b} - \mathbf{Ax}^{k+1/2} \\
-    \mathbf{x}^{k+1} &= \mathbf{x}^{k+1/2} + \mathbf{M_{MC}} \mathbf{r}^{k+1/2}
-  \end{align*}
-\end{frame}
-
-%%---------------------------------------------------------------------------%%
-\begin{frame}{Matrix-Free Algorithm}
-
-  \begin{columns}
-    
-    \begin{column}{0.4\textwidth}
-      
-      \begin{itemize}
-        \small
-      \item At each application of $\mathbf{M_{MC}}$, execute the Monte
-        Carlo process
-        \vfill
-      \item Must perform Monte Carlo every time you want to apply with a better
-        approximation requiring more time and more operations
-        \vfill
-      \item Variations in random number streams are amortized over iterations
-        \vfill
-      \item Vast majority of solve time spent doing Monte Carlo
-      \end{itemize}
-
-    \end{column}
-
-    \begin{column}{0.6\textwidth}
-      \begin{table}[htb!]
-        \tiny
-        \begin{center}
-          \begin{tabular}{rrrrr}
-            \toprule
-            \multicolumn{1}{r}{$L$} &
-            \multicolumn{1}{r}{$N_S$} &
-            \multicolumn{1}{r}{MC Time (s)} &
-            \multicolumn{1}{r}{MC Fraction} &
-            \multicolumn{1}{r}{MCSA Iters}
-            \\ \midrule
-            %%
-            3 & 1 & 30.885 & 0.96 & 266 \\
-            3 & 2 & 60.869 & 0.98 & 261 \\
-            5 & 1 & 27.422 & 0.97 & 180 \\
-            5 & 2 & 54.319 & 0.98 & 175 \\
-            10 & 1 & 23.871 & 0.98 & 102 \\
-            10 & 2 & 45.551 & 0.99 & 97 \\
-            15 & 1 & 50.395 & 0.98 & 164 \\
-            15 & 2 & 42.951 & 0.99 & 69 \\
-            15 & 3 & 65.292 & 0.99 & 68 \\
-            25 & 2 & 70.505 & 0.99 & 78 \\
-            25 & 3 & 63.677 & 1.00 & 47 \\
-            %
-            \bottomrule
-          \end{tabular}
-        \end{center}
-        \caption{\small MCSA performance. $A$ had $115\,600$ rows and
-          $1\,186\,464$ non-zero entries.}
-      \end{table} 
-
-    \end{column}
-  \end{columns}
-  
-\end{frame}
-
-%%---------------------------------------------------------------------------%%
-\begin{frame}{Stochastic Approximate Inverse Algorithm}
-
-  \vspace{-0.1in}
   
   \begin{itemize}
     \small
-    \item Construct $\mathbf{M_{MC}}$ as a sparse matrix by executing the
-      Monte Carlo process once and tallying the row entries
-    \item Use this operator as a stochastic approximation to the inverse
-    \item A better approximation to the inverse requires more setup time and
-      more storage
-    \item We will investigate a drop tolerance strategy to control sparsity
+  \item 256 cores per subset with domain decomposition
+  \item $1/N_S$ samples per subset gives flat algorithmic performance
+  \item Two performance issues
+    \begin{itemize}
+    \item Dividing up samples creates work starvation
+    \item AllReduce buffer size is constant regardless of work starvation
+    \end{itemize}
+  \item Research is needed for a more performant subset combination
   \end{itemize}
-
-  \vspace{-0.1in}
-
-  \begin{table}[htb!]
-    \tiny
-    \begin{center}
-      \begin{tabular}{rrrrrrr}
-        \toprule
-        \multicolumn{1}{r}{$L$} &
-        \multicolumn{1}{r}{$N_S$} &
-        \multicolumn{1}{r}{$NNZ$} &
-        \multicolumn{1}{r}{$NNZ$ Ratio} &
-        \multicolumn{1}{r}{MC Time (s)} &
-        \multicolumn{1}{r}{Setup Time (s)} &
-        \multicolumn{1}{r}{MCSA Iters}
-        \\ \midrule
-        %%
-        3 & 2 & 484\,714 & 0.41 & 0.104 & 0.671 & 255 \\
-        3 & 3 & 622\,123 & 0.52 & 0.145 & 0.705 & 255 \\
-        5 & 2 & 783\,153 & 0.66 & 0.158 & 0.737 & 185 \\
-        5 & 3 & 1\,032\,573 & 0.87 & 0.237 & 0.831 & 171 \\
-        5 & 4 & 1\,241\,442 & 1.05 & 0.302 & 0.906 & 171 \\
-        10 & 3 & 1\,969\,540 & 1.66 & 0.433 & 1.061 & 95 \\
-        10 & 4 & 2\,416\,572 & 2.04 & 0.570 & 1.214 & 95 \\
-        15 & 3 & 2\,867\,005 & 2.42 & 0.645 & 1.317 & 132 \\
-        15 & 4 & 3\,544\,181 & 2.99 & 0.833 & 1.534 & 67 \\
-        15 & 5 & 4\,157\,269 & 3.50 & 1.029 & 1.765 & 66 \\
-        \bottomrule
-      \end{tabular}
-    \end{center}
-    \caption{MCSA Performance. $A$ had $115\,600$ rows and $1\,186\,464$
-      non-zero entries.}
-  \end{table} 
-
-\end{frame}
-
-%%---------------------------------------------------------------------------%%
-\begin{frame}{Unpreconditioned Algorithm Comparison}
-
-  \begin{itemize}
-    \small
-  \item No preconditioning, serial computation, fastest MCSA times reported
-  \item GMRES easier to precondition - performance here only indicates Monte
-    Carlo potential
-  \item These results indicate good stochastic approximate inverse performance
-    for traditional CPU architectures
-  \item Matrix-free approach may be more effective when vectorized for new
-    architectures by favoring operations over storage - 95\%+ of the runtime
-    spent in Monte Carlo
-  \end{itemize}
-
-  \begin{table}[htb!]
-    \tiny
-    \begin{center}
-      \begin{tabular}{lrrrr}
-        \toprule
-        \multicolumn{1}{l}{Solver} &
-        \multicolumn{1}{r}{Setup Time (s)} &
-        \multicolumn{1}{r}{Solve Time (s)} &
-        \multicolumn{1}{r}{Total Time (s)} &
-        \multicolumn{1}{r}{Iters}
-        \\ \midrule
-        %%
-        Richardson & 2.098 & 1.6709 & 3.769 & 1\,017 \\
-        MCSA Matrix-Free & 2.104 & 24.389 & 26.493 & 102 \\
-        MCSA Approximate Inverse & 2.953 & 0.779 & 3.731 & 95 \\
-        Belos GMRES & 1.791 & 1.021 & 2.812 & 81\\
-        %
-        \bottomrule 
-      \end{tabular}
-    \end{center}
-    \caption{$A$ had $115\,600$ rows and $1\,186\,464$ non-zero entries.}
-  \end{table} 
-
+  
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
@@ -872,9 +721,6 @@
       collectives
     \item Replication potentially offers resiliency with some overhead
     \end{itemize}
-    \vfill
-  \item Matrix-free and stochastic approximate inverse algorithms are
-    complementary - trade operations for storage
     \vfill
   \item Extending methods to broader problem areas is a significant
     algorithmic challenge and an attractive area for continued research
