@@ -155,53 +155,36 @@
 \section{Motivation}
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Motivation}
-  \vfill
-\begin{itemize}
-  \item As we move towards exascale computing, the rate of errors is expected
-  to increase dramatically
-  \vfill
-  \begin{itemize}
-  \item The probability that a compute node will fail during the course
-    of a large scale calculation may be near 1
-  \end{itemize}
-  \vfill
-\item Algorithms need to not only have increased concurrency/scalability
-  but have the ability to recover from hardware faults
-  \begin{itemize}
-  \item Lightweight machines
-  \item Heterogeneous machines
-  \item Both characterized by low power and high concurrency
-  \end{itemize}
-  \vfill
-\end{itemize}
-\vfill
-\end{frame}
 
-%%---------------------------------------------------------------------------%%
-\begin{frame}{Towards Exascale Concurrency and Resiliency}
   \begin{itemize}
-    \item Two basic strategies:
-      \vfill
-      \begin{enumerate}
-        \item Start with current ``state of the art'' methods and make
-          incremental modifications to improve scalability and fault
-          tolerance
-          \begin{itemize}
-            \item Many efforts are heading in this direction, attempting
-              to find additional concurrency to exploit
-          \end{itemize}
-        \vfill
-        \item Start with methods having natural scalability and resiliency
-          aspects and work at improving performance (e.g. Monte Carlo)
-          \begin{itemize}
-            \item Soft failures introduce an additional stochastic error
-              component
-            \item Hard failures potentially mitigated by replication
-            \item Concurrency enabled by several levels of parallelism
-          \end{itemize}
-      \end{enumerate}
+    \small
+  \item As we move towards exascale computing, the rate of errors is expected
+    to increase dramatically
+    \vfill
+  \item Algorithms need to not only have increased concurrency/scalability
+    but have the ability to recover from hardware faults
+    \vfill
+  \item Two basic strategies:
+    \vfill
+    \begin{enumerate}
+    \item Start with current ``state of the art'' methods and make
+      incremental modifications to improve scalability and fault
+      tolerance
+      \begin{itemize}
+      \item Many efforts are heading in this direction, attempting
+        to find additional concurrency to exploit
+      \end{itemize}
+    \item Start with methods having natural scalability and resiliency
+      aspects and work at improving performance (e.g. Monte Carlo)
+      \begin{itemize}
+      \item Soft failures introduce an additional stochastic error
+        component
+      \item Hard failures potentially mitigated by replication
+      \item Concurrency enabled by several levels of parallelism
+      \end{itemize}
+    \end{enumerate}
   \end{itemize}
-  \vfill
+
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
@@ -568,7 +551,8 @@
 %%---------------------------------------------------------------------------%%
 \begin{frame}{Domain Decomposition Scaling}
 
- 
+  \vspace{-0.2in}
+  
   \begin{table}[htb!]
     \tiny
     \begin{center}
@@ -592,10 +576,11 @@
         \bottomrule
       \end{tabular}
     \end{center}
+    \vspace{-0.07in}
     \caption{\small Strong Scaling}
   \end{table} 
 
-  \vspace{-0.2in}
+  \vspace{-0.4in}
   
   \begin{table}[htb!]
     \tiny
@@ -621,16 +606,20 @@
         \bottomrule
       \end{tabular}
     \end{center}
+        \vspace{-0.07in}
     \caption{\small Weak Scaling}
   \end{table}
 
-  \vspace{-0.2in}
+  \vspace{-0.25in}
   
   \begin{itemize}
     \small
-  \item Titan Cray XK7 was used with no GPUs
+  \item Titan Cray XK7 was used with no GPUs - used Eos parameters
   \item Results are consistent with transport literature
-  \item Need to further push work starvation in strong scaling study
+  \item History length of 15 and 3 histories per DOF
+  \item Consider these effective operator apply times of 15 realizations of
+    $\ve{H}$
+  \item MC dominates run times in solver applications
   \end{itemize}
 
 \end{frame}
@@ -667,6 +656,7 @@
   
   \begin{itemize}
     \small
+  \item Timings are Monte Carlo time plus AllReduce time
   \item 256 cores per subset with domain decomposition
   \item $1/N_S$ samples per subset gives flat algorithmic performance
   \item Two performance issues

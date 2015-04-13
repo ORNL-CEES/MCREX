@@ -3,12 +3,16 @@ BIB    := bibtex
 PDFTEX := pdflatex
 PDF    := dvipdf
 
-all:
+all: stencil_graph.pdf
 	$(PDFTEX) slattery_wilson_evans
 	$(BIB) slattery_wilson_evans
 	$(PDFTEX) slattery_wilson_evans
 	$(PDFTEX) slattery_wilson_evans
 	$(PDFTEX) slattery_wilson_evans
+
+stencil_graph.pdf: stencil_graph.fig
+	fig2dev -L pdftex -p stencil_graph.pdf -m 0.4 stencil_graph.fig stencil_graph.pdf
+	fig2dev -L pdftex_t -p stencil_graph.pdf -m 0.4 stencil_graph.fig stencil_graph.pdftex_t
 
 clean:
 	-rm -f *~

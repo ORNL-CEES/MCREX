@@ -1,6 +1,6 @@
 \beamer@endinputifotherversion {3.26pt}
 \beamer@sectionintoc {1}{Motivation}{4}{0}{1}
-\beamer@sectionintoc {2}{Monte Carlo Methods}{6}{0}{2}
-\beamer@sectionintoc {3}{Domain Decomposition and Replication}{13}{0}{3}
-\beamer@sectionintoc {4}{Scaling Studies}{17}{0}{4}
-\beamer@sectionintoc {5}{Current/Future Work and Conclusions}{21}{0}{5}
+\beamer@sectionintoc {2}{Monte Carlo Methods}{5}{0}{2}
+\beamer@sectionintoc {3}{Domain Decomposition and Replication}{12}{0}{3}
+\beamer@sectionintoc {4}{Scaling Studies}{16}{0}{4}
+\beamer@sectionintoc {5}{Current/Future Work and Conclusions}{20}{0}{5}
