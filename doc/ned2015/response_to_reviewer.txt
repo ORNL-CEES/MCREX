@@ -1,0 +1,124 @@
+Response to reviewer's comments:
+
+------------------------------------------------------------------------------
+1. Since the underlying analysis seems to be graphical, they should use as
+many graphs to explain what is happening.  Following words and moving
+information is not so easy for a reader.
+
+We agree that without visual aids the discussion is complex and is very much
+based on the underlying graph of the matrix. We have added a figure (Figure 1)
+in section 3.1 and discussion the random walk in terms of the sparse graph
+underneath the matrices that should help clarify the explanation, particularly
+for the n_s and n_i parameters in our diffusion analysis. In addition, we have
+expanded our description of the algorithm in section 2 and have provided more
+definitions for clarity.
+
+------------------------------------------------------------------------------
+2. Abstract: The term "measured computational results" is not so clear at
+first.  The authors may want to find another name for this quantity.
+
+We agree and have clarified that leakage fractions computed via numerical
+experiments show good agreement with the equations we have derived.
+
+------------------------------------------------------------------------------
+3. Page 2: Last sentence of the second paragraph, it is not clear what is
+meant by "specifically, have poor algorithmic strong scaling."
+
+This statement has been clarified to indicate that when an algorithm is strong
+scaled, the amount of on-process work decreases while the amount of
+communication increases due to increasing processor count and decreasing local
+problem size.
+
+------------------------------------------------------------------------------
+4. Top of Page 3: "adjoint method Monte Carlo method", is it necessary to use
+'method' twice?  Seems a bit awkward.
+
+This is a typo and it has been corrected.
+
+------------------------------------------------------------------------------
+5. Should indicate after Eq(2) .. yet to be determined adjoint source…
+
+We agree and have indicated that these quantities will be determined in the
+derivation.
+
+------------------------------------------------------------------------------
+4.  I assume Wm is a weight vector.
+
+Wm is a scalar quantity equal to the weight of a random walk on its m^th
+step. We have clarified the definition of Wm by indicating this.
+
+------------------------------------------------------------------------------
+6. D is the diffusion FD operator.
+
+We have clarified that D is the diffusion operator resulting from our choice
+of finite difference scheme.
+
+------------------------------------------------------------------------------
+7. Why not diagonalize D when it first appears?
+
+We agree that we could diagonalize D initially. However, for more difficult
+problems diagonal preconditioning may not be sufficient to satisfy the
+convergence criteria and therefore it is instructive to separate it in the
+analysis to show how a preconditioner would affect both iterative performance
+as well as indicate how our analysis could be extended for more complicated
+preconditioners. In addition, for our model problem the preconditioner simply
+results in a scaling of the operator spectrum computed in section 4.1 and
+therefore lets us analyze the operator independently from the preconditioner.
+
+------------------------------------------------------------------------------
+8. I believe D can be written as a block tridiagonal matrix for the stencil
+used.  Is this the case?  If not see Burlish and Stoerer.  This would simplify
+the analysis greatly.
+
+Although we agree other matrix orderings could have been used, the results of
+the paper are fundamentally based on the local stencil and independent the
+overall global structure of the matrix. A block tridiagonal ordering could
+reduce the bandwidth of the matrix and improve computational efficiency for a
+matrix-vector multiply. However, the Monte Carlo algorithm would perform
+identically in both cases given the same parallel decomposition of the
+problem. The addition of Figure 1 in response to the first comment should also
+help with this part of the analysis.
+
+For example, given a banded ordering like that used in this work or the
+suggested block tridiagonal ordering, the probability distribution functions
+would be of the same size and have the same nearest-neighbor connections
+because both use the same local stencil. Therefore, both cases will yield
+random walks of the same time and space complexity. In addition, if both cases
+had the same domain decomposition, random walks would be communicated from
+domain to domain in an identical matter because the same local stencil was
+used, therefore also resulting in the same parallel analysis.
+
+------------------------------------------------------------------------------
+9. Finally, there are no flux results with estimated errors.  We need results
+since, after all, they are the bottom-line.
+
+The purpose of the paper is to provide analytic relationships for the
+domain-to-domain communication of random walks, and therefore a measure of
+potential bandwidth and latency issues, when the Neumann-Ulam algorithm is
+subject to domain decomposition. The domain decomposition itself does not
+perturb the results of the stochastic algorithm (e.g. the flux in this
+case). Rather, it simply provides a means to perform random walks via the
+rules of the Neumann-Ulam game where the data for the random walks (weights
+and probablities) has been domain-decomposed.
+
+Variance estimation, however, is a different story and domain decomposition
+schemes to date trade inexact variance estimates for scalablity. This is due
+to the fact that the order of events must be maintained to acheive a correct
+variance estimate and fully asynchronous algorithms do not, in general, permit
+this. The literature indicates that this order of operations is less
+significant for the correctness of the flux estimate with differences in
+computations induced by round-off error in floating point
+computations. Furthermore, the accuracy and convergence properties of the
+Monte Carlo method have been well documented in the references cited by the
+paper.
+
+Therefore, because the purpose of this work is to analyze communication costs
+of the algorithm using an operator with spectral properties similar to large
+scale neutronics problems and not computing the global flux and variance
+estimate, we do not feel it is necessary in this paper to report flux results.
+
+We will, however, in an upcoming paper present our full domain decomposition
+algorithm for parallelizing the solver and give a thorough analysis of its
+correctness and scalability.
+
+------------------------------------------------------------------------------
