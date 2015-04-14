@@ -95,8 +95,8 @@ urlcolor = blue
   \end{abstract}
 
   \begin{keyword}
-    Monte Carlo \sep domain decomposition \sep MCSA \sep parallel \sep
-    computing \sep linear solvers
+    Monte Carlo \sep domain decomposition \sep MCSA \sep parallel computing
+    \sep linear solvers
   \end{keyword}
 
 \end{frontmatter}
@@ -122,11 +122,10 @@ residual Monte Carlo solution serves as a correction to a fixed point
 iteration \cite{halton_sequential_1962}. In recent years, the adjoint
 Neumann-Ulam method has been leveraged in Monte Carlo Synthetic Acceleration
 (MCSA) methods that, for certain classes of problems, are competitive with
-conventional methods methods and are applicable to a wide variety of linear
-systems \cite{evans_monte_2009,evans_monte_2014}. To apply these new MCSA
-methods to engineering problems, our research aims to improve the underlying
-Monte Carlo algorithms to handle large-scale problems in parallel computing
-environments.
+conventional methods methods and are applicable to a variety of linear systems
+\cite{evans_monte_2009,evans_monte_2014}. To apply these new MCSA methods to
+engineering problems, our research aims to improve the underlying Monte Carlo
+algorithms to handle large-scale problems in parallel computing environments.
 
 To date, parallel Neumann-Ulam methods have been limited to full domain
 replication with parallelism exploited through individual random walks
@@ -249,8 +248,8 @@ summation:
 \end{equation}
 where $\nu$ is a particular random walk permutation. Starting a random walk
 permutation requires the computation of an initial starting state, $i_0$, and
-initial weight, $W_0$. The initial state, $i_0$, of the random walk is
-determined by sampling the source vector $\ve{b}$ with probabilities:
+initial weight, $W_0$. The initial state is determined by sampling the source
+vector $\ve{b}$ with probabilities:
 \begin{equation}
   P_{(i_0=i)}(\nu) = \frac{|b_i|}{||\ve{b}||_1}\:,
   \label{eq:adjoint_source_probability}
@@ -293,15 +292,15 @@ where $W_c$ is the \textit{weight cutoff}. The random walk will be terminated
 after $m$ steps if $W_m < W_f$.
 
 Using our result from Eq~(\ref{eq:inner_product_constraint}) the Monte Carlo
-estimator for the solution in state $i$ for a particular random walk
-permutation of length $k$ is:
+estimator for the solution from a particular random walk permutation of length
+$k$ is:
 \begin{equation}
   X_{\nu} = \sum_{m=0}^k W_{m} \delta_{i,i_m}\:,
   \label{eq:adjoint_permutation_contribution}
 \end{equation}
-where the Kronecker delta indicates that the tally contributes only in the
-current state, $i_m$. Finally, the expectation value using all random walk
-permutations is:
+where the Kronecker delta indicates that the tally contribution for each step
+of the random walk is only in its current state, $i_m$. Finally, the
+expectation value using all random walk permutations is:
 \begin{equation}
   E\{X\} = \sum_{\nu} P_{\nu} X_{\nu}\:
   \label{eq:adjoint_expectation_value}
@@ -322,7 +321,7 @@ which if expanded with Eqs~(\ref{eq:adjoint_probability}) and
 \section{Model Problem}
 \label{sec:model_problem}
 
-For our numerical experiments, we choose the one-speed,
+For our derivations and numerical experiments, we choose the one-speed,
 two-dimensional neutron diffusion equation as a model problem
 \cite{duderstadt_nuclear_1976}:
 \begin{equation}
@@ -391,9 +390,9 @@ matrix. In the case of the model problem, parallel decomposition of states and
 subsequently the input matrix is determined by a spatial partitioning of the
 grid.
 
-Compared to the serial construction of the probabilities and weights, data for
-all states that are required to be on-process must be collected in parallel so
-that all possible random walks that leave the local domain may be correctly
+Compared to the serial construction of the probabilities and weights, domain
+decomposition requires that data for all states be on-process so that all
+possible random walks that leave the local domain may be correctly
 communicated. As an example of walking through the sparse graph of the matrix
 and parallel communication, Figure~\ref{fig:diffusion_graph} gives the
 adjacency graph of a single state in the neutron diffusion matrix for the
@@ -403,9 +402,9 @@ to which a random walk may transition. Consider a random walk starting at node
 $(i,j)$ in the mesh (the center node). If we play the Monte Carlo game to move
 to a new state, then we may move to any of the nodes in this graph, including
 the node at which we started with a probability proportional to the
-coefficients of each node in Eq~(\ref{eq:fd_system}). If any grid point
-adjacent to node $(i,j)$ is on another processor, the random walk must be
-communicated to that processor to continue the walk.
+coefficients of each node in Eq~(\ref{eq:fd_system}). If any node adjacent to
+node $(i,j)$ is on another processor and the walk moves to that node, the
+random walk must be communicated to that processor to continue the walk.
 
 \begin{figure}[ht!]
   \begin{center}
@@ -446,7 +445,7 @@ the complex plane.
 
 We first compute the eigenvalues for the diffusion operator $\ve{D}$ by
 applying the operator to the eigenfunctions and noting that $x=ih$ and $y=jh$
-on a rectilinear Cartesian grid:
+on a square Cartesian grid:
 \begin{multline}
   \ve{D}\Phi_{p,q}(x,y) = \lambda_{p,q}(\ve{D})
   =\\ -\frac{D}{6h^2}\Big[4 e^{-2 \pi \imath p h} + 4 e^{2 \pi \imath
@@ -467,9 +466,13 @@ trigonometric functions:
 
 As Eq~(\ref{eq:diffusion_eq}) is diagonally dominant, Jacobi preconditioning
 is sufficient to reduce the spectral radius of the iteration matrix below
-unity and therefore ensure convergence of the Neumann series. The
-preconditioner in this case is $\ve{M} = diag(\ve{D})$ such that we are
-solving the following linear system:
+unity and therefore ensure convergence of the Neumann series\footnote{Although
+  $\rho(\ve{H}) < 1$ is a sufficient criteria for convergence of the Neumann
+  series, recent work by Ji, Mascagni, and Li provides an additional necessary
+  and sufficient condition for convergence of the Neumann-Ulam Monte Carlo
+  algorithm \cite{ji_2013}. A diagonal scaling of the model problem also
+  satisfies this condition.}. The preconditioner in this case is $\ve{M}
+= diag(\ve{D})$ such that we are solving the following linear system:
 \begin{equation}
   \ve{M}^{-1} \ve{D} \boldsymbol{\phi} = \ve{M}^{-1} \ve{s}\:.
   \label{eq:precond_diffsion}
@@ -539,9 +542,9 @@ splitting the operator in Eq~(\ref{eq:linear_problem}) and iterating:
   \ve{x}^{k+1} = \ve{H}\ve{x}^k + \ve{c}\:,
   \label{eq:linear_iterative_method}
 \end{equation}
-with $k \in \mathbb{Z}^+$ defined as the \textit{iteration
-  index}. Defining $\ve{e}^k = \ve{u}^k - \ve{u}$ as the solution
-error at the $k^{th}$ iterate, the error after $k$ iterations is:
+with $k \in \mathbb{Z}^+$ defined as the \textit{iteration index} and $\ve{c}$
+a modified source term. Defining $\ve{e}^k = \ve{u}^k - \ve{u}$ as the
+solution error at the $k^{th}$ iterate, the error after $k$ iterations is:
 \begin{equation}
   \ve{e}^{k} = \ve{H}^k\ve{e}^0\:. 
   \label{eq:linear_k_iter_error}
@@ -586,7 +589,7 @@ based on the weight cutoff parameter used in the Neumann-Ulam method.
 \subsection{Domain Leakage Approximations}
 \label{subsec:domain_leak_approx}
 
-In a domain decomposed situation, not all random walks will remain within the
+In a domain decomposed algorithm, not all random walks will remain within the
 domain they started in and must instead be communicated. This communication,
 expected to be expensive, was analyzed by Siegel and colleagues for idealized,
 load balanced situations for full nuclear reactor core Monte Carlo simulations
@@ -608,9 +611,9 @@ estimate the optical thickness of a domain in the decomposition and the
 corresponding leakage fraction in terms of properties of the linear operator
 and the discretization. We first calculate the mean distance a random walk
 will move in the grid by computing the mean squared distance of its movement
-along the chord of length $l$ defined along a cardinal direction of the
-domain. After a single transition a random walk will have moved a mean squared
-distance of:
+along the chord of length $l$ defined along a cardinal direction of the domain
+(i.e. $x$ or $y$). After a single transition a random walk will have moved a
+mean squared distance of:
 \begin{equation}
   \langle \bar{r_1^2} \rangle = (n_s h)^2\:,
   \label{eq:step_1_length}
@@ -674,10 +677,9 @@ and using the mean-chord approximation:
   \Lambda = \frac{1-e^{-\tau}}{\tau}\:.
   \label{eq:mean_chord_domain_leakage}
 \end{equation}
-Here, the leakage fraction is explicitly bound to the eigenvalues of
-the iteration matrix, the size of the domain, the content of the
-discretization stencil, and the weight cutoff selected to terminate
-low weight random walks.
+Our derived leakage fraction is dependent on the eigenvalues of the iteration
+matrix, the size of the domain, the content of the discretization stencil, and
+the weight cutoff selected to terminate low weight random walks.
 
 %%---------------------------------------------------------------------------%%
 \section{Numerical Experiments}
@@ -704,12 +706,12 @@ iterative eigenvalue solver.
   \begin{center}
     \includegraphics[width=0.8\textwidth]{spec_rad_results.eps}
   \end{center}
-  \caption{Measured and analytic preconditioned diffusion operator
-    spectral radius as a function of the absorption cross section to
-    scattering cross section ratio. Values of $h=0.01$, $h=0.1$, and
-    $h=1.0$ were used. The colored data was computed numerically by an
-    eigensolver while the black dashed data was generated by
-    Eq~(\ref{eq:iteration_radius}).}
+  \caption{\textbf{Measured and analytic preconditioned diffusion operator
+      spectral radius as a function of the absorption cross section to
+      scattering cross section ratio.} \textit{Values of $h=0.01$, $h=0.1$,
+      and $h=1.0$ were used. The colored data was computed numerically by an
+      eigensolver while the black dashed data was generated by
+      Eq~(\ref{eq:iteration_radius}).}}
   \label{fig:measured_spec_rad}
 \end{figure}
 
@@ -725,32 +727,32 @@ walks generated by a point source of strength 1 in the center of the
 domain. For each of the random walks, the number of transitions made was
 tallied to provide an effective value of $k$ for each random walk. This value
 was then averaged over all random walks to get a measured value of $k$ for the
-particular operator. Figure~\ref{fig:measured_length} presents
-these measurements as well as the analytic result computed by
+particular operator. Figure~\ref{fig:measured_length} presents these
+measurements as well as the analytic result computed by
 Eq~(\ref{eq:analytic_k}) as a function of the iteration matrix spectral
-radius, $\rho(\ve{H})$. Figure~\ref{fig:measured_length_error} gives
-the relative error between the predicted and observed results. We note good
+radius, $\rho(\ve{H})$. Figure~\ref{fig:measured_length_error} gives the
+relative error between the predicted and observed results. We note good
 qualitative agreement between the measured and analytic results. However, we
 observe a larger relative error for both long and short random walks.
 \begin{figure}[ht!]
   \begin{center}
     \includegraphics[width=0.8\textwidth]{random_walk_length.eps}
   \end{center}
-  \caption{Measured and analytic random walk length as a function of the
-    iteration matrix spectral radius. The weight cutoff was varied with
-    \sn{1}{-2}, \sn{1}{-4}, and \sn{1}{-8}. The colored data was computed
-    numerically by an adjoint Neumann-Ulam implementation while the black
-    dashed data was generated by Eq~(\ref{eq:analytic_k}).}
+  \caption{\textbf{Measured and analytic random walk length as a function of
+      the iteration matrix spectral radius.} \textit{The weight cutoff was
+      varied with \sn{1}{-2}, \sn{1}{-4}, and \sn{1}{-8}. The colored data was
+      computed numerically by an adjoint Neumann-Ulam implementation while the
+      black dashed data was generated by Eq~(\ref{eq:analytic_k}).}}
   \label{fig:measured_length}
 \end{figure}
 \begin{figure}[ht!]
   \begin{center}
     \includegraphics[width=0.8\textwidth]{random_walk_error.eps}
   \end{center}
-  \caption{Relative error between computed random walk length analytic length
-    computed by Eq~(\ref{eq:analytic_k}) as a function of the iteration matrix
-    spectral radius. The weight cutoff was varied with \sn{1}{-2}, \sn{1}{-4},
-    and \sn{1}{-8}.}
+  \caption{\textbf{Relative error between computed random walk length analytic
+      length computed by Eq~(\ref{eq:analytic_k}) as a function of the
+      iteration matrix spectral radius.} \textit{The weight cutoff was varied
+      with \sn{1}{-2}, \sn{1}{-4}, and \sn{1}{-8}.}}
   \label{fig:measured_length_error}
 \end{figure}
 
@@ -809,17 +811,18 @@ spectral radius.
   \begin{center}
     \includegraphics[width=0.8\textwidth]{leakage_fraction.eps}
   \end{center}
-  \caption{Measured and analytic domain leakage as a function of the iteration
-    matrix spectral radius. To test the behavior with respect to domain size,
-    $n_i=50$, $n_i=100$,and $n_i=200$ were used. The colored data was computed
-    numerically by a domain-decomposed adjoint Neumann-Ulam implementation,
-    the black dashed data was generated by
-    Eq~(\ref{eq:mean_chord_domain_leakage}) using the mean-chord
-    approximation, and the dashed-dotted black data was generated by
-    Eq~(\ref{eq:wigner_domain_leakage}) using the Wigner rational
-    approximation.}
+  \caption{\textbf{Measured and analytic domain leakage as a function of the
+      iteration matrix spectral radius.} \textit{To test the behavior with
+      respect to domain size, $n_i=50$, $n_i=100$,and $n_i=200$ were used. The
+      colored data was computed numerically by a domain-decomposed adjoint
+      Neumann-Ulam implementation, the black dashed data was generated by
+      Eq~(\ref{eq:mean_chord_domain_leakage}) using the mean-chord
+      approximation, and the dashed-dotted black data was generated by
+      Eq~(\ref{eq:wigner_domain_leakage}) using the Wigner rational
+      approximation.}}
   \label{fig:measured_leakage}
 \end{figure}
+
 Again, we note good qualitative agreement between the measured and
 analytic quantities but we begin to see the limits of the leakage
 approximations. To compare the quality of the two approximations, the
@@ -831,13 +834,12 @@ tested.
   \begin{center}
     \includegraphics[width=0.8\textwidth]{leakage_error.eps}
   \end{center}
-  \caption{Measured and analytic domain leakage absolute error as a
-    function of the iteration matrix spectral radius.  To test the
-    behavior with respect to domain size, $n_i=50$,
-    $n_i=100$, and $n_i=200$ were used. The dashed
-    lines represent the error using the Wigner rational
-    approximation while the solid lines represent the error using
-    the mean-chord approximation.}
+  \caption{\textbf{Measured and analytic domain leakage absolute error as a
+      function of the iteration matrix spectral radius.} \textit{To test the
+      behavior with respect to domain size, $n_i=50$, $n_i=100$, and $n_i=200$
+      were used. The dashed lines represent the error using the Wigner
+      rational approximation while the solid lines represent the error using
+      the mean-chord approximation.}}
   \label{fig:leakage_error}
 \end{figure}
 From these error results, the mean chord approximation is shown to have a
@@ -864,15 +866,15 @@ random walk length and leakage fraction when compared to numerical
 results generated by a domain decomposed implementation of the adjoint
 method.
 
-In future work, these relationships will serve as guidelines for
-selecting an appropriate parallel algorithm strategy and provide a
-basis for performance models for future parallel implementations of
-the adjoint Neumann-Ulam method. To be applicable to a broader range
-of problems, these models could potentially be extended to
-non-symmetric systems. In addition, these relations will be used to
-analyze parallel implementations of Monte Carlo synthetic acceleration
-methods that leverage the adjoint method and serve as an initial
-grounds for assessing their feasibility for large-scale problems.
+In future work, these relationships will serve as guidelines for selecting an
+appropriate parallel algorithm strategy and provide a basis for performance
+models for future parallel implementations of the adjoint Neumann-Ulam
+method. To be applicable to a broader range of problems, these models could
+potentially be extended to non-symmetric and three-dimensional systems. In
+addition, these relations will be used to analyze parallel implementations of
+Monte Carlo synthetic acceleration methods that leverage the adjoint method
+and serve as an initial grounds for assessing their feasibility for
+large-scale problems.
 
 %%---------------------------------------------------------------------------%%
 \section{Acknowledgments}
