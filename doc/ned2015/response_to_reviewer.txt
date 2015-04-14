@@ -13,6 +13,10 @@ for the n_s and n_i parameters in our diffusion analysis. In addition, we have
 expanded our description of the algorithm in section 2 and have provided more
 definitions for clarity.
 
+To improve clarity of the results, we have replotted our results using a
+different plotting tool to create higher quality images that should aid the
+reader. Note that the y-axis in figure 2 has been changed to a logarithmic scale.
+
 ------------------------------------------------------------------------------
 2. Abstract: The term "measured computational results" is not so clear at
 first.  The authors may want to find another name for this quantity.
