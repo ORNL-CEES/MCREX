@@ -7,13 +7,13 @@ information is not so easy for a reader.
 
 We agree that without visual aids the discussion is complex and is very much
 based on the underlying graph of the matrix. We have added a figure (Figure 1)
-in section 3.1 and discussion the random walk in terms of the sparse graph
+in section 3.1 and discussion of the random walk in terms of the sparse graph
 underneath the matrices that should help clarify the explanation, particularly
 for the n_s and n_i parameters in our diffusion analysis. In addition, we have
 expanded our description of the algorithm in section 2 and have provided more
 definitions for clarity.
 
-To improve clarity of the results, we also have replotted our results using a
+To improve clarity of the results, we also have re-plotted our results using a
 different plotting tool to create higher quality images that should aid the
 reader. Note that the y-axis in figure 2 has been changed to a logarithmic
 scale and the random walk length and error measurements have been broken into
@@ -105,11 +105,11 @@ subject to domain decomposition. The domain decomposition itself does not
 perturb the results of the stochastic algorithm (e.g. the flux in this
 case). Rather, it simply provides a means to perform random walks via the
 rules of the Neumann-Ulam game where the data for the random walks (weights
-and probablities) has been domain-decomposed.
+and probabilities) has been domain-decomposed.
 
 Variance estimation, however, is a different story and domain decomposition
-schemes to date trade inexact variance estimates for scalablity. This is due
-to the fact that the order of events must be maintained to acheive a correct
+schemes to date trade inexact variance estimates for scalability. This is due
+to the fact that the order of events must be maintained to achieve a correct
 variance estimate and fully asynchronous algorithms do not, in general, permit
 this. The literature indicates that this order of operations is less
 significant for the correctness of the flux estimate with differences in
