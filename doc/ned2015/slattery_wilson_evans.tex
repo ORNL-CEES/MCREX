@@ -13,7 +13,6 @@
 \usepackage{amssymb,amsthm}
 \usepackage[mathcal]{euscript}
 \usepackage{tabularx}
-\usepackage{tmadd,tmath}
 \usepackage[usenames]{color}
 \usepackage[
 naturalnames = true, 
@@ -24,6 +23,9 @@ citecolor = black,
 menucolor = black,
 urlcolor = blue
 ]{hyperref}
+
+\newcommand{\ve}[1]{\ensuremath{\mathbf{#1}}}
+\newcommand{\sn}[2]{\ensuremath{#1\times 10^{#2}}}
 
 \usepackage{booktabs}
 \biboptions{sort&compress}
@@ -407,9 +409,7 @@ node $(i,j)$ is on another processor and the walk moves to that node, the
 random walk must be communicated to that processor to continue the walk.
 
 \begin{figure}[ht!]
-  \begin{center}
-    \scalebox{1.25}{ \input{stencil_graph.pdftex_t} }
-  \end{center}
+  \centerline{ \includegraphics[clip]{figures.pdf} }
   \caption{\textbf{Neutron diffusion equation stencil adjacency graph.}
     \textit{The structure of the graph comes from the discretization of the
       Laplacian operator describing the diffusion physics in

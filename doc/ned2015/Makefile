@@ -16,6 +16,7 @@ stencil_graph.pdf: stencil_graph.fig
 
 clean:
 	-rm -f *~
+	-rm -f *.spl
 	-rm -f *.log
 	-rm -f *.aux
 	-rm -f *.dvi
