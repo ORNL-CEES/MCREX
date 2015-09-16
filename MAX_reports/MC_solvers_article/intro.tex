@@ -1,0 +1,64 @@
+\section{Introduction}
+
+For a long period the
+pursuit of a reliable solver for linear and nonlinear algebraic systems has
+been one of the most important issues in Numerical Analaysis. The
+mathematical properties of the model (e.g. likely sparsity pattern of the
+matrix) have urged scientists to look for efficient and pattern-driven
+solvers, capable to cope with curse of dimensionality and high scalability
+requests.
+
+As scalability computing move towards exascale facilities (which stands for
+machines computing up to $10^{18}$ flops), new numerical schemes suitable for
+this
+kind of architectures are strongly demanded. In fact the purpose is to combine
+high
+fidelity of the results with an optimized use of hardware resources at hand.
+
+Recently new algorithms that combine statistical and numerical techniques have
+been developed. Even though \textit{numerical efficiency} has been sacrificed
+sometimes, the advantages in terms of \textit{robustness} of these methods make
+it worth carrying on studies in this direction.
+A class of methods that may be employed for this purpose is represented by
+Monte Carlo linear solvers.
+
+These algorithms are the main topic covered in the work presented here,
+starting from what was developed so far by some of
+the authors who gave significant contributions (see \cite{Hal1962},
+\cite{Hal1994},
+\cite{DA1998}, \cite{DVA2001}, \cite{AADBTW2005},\cite{ESW2013} and
+\cite{EMSH2014}). \newline
+
+As underlined in \cite{DA1998}, Monte Carlo methods may be split into two
+classes: \textit{direct methods} (\cite{DA1998}, \cite{DVA2001}) and
+\textit{iterative methods} (\cite{Hal1962},
+\cite{Hal1994}, \cite{ESW2013}
+and \cite{EMSH2014}). The first are characterized by a merely stochastic
+scheme,
+therefore the provided error with respect to the exact solution is made of
+just a stochastic component. The second ones, instead, combine numerical and
+statistical schemes generating two types of error: a
+\textit{stochastic} one and a \textit{systematic} one. It does not
+mean
+that
+it will be always simple to recognize them separately. However it is important
+to
+be
+aware of this intrinsic structure, in order to target what is the part of the
+scheme that requires a refinement (e.g. increase of numerical iterations
+rather than random walks).\newline
+
+The paper is organized as follows. In Section 2 we describe all the
+viable stochastic settings for the definition of the Markovian process. In
+Section 3 we reinterpret probabilistic facts in terms of spectral properties of
+the linear system to be solved. Section 4 is dedicated to necessary conditions
+and sufficient conditions for the convergence of the algorithms. In Section 5
+different adaptive approaches are presented, in order to truncate the random
+walks and to decide how many samplings to use. Section 6 regards the study
+of matrices for which the convergence of the stochastic schemes is facilitated.
+Then in Section 7 a hybrid scheme combining numerical and probabilistic
+techniques is described: the \textit{Monte Carlo Synthetic Acceleration}.
+Numerical results are presented in Section 8 and 9, while Section 10 is
+dedicated to
+conclusive remarks and goals for the future.
+
