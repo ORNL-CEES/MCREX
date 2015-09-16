@@ -1,16 +1,15 @@
 \section{Convergence Behavior of Stochastic Methods}
+\label{sec:convergence}
 
-The requests imposed on the expected value and second moment of the estimators
-can be reformulated in a purely deterministic setting by looking at the
-spectral radii of some properly defined matrices.
-
-For instance the condition of finiteness of the expected value can be
+The convergence requirements imposed by the Monte Carlo estimator and
+the corresponding variance can be reformulated in a purely deterministic
+setting by considering certain properly defined matrices.
+For instance, the condition of finiteness of the expected value can be
 reformulated by requiring
 \begin{equation}
  \rho(H)<1
  \label{rho_h},
 \end{equation}
-
 where $H$ is the iteration matrix of the fixed point scheme.
 In fact both equations (\ref{dir_mean}) and (\ref{adj_mean}) can be considered
 as
@@ -18,71 +17,55 @@ power series in terms of $H$ and the spectral radius of $H$ smaller
 than 1 is a necessary and sufficient condition for the Neumann series to
 converge.
 
-
-By analogy we aim at reproducing a similar reasoning for the second moment of
-the estimator, since we want it to be finite as well.
-By looking at the equations of the variance (\ref{dir_var}) and (\ref{adj_var})
+We wish to achieve a similar result based on the requirement that the
+second moment of the estimator must be finite as well.
+Examination of the equations of the variance (\ref{dir_var}) and (\ref{adj_var})
 for
-the Forward and the Adjoint method respectively, we notice that the second
+the forward and the adjoint method respectively, we notice that the second
 moment can be reinterpreted as a power series with respect to the matrices
 defined as follows:
-
 \[
  \hat{H}_{i,j}=\frac{H_{i,j}^2}{P_{i,j}} \quad \text{- Forward Method}.
 \]
-
 or
-
 \[
  \hat{H}_{i,j}=\frac{H_{j,i}^2}{P_{i,j}} \quad \text{- Adjoint Method}.
 \]
-
-
 Accordingly to the necessary and sufficient condition for the power series to
 converge, we require
 \begin{equation}
  \rho(\hat{H})<1.
  \label{rho_star}
 \end{equation}
-
 Condition (\ref{rho_h}) must be required for a generic fixed point scheme to
 reach convergence, whereas the extra condition (\ref{rho_star}) is typical of
-the stochastic schemes presented in this work. Having two conditions to
-verify makes the numerical treatment of the linear system via MC very
-difficult. We will discuss this in details later in the treatise. \newline
+the stochastic schemes presented in this work.
 
 \subsection{Necessary and Sufficient Conditions}
 
-Here below some results presented in
-\cite{MASC2013} about necessary conditions and sufficient
-conditions for
-convergence are enunciated. In particular a suitable choice for constructing a
-transition probability is discussed to guarantee and speed-up convergence.
+Here we briefly reproduce some results introduced in \cite{MASC2013}
+concerning necessary conditions and sufficient conditions for convergence.
+In particular, a suitable choice for constructing a
+transition probability is discussed to guarantee convergence.
 
-We remember that the construction of the transition probability must satisfy
-some constraints such as
-
+The construction of the transition probability must satisfy
 \[
 \begin{cases}
   P_{i,j}\ge 0 \\
- \sum_{j=1}^N P_{i,j}=1
+ \sum_{j=1}^N P_{i,j}\le 1 \,.
 \end{cases}
 \]
-
-plus one more restriction which varies depending on the particular Monte Carlo
-approach chosen
-
+One additional constraint relates the sparsity pattern of $H$ to that
+of the transition probabilities:
 \begin{align*}
 & \text{Forward Method:} \quad H_{i,j}\ne 0 \Rightarrow P_{i,j}\ne 0 \\ &
 \text{Adjoint Method:} \quad H_{j,i}\ne 0 \Rightarrow P_{i,j}\ne 0
 \end{align*}.
-
-The previous restrictions on the attainable values for the entries of the
+The previous constraints on the values for the entries of the
 transition probability are called \textit{transition conditions}.
 
-
-At first an introductory theoretical result is shown, necessary to motivate the
-choices made afterwards for the choice of the transition probability.
+An introductory theoretical result is provided to motivate the possible
+choices for the transition probability.
 
 \begin{thm}
  Consider a vector $a=(a_1,a_2,\cdots,a_N)^T$ where at least one element is
@@ -102,7 +85,7 @@ It might be observed that the minimum of the quantity $\displaystyle
 defined such as $\displaystyle p_k=\frac{\lvert a_k\rvert}{\sum_{k=1}^N \lvert
 a_k\rvert}$. It implies that the $\infty$-norm of $\hat{H}$ is minimized as
 much
-as possible. \newline
+as possible.
 
 For the sake of simplicity let us introduce now a generic random walk
 truncated at a certain $k$-th step
@@ -115,7 +98,7 @@ and the statistical estimator
  X(\gamma_k)=\frac{H_{r_0,r_1}H_{r_1,r_2}\cdots
 H_{r_{k-1},r_k}}{P_{r_0,r_1}P_{r_1,r_2}\cdots P_{r_{k-1},r_k}}f_{r_k}
 \]
-which is associated with the Forward Method.
+which is associated with the forward method.
 
 Then the following theorem holds
 \begin{thm}\textit{(Suited to the Forward Method)}
@@ -136,7 +119,7 @@ If we introduce the estimator
 H^T_{r_{k-1},r_k}}{P_{r_0,r_1}P_{r_1,r_2}\cdots
 P_{r_{k-1},r_k}}sign(f_{r_0})\lVert \mathbf{f}\rVert_1
 \]
-which is associated with the Adjoint Method, then we can state a
+which is associated with the adjoint method, then we can state a
 theorem specular to \ref{for_thm}.
 
 \begin{thm}\textit{(Suited to the Adjoint Method)}
@@ -151,51 +134,24 @@ $Var\Big(\sum_{\nu}X(\nu_k)\Big)$ is bounded as $k\rightarrow \infty$.
 \label{adj_thm}
 \end{thm}
 
-In particular, relying on what guaranteed by Theorem \ref{lemma}, in both
-Theorems \ref{for_thm} and \ref{adj_thm} the thesis holds by picking the MAO
-transition probability.
-
-These theoretical results represent sufficient conditions for the convergence
-of the
-Forward and Adjoint Monte Carlo and they can be easily checked.
-However requiring $\lVert
-H\rVert_{\infty}<1$ or $\lVert H\rVert_1<1$ may be too demanding.
-Indeed, even if there exist some preconditioners able to guarantee this
-condition (e.g. approximate inverse preconditioners with a proper value of
-dropping
-tolerance), it may entail to compromise the sparsity of the
-iteration
-matrix.
-
-Thusly, in situations where the hypotheses of Theorems \ref{for_thm} and
-\ref{adj_thm} are too demanding to be verified, the necessary and sufficient
-condition
-on the
-spectral radius of $\hat{H}$ is the only criterion to take as reference.
-Nonetheless this constraint consists in
-computing the spectral radii of two matrices and the calculation
-might be very costly. Moreover the computation of the spectral radii is
-affected by resilience issues as well as
-a deterministic solver for the resolution of
-a linear system. Therefore the original difficulty is transferred without being
-actually tackled.
-
-\subsubsection{Forward MC}
-
-\subsubsection{Adjoint MC with Collision Estimator}
-
-\subsubsection{Adjoint MC with Expected-Value Estimator}
+These theoretical results represent sufficient (but not necessary) conditions
+for the convergence
+of the forward and adjoint Monte Carlo and can be easily verified.
+However, in many cases the conditions $\lVert H\rVert_{\infty}<1$ or
+$\lVert H\rVert_1<1$ may be restrictive.
 
 \subsection{Construction of Transition Probabilities}
 
-The way the transition probability is defined is extremely important. In fact
-in some circumstances it might determine whether the stochastic scheme
-converges or not. Two very simple ways of defining it are listed here
-below. These are the approaches adopted typically in literature.
+The method for determining the transition probability has a significant impact
+on the properties of the resulting approach, and in many circumstances the
+choice can be the difference between convergence or divergence of the stochastic
+scheme.  Two primary approaches have been considered in the literature:
+\textit{uniform probabilities} and \textit{weighted probabilities}.
 
 \subsubsection{Uniform probabilities}
-With this approach transition matrix $P$ is such that all the non-zero elements
-in each row have equal probability of occurring.
+
+With this approach, the transition matrix $P$ is such that all the non-zero elements
+in each row have equal probability of occurring:
 \[
 \text{Forward}:\;P_{i,j}=
 \begin{cases}
@@ -214,8 +170,9 @@ The Monte Carlo approach resorting to this definition of the transition matrix,
 in accordance to \cite{AADBTW2005}, is called \textit{Uniform Monte Carlo} (UM).
 
 \subsubsection{Weighted probabilities}
+
 An alternative way of defining the transition matrix consists in attributing
-probabilities to all the entries of the transition probability accordingly
+probabilities to the entries of the transition probability according
 to the magnitude of the elements. For instance we may employ the following
 definition
 \[
@@ -224,33 +181,28 @@ p(k_i=j \;\lvert\;k_{i-1}=i )=P_{i,j}=\frac{\lvert
 H_{i,j}\rvert^p}{\sum_{k=1}^n
 \lvert H_{i,k}\rvert^p}
 \]
-
+and
 \[
 \text{Adjoint}: \;
 p(k_i=j \;\lvert\;k_{i-1}=i )=P_{i,j}=\frac{\lvert
 H_{j,i}\rvert^p}{\sum_{k=1}^n
-\lvert H_{k,i}\rvert^p}
+\lvert H_{k,i}\rvert^p} \,,
 \]
-
-
 where $p\in \mathbb{N}$.
-This way of proceeding, for $p=1$, still basing on the work \cite{AADBTW2005},
-is called
+This selection, for $p=1$, has been termed
 \textit{Monte Carlo Almost Optimal} (MAO).
-The reason why the almost optimal probability is called this way is associated
-with a notice from Theorem \ref{lemma}. Indeed from
-the mentioned lemma we know that the quantity $\displaystyle
-\sum_{k=0}^N\frac{a_k^2}{p_k}$ is minimized when the probability vector is
+The reason for the ``almost optimal'' designation can been seem from
+Theorem~\ref{lemma}, as the quantity
+$\displaystyle \sum_{k=0}^N\frac{a_k^2}{p_k}$
+is minimized when the probability vector is
 defined such as $\displaystyle p_k=\frac{\lvert a_k\rvert}{\sum_{k=1}^N \lvert
 a_k\rvert}$. This implies that the almost optimal probability minimizes the
-$\infty$-norm of $\hat{H}$ in the Forward method and the $1$-norm of $\hat{H}$
-in the
-Adjoint method. This is very important to be pointed out since these two norms
-are so far the best practical upper bounds for $\rho(\hat{H})$ that we can
-easily
-handle. In the Section dedicated to the numerical results it will be proved
-that the Almost Optimal Probability eases the convergence of the MC solver,
-even in cases when the employment of the Uniform Probability does not provide
+$\infty$-norm of $\hat{H}$ in the forward method and the $1$-norm of $\hat{H}$
+in the adjoint method. This is very important, since these two norms
+provide computable upper bounds for $\rho(\hat{H})$.
+In Section~\ref{sec:results}, it will be shown
+that the almost optimal probability enables convergence of the MC solver,
+even in cases when the employment of the uniform probability does not provide
 convergence at all.
 
 \subsection{Classes of Matrices with Guaranteed Convergence}
@@ -258,22 +210,16 @@ convergence at all.
 As we have already seen, sufficient conditions for
 the convergence of the Monte Carlo linear solvers are very restrictive (see
 \cite{MASC2013}), whereas the necessary and sufficient condition requires the
-computation of
-$\rho(H)$and $\rho(\hat{H})$, which is very expensive in general. Once a
-proper
-preconditioner is picked (e.g. Approximate Inverse), $\rho(H)<1$ may
-be always guaranteed, whilst $\rho(\hat{H})<1$ is more
-problematic to be verified.
-
-In order to bypass the cost of these checks, it is useful to pursue for sets of
-matrices for
-which the Monte Carlo linear solver always converges, maybe with the use of an
-ad-hoc preconditioner.
+computation of $\rho(H)$and $\rho(\hat{H})$, which is very expensive in general.
+Many instances of matrices (perhaps with appropriate preconditioning) such
+that $\rho(H)<1$ are available, but verifying $\rho(\hat{H})<1$ is generally
+more problematic.  We now with to identify classes of matrices for which
+the Monte Carlo linear solver is guaranteed to converge.
 
 \subsubsection{Strictly Diagonally Dominant}
+\label{sec:sdd}
 
- One of the these sets is
-represented by strictly diagonally dominant matrices.
+One of the these sets is represented by strictly diagonally dominant matrices.
 
 \begin{defn}
  A matrix $A\in\mathbb{R}^{n\times n}$is strictly diagonally dominant (s.d.d)
@@ -298,7 +244,7 @@ a_{ij}\rvert
 When (\ref{sddr}) holds we can resort to a left diagonal preconditioning and we
 get an iteration matrix $H=I-D^{-1}A$ such that $\lVert H \rVert_{\infty}<1$.
 
-Introducing a MAO transition probability for the Forward Method we get
+Introducing a MAO transition probability for the forward method we get
 \[
  P_{ij}=\frac{\lvert H_{ij}\rvert}{\sum_{k=1}^n\lvert H_{ik}\rvert}
 \]
@@ -316,19 +262,20 @@ H_{ik}\rvert\bigg ) =\bigg
 (\sum_{j=1}^n \lvert H_{ij}\rvert\bigg ) ^2 <1 \quad \forall i=1,\cdots, n.
 \]
 This automatically implies that $\rho(\hat{H})<=\lVert
-\hat{H}\rVert_{\infty}<1$. Thus the Forward Monte Carlo converges.
+\hat{H}\rVert_{\infty}<1$. Thus the forward Monte Carlo converges.
 However nothing a priori can be
-stated about the behavior of the Adjoint method.\newline
+stated about the behavior of the adjoint method.
 
 Instead if (\ref{sddc}) holds we can resort to a right diagonal preconditioning
 and we
 get an iteration matrix $H=I-AD^{-1}$ such that $\lVert H \rVert_{1}<1$.
 In this case, by following a similar reasoning to the one made before, we
-conclude that the Adjoint Method convergences thanks to $\lVert
+conclude that the adjoint method convergences thanks to $\lVert
 \hat{H}\rVert_1<1$,
-whereas nothing can be said in advance as concerns the Forward method.
+whereas nothing can be said in advance as concerns the forward method.
 
 \subsubsection{Generalized Diagonally Dominant}
+\label{sec:gdd}
 
  Another set of matrices for which the convergence of
 the MC solvers is guaranteed is made of \textit{generalized diagonally
@@ -350,7 +297,6 @@ by $M$- matrices (see \cite{Ax1996}).
 There are many definitions of $M$-matrices that may be found on books and all
 of them are equivalent. The one presented in \cite{Saad} states the
 following
-
 \begin{defn}
 A matrix $A\in\mathbb{R}^{n\times n}$ is said to be an $M$-matrix if it
 satisfies the following four properties:
@@ -365,7 +311,6 @@ satisfies the following four properties:
 
 A very important result about $M$-matrices enables to come up with a convergent
 splitting and, therefore, a convergent fixed point scheme.
-
 In particular Jacobi, Block Jacobi and Gauss Seidel  are
 convergent
 splitting for an $M$-matrix.
@@ -373,7 +318,7 @@ However, the construction of a splitting like this is not enough to ensure the
 convergence of
 the Monte Carlo linear solver. In fact none of these conditions is sufficient
 to guarantee $\rho(\hat{H})<1$. Because of this obstacle, other options must
-be considered.\newline
+be considered.
 
 For this purpose we
 appeal to a result in \cite{Li2002}. In this paper the author presents an
@@ -381,7 +326,7 @@ algorithm to transform a generalized diagonally dominant matrix with
 nonzero diagonal entries into strictly diagonally dominant. The
 algorithm works for a generic complex matrix $A\in\mathbb{C}^{n\times n}$.
 
-Here below we report the algorithm at hand\newline
+Here below we report the algorithm at hand
 
 \begin{algorithm}[H]
  For a given complex matrix $A$, $a_{ii}\ne 0$, $i=1,\cdots, n$;\newline
@@ -409,19 +354,19 @@ at step 1 with
 $\displaystyle S_{i}=\sum^{n}_{\substack{i=1 \\ i\ne j}}\lvert a_{ij}\rvert$
 and by replacing
 $a_{ji}=a_{ji}\cdot d_i$ with $a_{ji}=a_{ji}\cdot d_j$ we obtain the algorithm
-that turns a GDDM matrix into a s.d.d. by columns.\newline
+that turns a GDDM matrix into a s.d.d. by columns.
 
 Once we have applied this transformation to the matrix at hand into a s.d.d.,
 we can use the Monte Carlo linear solver which is ensured to converge.
 
 \subsubsection{Block Diagonally Dominant}
+\label{sec:bdd}
 
- In this section we wonder in which situations a block diagonal preconditioning
-might come up with a convergent Monte Carlo linear solver.
-By mimicking the computations we already showed previously, the iteration
+In the section we consider situations in which block diagonal preconditioning
+can result in a convergent Monte Carlo linear solver.
+By mirroring the computations we already showed previously, the iteration
 matrix $H\in\mathbb{R}^{n\times n}$ resulting from a block diagonal
 preconditioning takes the form
-
 \[
  H=I-D^{-1}A=\begin{bmatrix}0_{n_1\times n_1} & -[A_{11}]^{-1}A_{12} & \cdots &
 \cdots & -[A_{11}]^{-1}A_{1p} \\
@@ -434,17 +379,16 @@ preconditioning takes the form
 \end{bmatrix}.
 \]
 
-For the sake of clarity, we notify that the symbol "$\%$" used in the following
+For the sake of clarity, we note that the symbol "$\%$" is used in the following
 subsections represents the modulus function between two integer numbers, while
-the floor function is represented with pretty standard symbol "$\lfloor
+the floor function is represented with the standard symbol "$\lfloor
 \cdot \rfloor$".
 
-\paragraph{Forward method}
+We first consider the forward method.
 By assuming that all $n_i$'s have the same value we may define
 \[
  m=n_i=\text{size of a block}=\frac{n}{p}.
 \]
-
 The MAO transition probability matrix becomes:
 \[
  P_{i,j}=\frac{\lvert H_{i,j} \rvert}{\sum_{k=1}^n\lvert H_{i,k}
@@ -458,7 +402,6 @@ The MAO transition probability matrix becomes:
 \frac{i}{m}\rfloor}]^{-1} A_{\lfloor \frac{i}{m}\rfloor \lfloor
 \frac{k}{m}\rfloor}\bigg )_{i\%m,k\%m}\bigg \rvert}
 \]
-
 Consequently, the $\hat{H}$ matrix is defined such that
 \[
 \hat{H}_{i,j} = \lvert H_{i,j}\rvert\bigg(\sum_{k=1}^n\lvert H_{ik}\rvert\bigg)=
@@ -471,7 +414,6 @@ Consequently, the $\hat{H}$ matrix is defined such that
 \frac{i}{m}\rfloor}]^{-1} A_{\lfloor \frac{i}{m}\rfloor \lfloor
 \frac{k}{m}\rfloor}\bigg )_{i\%m,k\%m}\bigg \rvert
 \]
-
 By computing the sum over a generic row of $\hat{H}$ we get:
 \[
  \sum_{j=1}^n \lvert \hat{H}_{i,j}\rvert=\sum_{j=1}^n \hat{H}_{i,j} =
@@ -480,7 +422,6 @@ By computing the sum over a generic row of $\hat{H}$ we get:
 \frac{i}{m}\rfloor}]^{-1} A_{\lfloor \frac{i}{m}\rfloor \lfloor
 \frac{j}{m}\rfloor}\bigg )_{i\%m,j\%m}\bigg \rvert \bigg ) ^2.
 \]
-
 If we focus on the norm $\lVert \hat{H}\rVert_{\infty}$, then the following
 equivalence condition holds:
 \[
@@ -496,7 +437,6 @@ i=1,\cdots,n
   \sum_{\substack{j=1\\j\ne i}}^p \lVert [A_{ii}]^{-1}A_{ij}\rVert_{\infty}<1.
     \label{block_cs}\quad \forall i=1,\ldots,p.
  \end{equation}
-
 By defining a matrix $\tilde{H}\in \mathbb{R}^{p\times p}$ such that
 \[
  \tilde{H}=\begin{bmatrix}0 & \lVert [A_{11}]^{-1}A_{12}\rVert_{\infty} &
@@ -511,23 +451,21 @@ By defining a matrix $\tilde{H}\in \mathbb{R}^{p\times p}$ such that
 \lVert [A_{pp}]^{-1}A_{p,p-1}\rVert_{\infty} & 0
 \end{bmatrix}
 \]
-
 We can use the $\tilde{H}$ matrix just defined in order to introduce a
-sufficient condition for the convergence of the Forward Monet Carlo method with
+sufficient condition for the convergence of the forward Monet Carlo method with
 a Block Diagonal preconditioning.
-
 \begin{equation}
  \lVert \tilde{H} \rVert_{\infty}<1 \Rightarrow \lVert \hat{H}
 \rVert_{\infty}<1.
 \end{equation}
 
-\paragraph{Adjoint method}
-Analogously to the Forward method, if we define
+We now turn our attention to the adjoint method.
+Analogously to the forward method, if we define
 \[
 (\hat{H})^T_{i,j} = \lvert H^T_{i,j}\rvert\bigg(\sum_{k=1}^n\lvert
 H^T_{ik}\rvert\bigg)
 \]
-we can formulate a sufficient condition for the convergence of the Adjoint
+we can formulate a sufficient condition for the convergence of the adjoint
 Monte
 Carlo method by introducing a matrix $\tilde{H}$ which in this case is such that
 \[
@@ -550,25 +488,29 @@ The sufficient condition assumes the form
 
 \subsection{Adaptive Methods}
 
-In formulas (\ref{dir_mean}) and (\ref{adj_mean}) the estimation of the
+In formulas (\ref{dir_mean}) and (\ref{adj_mean}), the estimation of the
 solution to
-the linear system (\ref{linsys_prec}) involves infinite sums. Of course this is
-not viable for
-computational issues, therefore it is necessary to resort to truncation of
-the sums through proper criteria. In details, the truncation implies the
-employment of a finite number of permutations and a finite number of
-steps for each one of the permutations computed. Therefore it is necessary to
-truncate at two different levels to decide both how many permutations to employ
-and how many steps each one of them should be kept running.
+the linear system (\ref{linsys}) involves infinite sums. Of course this is
+not viable in a computational setting,
+therefore it is necessary to truncate both the number of steps taken in
+a single random walk as well as the number of random walks that
+are performed.
 
 \subsubsection{History Length}
 
-At first we focus on the definition of a weight cut-off
-in order to decide where to terminate the histories. It may be reinterpreted as
-a quantity guiding us to decide how many terms of the Neumann
-series to consider. \newline
+We first consider criteria to terminate an individual random walk, effectively
+deciding how many terms of the Neumann series will be considered.
+One possibility is to set a predetermined history length at which point all
+histories are terminated.  The approach, however, presents two difficulties.
+First, it is difficult to determine a priori how many steps on average will be
+necessary to achieve a specified tolerance.  Second, due to the stochastic
+nature of the random walks, some histories will retain important information
+longer than others.  Truncating histories at a predetermined step runs the
+risk of either prematurely truncating important histories, leading to larger
+errors, or continuing unimportant histories longer than necessary,
+leading to computational inefficiency.
 
-The goal is to apply the cutoff via an automatic procedure, without requiring
+Our goal is to apply a cutoff via an automatic procedure, without requiring
 the intervention of the user directly.
 Therefore we are looking for an integer $m$ such that
 \[
@@ -579,37 +521,35 @@ P_{k_0,k_1}P_{k_1,k_2}\cdots P_{k_{\ell-1},
 k_{\ell}}w_{k_0,k_1}w_{k_1,k_2}\cdots
 w_{k_{\ell-1}, k_{\ell}}f_{k_{\ell}}
 \]
-
 and
-
 \[
 \tilde{\theta}_j=E\bigg[\sum_{\ell=0}^m W_{\ell}\delta_{k_{\ell},
 j}\bigg]=\sum_{\ell=0}^{m}\sum_{k_1}^n\sum_{k_2}^n\cdots\sum_{k_{\ell}}^n
 f_{k_0}P_{k_0,k_1}P_{k_1,k_2}\cdots P_{k_{\ell-1},K_{\ell}}w_{k_0,k_1}\cdots
 w_{k_{\ell-1},k_{\ell}}\delta_{k_{\ell},j}
 \]
-
 are good approximations of (\ref{dir_mean}) and (\ref{adj_mean}) respectively.
 
-
-In \cite{Slattery2013} there is a criterion for the cutoff of the random walk
-applicable to both the Forward and the Adjoint method. It requires the set up
-of a relative cutoff threshold $W_c$ and to look for a step $m$ such that
+In \cite{Slattery2013}, a criterion was used for the cutoff of the random walk
+applicable to both the forward and the adjoint method. It requires the set up
+of a relative weight cutoff threshold $W_c$ and to look for a step $m$ such that
 \begin{equation}
-W_m \le W_c W_0.
+W_m \le W_c W_0 \,,
 \label{cutoff}
 \end{equation}
-$W_0$ is the value of the weight at the initial step of the random walk and
-$W_m$ is the value of the weight after $m$ steps.
+where $W_0$ is the value of the weight at the initial step of the random walk
+and $W_m$ is the value of the weight after $m$ steps.
 
 \subsubsection{Number of Random Walks}
 
-We now focus on quantities that might lead to a proper
-number of permutations to compute, in order to get a prescribed order of
-accuracy.
-As regards the Forward method, we know that the expression for the variance
-is defined in formula (\ref{dir_var}).
+We now consider the selection of the number of random walks that should be
+performed to achieve a given accuracy.  Unlike the termination of histories,
+this is a subject that has not been discussed in the Monte Carlo linear
+solver literature, as all previous studies have considered the simulation
+of a prescribed number of histories.
 
+The expression for the variance of the forward method is given by
+formula (\ref{dir_var}).
 In this context, a reasonable criterion to determine the number $\tilde{N}_i$
 of random walks to be run is setting a threshold $\varepsilon_1$ and determine
 \begin{equation}
@@ -622,17 +562,15 @@ seems
 to be absent in the previous formula, is highlighted by the fact that
 $\theta_i$
 is estimated by fixing a finite number of histories.
-Therefore we are controlling the relative standard deviation requiring it not
-to be too large. In other words we are pursuing a statistical setting where the
-uncertainty factor is not dominating over the expected value.
+Therefore, we are controlling the relative standard deviation requiring it not
+to be too large. In other words, we are pursuing a statistical setting where the
+uncertainty factor is small relative to the expected value.
 This simple adaptive approach can be applied for the estimation of each
 component $x_i$. Hence different number of histories may be employed to
-compute different entries of the solution vector. \newline
+compute different entries of the solution vector.
 
-
-As concerns the Adjoint method, the estimation of the variance for each entry
-is reproduced by Formula (\ref{adj_var}).
-
+As concerns the adjoint method, the estimation of the variance for each entry
+is reproduced by formula (\ref{adj_var}).
 A possible adaptive selection of $\tilde{N}$, in this situation, is
 \begin{equation}
 \tilde{N} \quad s.t. \quad \frac{\lVert
@@ -643,13 +581,12 @@ A possible adaptive selection of $\tilde{N}$, in this situation, is
 where $\boldsymbol{\sigma}$ is a vector whose entries are
 $\boldsymbol{\sigma}_{\tilde{N},i}=Var[\theta_i]$.
 
-What introduced above can be exploited in order to build
-an a posteriori adaptive algorithm, capable to identify the minimal value of
+The criteria introduced above can be exploited in order to build
+an a posteriori adaptive algorithm, capable of identifying the minimal value of
 $\tilde{N}$ that verifies (\ref{forward_adapt}) or (\ref{adjoint_adapt})
 respectively.
-
-Below there are the pseudo-codes associated with both Forward and Adjoint Monte
-Carlo.
+Algorithms \ref{alg:adaptive_for} and \ref{alg:adaptive_adj} describe
+the Monte Carlo approaches with the adaptive criteria.
 
 \begin{algorithm}[H]
  \KwData{$N$, $\varepsilon_1$}
@@ -664,7 +601,7 @@ E[\theta_i]\rvert}<\varepsilon_1$}{
   compute $E[\theta_i]=x_i$\;
  }
  return $\theta_i$, $x_i$, $\sigma_i$\;
- \caption{A posteriori adaptive Forward Monte Carlo}
+ \caption{A posteriori adaptive Forward Monte Carlo \label{alg:adaptive_for}}
 \end{algorithm}
 
 \begin{algorithm}[H]
@@ -679,161 +616,61 @@ E[\theta]\rVert}<\varepsilon_1$}{
   compute $E[\theta]=\mathbf{x}$\;
  }
  return $\theta$, $\mathbf{x}$, $\boldsymbol{\sigma}$\;
- \caption{A posteriori adaptive Adjoint Monte Carlo}
+ \caption{A posteriori adaptive Adjoint Monte Carlo \label{alg:adaptive_adj}}
 \end{algorithm}
 
 \subsection{Preconditioning}
 
-In this section we focus on the pursuit of preconditioners that facilitate the
-convergence of the stochastic schemes introduced so far. A priori, all of the
-following techniques are good candidates to improve the numerical setting.
-However issues about the fill-in effect and the verification of convergence
-conditions limit their employment for our purposes.
+Preconditioning can be incorporated into the Monte Carlo linear solver
+algorithm by simply substituting $A \leftarrow P^{-1}A$ and
+$b \leftarrow P^{-1}b$ in Eq.~\eqref{linsys}.  The Monte Carlo process, however,
+introduced some constraints on the choice of preconditioners used.  Most
+significantly, because the transition probabilities are built based on the
+values of the iteration matrix, it is necessary to have access to the
+entries of the preconditioned matrix $P^{-1}A$.
+Therefore, we must focus on preconditioner selections that enable explicitly
+forming the preconditioned matrix while retaining some of the sparsity of the
+original matrix.
 
-\subsubsection*{Block Preconditioning}
-Consider a matrix $A\in\mathbb{R}^{n\times n}$ of the form
-\[
- A=\begin{bmatrix}A_{11} & A_{12} & \cdots & A_{1p}\\
-    A_{21} & A_{22} & \cdots & A_{2p}\\
-    \vdots & \vdots & \ddots & \vdots \\
-    A_{p1} & \cdots & \cdots & A_{pp}
-   \end{bmatrix}
-\]
-where $p$ is a divisor of $n$ and such that $A_{ii} \in \mathbb{R}^{n_i
-\times n_i}$ are nonsingular square matrices.
-By defining a block diagonal matrix such as
-\[
- D=\begin{bmatrix}A_{11} & 0_{12} & \cdots & 0_{1p}\\
-    0_{21} & A_{22} & \cdots & 0_{2p}\\
-    \vdots & \vdots & \ddots & \vdots \\
-    0_{p1} & \cdots & \cdots & A_{pp}
-   \end{bmatrix}
-\]
-it is possible to compute its inverse.
-$D^{-1}$  can be used as a preconditioner for the original matrix $A$.
-In particular
-\[
- D^{-1}A=\begin{bmatrix}I_{n_1\times n_1} & A_{11}^{-1}A_{12} & \cdots &
-\cdots & A_{11}^{-1}A_{1p} \\
-A_{22}^{-1}A_{21} & I_{n_2\times n_2} & A_{22}^{-1}A_{23} &
-\cdots & A_{22}^{-1}A_{2p}\\
-\vdots & \vdots & \ddots & \vdots & \vdots\\
-\vdots & \vdots & \vdots &\ddots & \vdots \\
-A_{pp}^{-1}A_{p1} &  \cdots & \cdots&
-A_{pp}^{-1}A_{p,p-1} & I_{n_p \times n_p}
-\end{bmatrix}.
-\]
-The ultimate goal is to resort to this preconditioning technique in order to
-achieve the condition $\rho(D^{-1}A)<1$. In fact this is necessary in order to
-reformulate \ref{linsys} into \ref{fixedpoint}.
-
-Convergence of \ref{fixedpoint} with block diagonal preconditioning, from the
+One possible preconditioning approach involves either diagonal or block
+diagonal preconditioning.  Convergence of \ref{fixedpoint} with block
+diagonal preconditioning, from the
 deterministic point of view, is guaranteed when $A$ is an irreducibly
 diagonally dominant matrix or when $A$ is an $M$-matrix. In fact in situation
 such as these, theoretical results guarantee that $A=D-N$ is a regular
 splitting (see \cite{Ax1996}). However the same theoretical results cannot be
 exploited to guarantee the convergence of the MC solvers, because of the
 additional check on $\rho(\hat{H})<1$ to be considered.
+From the discussions in Section~\ref{sec:sdd}
+and \ref{sec:bdd}, selecting a diagonal or block diagonal preconditioner can
+guarantee convergence for matrices that are strictly diagonally dominant
+or block diagonally dominant, respectively.
 
-\subsubsection*{Approximate Inverse of a Sparse Matrix (AINV)}
+Other standard preconditioning approaches can also be used in an attempt
+to reduce $\rho(\hat{H})$ while still retaining the ability to explicitly
+form the preconditioned matrix.  One possibility is the use of incomplete
+LU factorizations \cite{Saad,Benzi2002}.  If $P=LU$ is the preconditioner
+with sparse triangular factors $L$ and $U$, then $P^{-1}A$ can easly be
+formed by back substitution.
+Variants of the algorithm set constraints on the amount of fill-in
+of the sparsity pattern of the triangular factors, allowing the user to
+find a compromise between sparsity and accuracy in
+approximating the inverse of $A$.
 
-This stimulated our interests into other types of preconditioners. At first we
-concentrated on Approximate Inverse preconditioners (see \cite{Saad} and
-\cite{Benzi2002}).
+Another class of preconditioners that are viable for use with Monte Carlo
+linear solvers are approximate inverse preconditioners
+\cite{Saad,Benzi2002,Tuma1996,Tuma1998}.  In these algorithms, an approximation
+to the inverse of $A$ is generated directly, making computation of the
+preconditioned matrix a straightforward task.  As with ILU factorizations,
+multiple versions of approximate inverse preconditioning exist which may
+have different behavior in terms of effectiveness of the preconditioner
+versus the resulting reduction in sparsity.
 
-There are many practical techniques that may be applied in order to build the
-AINV preconditioner.
-One of these is described in \cite{Tuma1996} and \cite{Tuma1998}.
-This is the actual approach we applied to the construction of the
-preconditioner. The technique constructs the preconditioner via a
-bi-conjugation fashion.
-The idea is to compute an approximate factorization of the form $W^T A Z=D$.
-$W$ and $Z$ are unit upper triangular matrices and $D$ is a diagonal matrix.
+A downside with the use of ILU or approximate inverse preconditioning is the
+the quality of preconditioner needed to achieve $\rho(\hat{A})<1$ is
+difficult to determine.  In fact, in some situations it may happen that
+modifying the preconditioner to reduce $\rho(A)$ may actually lead to an
+increase in $\rho(\hat{A})$, decreasing the effectiveness of the Monte
+Carlo process on the system.
 
-In order to compute the AINV preconditioner, a \texttt{FORTRAN} code
-provided by Miroslav Tuma (Academy of Sciences, Prague) is used.
-We report as follows the algorithm employed for the construction of the so
-called \textit{Right-looking Factored AINV}. The algorithm provide the user
-with a dropping tolerance $\tau$ which can be used in order to tune the fill-in
-effect
-of the factored preconditioner. \newline
 
-\begin{algorithm}[H]
- \KwData{$p=q=(0,\cdots,0)\in \mathbb{R}^n$, $Z=[z_1,\cdots,z_n]=I_n$,
-$W=[w_1,\cdots,w_n]=I_n$}
- \KwResult{$Z$, $W$}
- \For{$k=1,\cdots, n$}{
- $p_k=w_k^T A e_k$, $q_k=e_k^T A z_k$ \;
-     \For{$i=k+1,\cdots,n$}{
-         $p_i=(w_k^T A e_k)/p_k$, $q_i=(e_k^T A z_i)/q_k$\;
-         Apply a dropping rule to $p_i$, $q_i$\;
-         $w_i=w_i - w_k p_i$, $z_i=z_i - z_k q_i$\\
-         Apply a dropping rule to $w_{j,i}$ and $z_{j,i}$ for $j=1,\cdots,i$\;
-     }\;
-  }\;
- Choose diagonal entries of $D$ as the component of $p$ or $q$\;
- return $Z$, $W$\;
- \caption{Right-looking Factored AINV}
-\end{algorithm}
-
-\subsubsection*{Incomplete LU Factorization Preconditioners (ILU)}
-This set of preconditioners has the goal of computing a sparse lower triangular
-matrix $L$ and a sparse upper triangular matrix $U$ such that the residual
-matrix $R=LU-A$ respects some constraints. One of these constraints may be the
-fact that some entries must be set to zero.
-For instance we can introduce a zero pattern set
-\[
- P\subset \{(i,j)\lvert i\ne j; 1\le i,j\le n\}
-\]
-and use this set in order to impose some constraints on the shape of the
-preconditioner built.\newline
-
-Different variants of the
-Incomplete LU Factorization algorithm are available (see \cite{Saad}).
-However it is
-possible to prove that if all the formulation are well defined, then they are
-all equivalent.
-One of these variants is the following
-
-\begin{algorithm}[H]
- \KwData{$P$}
- \KwResult{$A$}
- For each $(i,j)\in P$ set $a_{ij}=0$\;
- \For{$k=1,\cdot,n-1$}{
- \For{$i=k+1,n$}{
- \If{$(i,k)\notin P$}{
- $a_{ik}=\frac{a_{ik}}{a_{kk}}$
- \For{$j=k+1,\cdots, n$ and for $(i,j)\notin P$}{
-  $a_{ij}=a_{ij}-a_{ik}*a_{kj}$
- }
- }
- }
- }
- return $Z$, $W$\;
- \caption{General Static Pattern ILU}
-\end{algorithm}
-
-This kind of algorithm is guaranteed to terminate without any breakdown just
-for $M$-matrices.
-
-Assuming that the zero pattern $P$ coincides with the zero pattern of $A$ leads
-to the $ILU(0)$. \newline
-
-\begin{algorithm}[H]
- \KwData{$P$}
- \KwResult{$A$}
- \For{$i=2,\cdot,n$}{
- \For{$k=i,i-1$ and for $(i,k)\in NZ(A)$}{
-  $a_{ik}=\frac{a_{ik}}{a_{kk}}$
-  \For{$j=k+1,\cdots,n$ and for $(i,j)\in NZ(A)$}{
-  $a_{ij}=a_{ij}-a_{ik}a_{kj}$}
- }
- }
- \caption{ILU(0).}
-\end{algorithm}
-
-More sophisticated variants of the algorithm enable to enlighten the constraint
-of the sparsity pattern, finding a compromise between sparsity and accuracy in
-approximating the inverse of $A$. We refer to \cite{Saad} and
-\cite{Benzi2002} for further information about it.
-i

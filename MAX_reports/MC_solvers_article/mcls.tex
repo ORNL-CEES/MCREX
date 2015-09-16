@@ -1,26 +1,20 @@
 \section{Stochastic Linear Solvers}
+\label{sec:mcls}
 
 We consider the solution of systems of linear equations of the form
 \begin{equation}
 A \mathbf{x}=\mathbf{b},
 \label{linsys}
 \end{equation}
-where $A\in \mathbb{R}^{n\times n}$, $\mathbf{x}$, $\mathbf{b} \in
+where $A\in \mathbb{R}^{n\times n}$ and $\mathbf{x}$, $\mathbf{b} \in
 \mathbb{R}^n$.
 
-By applying a left preconditioning, the system (\ref{linsys}) gets the
-following shape:
-\begin{equation}
-P^{-1}A \mathbf{x}=P^{-1}\mathbf{b},
-\label{linsys_prec}
-\end{equation}
-(\ref{linsys_prec}) can be
-reinterpreted as a fixed point scheme
+Equation~(\ref{linsys}) can be reinterpreted as a fixed point scheme
 \begin{equation}
  \mathbf{x}=H\mathbf{x}+\mathbf{f}.
  \label{fixedpoint}
 \end{equation}
-where $H=I-P^{-1}A$ and $\mathbf{f}=P^{-1}\mathbf{b}$.
+where $H=I-A$ and $\mathbf{f}=\mathbf{b}$.
 
 Assuming that the spectral radius $\rho(H)<1$, the solution to
 (\ref{fixedpoint}) can be written in terms of a power series of
@@ -40,9 +34,7 @@ H_{k_0,k_1}H_{k_1,k_2}\cdots H_{k_{\ell-1}, k_{\ell}}f_{k_{\ell}}.
 \label{forward}
 \end{equation}
 The last equation can be reinterpreted as the realization of an estimator
-defined on a random walk.
-
-Let us start considering a random walk whose
+defined on a random walk.  Let us start considering a random walk whose
 state space $S$ is characterized by the set of indices of the forcing term
 $\mathbf{f}$:
 \[
@@ -52,12 +44,12 @@ Each $i$-th step of the random walk has a random variable
 $k_i$ associated with it. The realization of $k_i$ represents the index of the
 component of $\mathbf{f}$
 which is visited in the current step of the random walk.
-
-The way the transition probability is built and the way the initial state of
-the random walk is chosen give birth to two different approaches we are
-going to use: the \textit{Forward} and \textit{Adjoint} methods.
+The method of building the transition probabilities and the selection of
+the initial state of the random walk gives rise to two different approaches:
+the \textit{forward} and \textit{adjoint} methods.
 
 \subsection{Forward Method}
+\label{subsec:forward}
 
 The goal is to evaluate a functional such as
 \[
@@ -72,9 +64,8 @@ S\rightarrow [0,1]$ of the random walk such that
 h_i\rvert}.
 \]
 It is important to stress out that the role of vector $\mathbf{h}$ is
-restricted to the construction of the initial probability. Once that is done,
-it is
-not used anymore in the definition of the stochastic process.
+restricted to the construction of the initial probability and is not
+used further in the definition of the stochastic process.
 A possible choice for the transition probability $P$ can be
 \[
 p(k_i=j \;\lvert\;k_{i-1}=i )=P_{i,j}=\frac{\lvert H_{i,j}\rvert}{\sum_{k=1}^n
@@ -166,28 +157,27 @@ Therefore we have to impose the following conditions:
 f_{k_{\ell}}^2\bigg]<\infty
 \end{equation}
 
-The Forward method presented above, however, has the limitation of employing an
+The forward method presented above, however, has the limitation of employing an
 entire set of permutations to estimate just a single entry of
 the solution at a time. Therefore, in order to estimate the entire solution
-vector for \ref{linsys_prec}, we have to employ as many sets of permutation as
-the number of entries composing the vector. Of course this might turn to be
-extremely expensive both in terms of time and resources for most of the
-challenging problems coming from applications. This is essentially the reason
-why usually it is preferred to adopt another stochastic algorithm which is
-explained here following: the \textit{Adjoint} Monte Carlo method.
+vector for Eq.~\eqref{linsys}, we have to employ a separate set of
+permutations for each entry in the solution vector.
 
 \subsection{Adjoint Method}
+\label{subsec:adjoint}
 
 A second Monte Carlo method can be derived by considering the linear system
-adjoint to (\ref{linsys_prec})
+adjoint to (\ref{linsys})
 \begin{equation}
-(P^{-1}A)^T\mathbf{y}=\mathbf{d},
+A^T\mathbf{y}=\mathbf{d},
 \label{adj}
 \end{equation}
 where $\mathbf{y}$ and $\mathbf{d}$ are the adjoint solution and source term.
 
+\textcolor{red}{Provide some more details relating the adjoint to original problem.}
+
 By reformulating the fixed point scheme, introducing initial probability,
-transition probability and weights
+transition probability and weight
 sequences in the same fashion as done before, the expected value for the
 estimator becomes
 \begin{equation}
@@ -199,17 +189,17 @@ w_{k_{\ell-1},k_{\ell}}\delta_{k_{\ell},j}.
 \end{equation}
 This estimator is known in literature as \textit{collision} estimator.
 
-We can notice now that the component of the source vector, in each
-permutation of the random walk, is associated with the initial step. The
-Kronecker delta
-at the end of the series stands for a filter. It means that if the goal is to
-estimate the $j$-th component of the solution vector, just a subset of all the
-permutations gives a contribution to this. The only permutations considered are
-those ones that currently reside on the index associated with the entry to be
-estimated.
+The forward method adds a contribution to the component of the solution
+vector where the random walk began based on the value of the source vector
+in the state in which the walk currently resides.  The adjoint method,
+on the other hand, adds a contribution to the component of the solution
+vector where the random walk currently resides based on the value of the
+source vector in the state in which the walk began.
+The Kronecker delta at the end of the series represents a filter, indicating
+that only a subset of permutations contribute to the $j$-th component
+of the solution vector.
 
-The variance is
-
+The variance is given by
 \begin{equation}
 Var\bigg [\sum_{\ell=0}^\infty W_{\ell}
 f_{k_0}\delta_{k_{\ell},j}\bigg]=E\bigg[\sum_{\ell=0}^\infty W_{\ell}^2
@@ -219,8 +209,9 @@ f_{k_0}\delta_{k_{\ell},j}\bigg]\bigg )^2\quad j=1,\cdots,n
 \label{adj_var}.
 \end{equation}
 
-On the same lead of what done for the Forward method, there is need to impose
-finiteness of the expected value and second moment. Therefore the following
+Along the same lines as the development for the forward method, we must
+impose finiteness of the expected value and second moment.
+Therefore the following
 conditions must be verified:
 
 \begin{equation}
@@ -233,15 +224,14 @@ and
 f_{k_0}^2\delta_{k_{\ell},j}\bigg]<\infty \quad j=1,\cdots,n.
 \end{equation}
 
-The main advantage of this method, compared to the Forward one, consists in the
-fact that a single set of permutation is used to estimate the entire solution
-vector. Therefore, in general, this algorithm has to be preferred to the
-previous one since it enables to reduce dramatically the computational burden.
+The main advantage of this method, compared to the forward one, consists in the
+fact that a single set of permutations is used to estimate the entire solution
+vector.  Unless only a small portion of the problem is of interest, this
+property often leads to the adjoint method being favored over the forward method.
 
 In literature another estimator is employed along with the Adjoint Monte Carlo
 method, the so called \textit{expected value} estimator. Its
 formulations is as follows:
-
 \begin{equation}
 \theta_j=E\bigg[f_j + \sum_{\ell=0}^\infty
 W_{\ell}H_{k_{\ell}, j}^T\bigg]=f_j
@@ -251,11 +241,10 @@ w_{k_{\ell-1},k_{\ell}}H_{k_{\ell},j}^T.
 \label{adj_mean1}
 \end{equation}
 
-Differently from the collision estimator, the expected value estimator averages
+Thus, the expected value estimator averages
 the deterministic contribution of the iteration matrix over all the potential
 states $j$ that might be reached from the current state $\ell$. The variance
 in this case becomes:
-
 \begin{equation}
 Var\bigg [\sum_{\ell=0}^\infty W_{\ell}
 f_{k_0}H_{k_{\ell},j}^T\bigg]=E\bigg[\sum_{\ell=0}^\infty W_{\ell}^2
@@ -265,39 +254,41 @@ f_{k_0}H_{k_{\ell},j}^T\bigg]\bigg )^2\quad j=1,\cdots,n
 \label{adj_var}.
 \end{equation}
 
-In the sections dedicated to the numerical tests, both the collision estimator
-and the expected value are employed, in order to test their effectiveness.
-
 \subsection{Hybrid Stochastic/Deterministic Methods}
 
-Even if the standard Monte Carlo, in both its Forward and Adjoint formulation,
-has the advantage of being embarrassingly parallelizable (because of the
-independence of the samplings employed), it has a drawback as
-well. In fact its slow rate of convergence, associated with the
-$\frac{1}{\sqrt{N}}$ behavior predicted but the CLT, prevents its use for
-problems of actual interest in applied linear algebra (with many d.o.f's).
+The direct methods described in Sections~\ref{subsec:foward} and
+\ref{subsec:adjoint} suffer from a slow rate of convergence due to the
+$\frac{1}{\sqrt{N}}$ behavior dictated by the central limit theorem ($N$ here
+is the number of random walks used to estimate the solution).  Furthermore,
+when the spectral radius of the iteration matrix is close to unity, each
+individual random walk may require a large number of transitions to
+approximate the corresponding components in the Neumann series.
+To offset the slow convergence of the central limit theorem, schemes have
+been proposed which combine traditional fixed-point iterative methods with
+the stochastic solvers.  The first such method, due to Halton, was termed
+the Sequential Monte Carlo (SMC) method, and can be written as:
+\begin{algorithm}[H]
+ \KwData{$H$, $\mathbf{b}$, $\mathbf{x}_0$}
+ \KwResult{$x_{num}$}
+ $\mathbf{x}^{l}=\mathbf{x}_0$\;
+ \While{not reached convergence}{
+  $\mathbf{r}^{l}=\mathbf{b}-A\mathbf{x}^{l}$\;
+  $\delta \mathbf{x}^{l+1}=(I-H)^{-1}\mathbf{r}^{l}$\;
+  $\mathbf{x}^{l+1}=\mathbf{x}^{l}+\delta \mathbf{x}^{l+1}$\;
+ }
+ $x_{num}=x^{l+1}$\;
+ \caption{Sequential Monte Carlo}
+\end{algorithm}
+The Monte Carlo linear solver method is used to compute the update $\delta
+\mathbf{x}^{l}$.  This algorithm is equivalent to a preconditioned Richardson
+iteration in which the Monte Carlo process acts as the preconditioner.
+Because Monte Carlo is only applied within a single iteration, the central
+limit theorem is only applicable within that iteration rather than to
+the overall convergence behavior of the algorithm.
 
-Moreover, when the spectral radius of the iteration matrix is close to the
-unit
-value, Monte Carlo direct methods reach convergence after an excessive number
-of steps for each
-permutation. In particular this aspect will be pointed out more by some
-numerical tests analyzed in the upcoming sections of this work.
-This motivation makes the standard Mote Carlo paradigm even more
-unpractical for solving linear systems associated with realistic applications.
-\newline
-
-To cope with this, in the early 2000's Evans et al. introduced a new method:
-the
-\textit{Monte Carlo Synthetic Acceleration (MCSA)}
-(\cite{ESW2013} and \cite{EMSH2014}). Earlier contributions on these direction
-are attributed also to other scientists (e.g. \textit{Sequential Method} by
-J.H. Halton). However the MCSA is the algorithm we are going to focus on more
-hereafter. If
-we think about a fixed point formulation of the problem
-such as $\mathbf{x}=H\mathbf{x}+\mathbf{b}$, then the Monte Carlo Synthetic
-Acceleration assumes this form
-
+A further extension of Halton's method, termed
+\textit{Monte Carlo Synthetic Acceleration} (MCSA), has been recently
+introduced (\cite{ESW2013} and \cite{EMSH2014}).  The MCSA algorithm can be written as
 \begin{algorithm}[H]
  \KwData{$H$, $\mathbf{b}$, $\mathbf{x}_0$}
  \KwResult{$x_{num}$}
@@ -312,27 +303,10 @@ Acceleration assumes this form
  $x_{num}=x^{l+1}$\;
  \caption{Monte Carlo Synthetic Acceleration}
 \end{algorithm}
-The Monte Carlo method is used to compute the updating contribution $\delta
-\mathbf{x}^{l+\frac{1}{2}}$.
-
-The role of the first line of the iterative process has the goal to compress
-the residual of the previous iteration. This is the actual difference
-between the MCSA and the Sequential Monte Carlo. Once this done, the corrected
-residual
-is employed to compute an update $\delta x^{1+\frac{1}{2}}$ to the solution via
-one of the Monte Carlo techniques introduced before. The utility of compressing
-the residual at the very beginning of the iteration will be shown in the two
-last test cases for numerical validations.
-The intent of MCSA is to designate most of the time employed by the
-computation to the accomplishment of the stochastic part of the algorithm.
-This
-is useful to decrease the probability of fault occurrence in the non-resilient
-steps, which is represented by the non-stochastic component of the numerical
-scheme presented above. In particular, the higher is the percentage of time
-spent on the computation of $\delta x^{1+\frac{1}{2}}$ via Monte Carlo, the
-better it should be in terms of resilience.
-
-\subsubsection{Sequential Monte Carlo}
-
-\subsubsection{Monte Carlo Synthetic Acceleration}
+As with SMC, a Monte Carlo linear solver is used to compute the updating
+contribution $\delta \mathbf{x}^{l+\frac{1}{2}}$.  In this approach, an
+extra step of unpreconditioned Richardson iteration is added to smooth out
+some of the high-frequency noise introduced by the Monte Carlo process.
+This way, the deterministic and stochastic components of the algorithm
+act in a complementary fashion.
 
