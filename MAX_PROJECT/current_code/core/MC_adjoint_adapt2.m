@@ -120,7 +120,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
    %     Z=[Z; X];
    %     x=mean(Z,1)';
         x=x*tot_walks+mean(X,1)'*n_walks;
-        y=[y ((sqrt(n_walks)*y(:,end)).^2)*(tot_walks-1)+(var(X,1)')*(n_walks-1)]; 
+        y=[y ((sqrt(tot_walks)*y(:,end)).^2)*(tot_walks-1)+(var(X,1)')*(n_walks-1)]; 
         tot_walks=tot_walks+n_walks;
         x=x/(tot_walks);
         y=y(:,end);
@@ -242,7 +242,7 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
    %     Z=[Z; X];
    %     x=mean(Z,1)';
         x=x*tot_walks+mean(X,1)'*n_walks;
-        y=[y ((sqrt(n_walks)*y(:,end)).^2)*(tot_walks-1)+(var(X,1)')*(n_walks-1)]; 
+        y=[y ((sqrt(tot_walks)*y(:,end)).^2)*(tot_walks-1)+(var(X,1)')*(n_walks-1)]; 
         tot_walks=tot_walks+n_walks;
         x=x/(tot_walks);
         y=y(:,end);

@@ -1,8 +1,9 @@
-function [sol, rel_res, var, VAR, DX, NWALKS, tally, count]=SEQ_forward1(fp, P, cdf, numer, stat)
+function [sol, rel_res, VAR, REL_RES, DX, NWALKS, tally, count]=SEQ_forward1(fp, P, cdf, numer, stat)
 
 VAR=[];
 NWALKS=[];
 DX=[];
+REL_RES=[];
 n_walks=stat.nwalks;
 max_step=stat.max_step;
 eps=numer.eps;
@@ -19,19 +20,24 @@ if ~ strcmp(fp.precond, 'alternating')
     H=fp.H;
     rhs=fp.rhs;
     sol=ones(size(H,1),1);
-    var=zeros(size(H,1),1);
 
     %matrix to be used for the computation of the redisual at each Richardson
     %iteration
     B=(eye(size(H))-H);
 
     rel_residual=norm(rhs-B*sol,2)/norm(rhs,2);
+    REL_RES=[REL_RES rel_residual];  
     count=1;
 
     if stat.adapt_walks==1 || stat.adapt_cutoff==1
         while(rel_residual>eps && count<=rich_it)
             display(strcat('iteration number', {' '}, num2str(count)))
             r=rhs-B*sol;
+            
+            if stat.adapt_walks==1 && count>1 && REL_RES(end)>REL_RES(end-1)
+                 stat.varcut=stat.varcut/ceil(REL_RES(end)/min(REL_RES));
+            end            
+            
             [dx, dvar, X]=MC_forward_adapt(H, r, P, cdf, stat);
             NWALKS=[NWALKS size(X,1)];       
             sol=sol+dx;
@@ -40,6 +46,7 @@ if ~ strcmp(fp.precond, 'alternating')
             rel_residual=norm(r,2)/norm(rhs,2);
             VAR=[VAR abs(dvar)];
             DX=[DX dx];
+            REL_RES=[REL_RES rel_residual]; 
             var=var+abs(dvar);
             count=count+1;
         end
@@ -55,7 +62,6 @@ if ~ strcmp(fp.precond, 'alternating')
             rel_residual=norm(r,2)/norm(rhs,2);
             VAR=[VAR abs(dvar)];
             DX=[DX dx];
-            var=var+abs(dvar);
             count=count+1;
         end
     end
@@ -85,6 +91,7 @@ else
     rhs2=fp.rhs2;
     sol=ones(size(H1,1),1);
     rel_residual=norm(rhs1-B1*sol,2)/norm(rhs1,2);
+    REL_RES=[REL_RES rel_residual];  
     count=1;
 
     var=zeros(size(H1,1),1);
@@ -97,12 +104,23 @@ else
                 NWALKS=[NWALKS size(X,1)];        
                 sol=sol+dx;
                 r=rhs1-B1*sol;
+                
+                if stat.adapt_walks==1 && count>1 && REL_RES(end)>REL_RES(end-1)
+                   stat.varcut=stat.varcut/ceil(REL_RES(end)/min(REL_RES));
+                end                          
+                
                 VAR=[VAR dvar];
                 DX=[DX dx];
                 var=var+abs(dvar);
                 rel_residual=norm(r,2)/norm(rhs1,2);
+                REL_RES=[REL_RES rel_residual]; 
             else
                 r=rhs2-B2*sol;
+                
+                if stat.adapt_walks==1 && count>1 && REL_RES(end)>REL_RES(end-1)
+                   stat.varcut=stat.varcut/ceil(REL_RES(end)/min(REL_RES));
+                end                        
+                
                 [dx, dvar, X]=MC_forward_adapt(H2, r, P.P2, cdf.cdf2, stat);
                 NWALKS=[NWALKS size(X,1)];
                 sol=sol+dx;
@@ -111,6 +129,7 @@ else
                 DX=[DX dx];
                 var=var+abs(dvar);
                 rel_residual=norm(r,2)/norm(rhs2,2);
+                REL_RES=[REL_RES rel_residual];  
             end
 
             count=count+1;

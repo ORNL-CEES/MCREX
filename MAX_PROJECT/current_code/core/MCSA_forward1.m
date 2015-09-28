@@ -1,8 +1,9 @@
-function [sol, rel_res, VAR, DX, NWALKS, tally, count]=MCSA_forward1(fp, P, cdf, numer, stat)
+function [sol, rel_res, VAR, REL_RES, DX, NWALKS, tally, count]=MCSA_forward1(fp, P, cdf, numer, stat)
 
 VAR=[];
 NWALKS=[];
 DX=[];
+REL_RES=[];
 n_walks=stat.nwalks;
 max_step=stat.max_step;
 eps=numer.eps;
@@ -27,6 +28,7 @@ if ~ strcmp(fp.precond, 'alternating')
 
     r=rhs-B*sol;
     rel_residual=norm(r,2)/norm(rhs,2);
+    REL_RES=[REL_RES rel_residual];  
     count=1;
 
     if stat.adapt_walks==1 || stat.adapt_cutoff==1
@@ -34,12 +36,18 @@ if ~ strcmp(fp.precond, 'alternating')
             display(strcat('iteration number', {' '}, num2str(count)))
             sol=sol+r; 
             r=rhs-B*sol;
+            
+            if stat.adapt_walks==1 && count>1 && REL_RES(end)>REL_RES(end-1)
+                 stat.varcut=stat.varcut/ceil(REL_RES(end)/min(REL_RES));
+            end
+            
             [dx, dvar, nwalks]=MC_forward_adapt(H, r, P, cdf, stat);
             NWALKS=[NWALKS nwalks];       
             sol=sol+dx;
             r=rhs-B*sol;
             display(strcat('residual norm: ', num2str(norm(r)/norm(rhs))));    
             rel_residual=norm(r,2)/norm(rhs,2);
+            REL_RES=[REL_RES rel_residual];  
             VAR=[VAR dvar];
             DX=[DX dx];
             count=count+1;
@@ -55,6 +63,7 @@ if ~ strcmp(fp.precond, 'alternating')
             r=rhs-B*sol;
             display(strcat('residual norm: ', num2str(norm(r)/norm(rhs))));    
             rel_residual=norm(r,2)/norm(rhs,2);
+            REL_RES=[REL_RES rel_residual];  
             VAR=[VAR dvar];
             DX=[DX dx];
             count=count+1;
@@ -93,6 +102,7 @@ else
 
     r=rhs1-B1*sol;
     rel_residual=norm(r,2)/norm(rhs1,2);
+    REL_RES=[REL_RES rel_residual];  
     count=1;
 
     if stat.adapt_walks==1 || stat.adapt_cutoff==1
@@ -104,21 +114,33 @@ else
                NWALKS=[NWALKS nwalks];
                sol=sol+dx;
                r=rhs1-B1*sol;
+               
+               if stat.adapt_walks==1 && count>1 && REL_RES(end)>REL_RES(end-1)
+                  stat.varcut=stat.varcut/ceil(REL_RES(end)/min(REL_RES));
+               end              
+               
                VAR1=[VAR1 dvar];
                VAR=[VAR dvar];
                DX=[DX dx];
                rel_residual=norm(r,2)/norm(rhs1,2);
+               REL_RES=[REL_RES rel_residual];  
            else
                sol=sol+r;
                r=rhs2-B2*sol;
+               
+               if stat.adapt_walks==1 && count>1 && REL_RES(end)>REL_RES(end-1)
+                  stat.varcut=stat.varcut/ceil(REL_RES(end)/min(REL_RES));
+               end                 
+               
                [dx, dvar, nwalks]=MC_forward_adapt(H2, r, P.P2, cdf.cdf2, stat);
                NWALKS=[NWALKS nwalks];
                sol=sol+dx;  
-               r=rhs2-B2*sol;
+               r=rhs2-B2*sol;  
                VAR2=[VAR2 dvar];
                VAR=[VAR dvar];
                DX=[DX dx];
                rel_residual=norm(r,2)/norm(rhs2,2);
+               REL_RES=[REL_RES rel_residual];  
            end
 
            count=count+1;
@@ -137,6 +159,7 @@ else
                VAR=[VAR dvar];
                DX=[DX dx];
                rel_residual=norm(r,2)/norm(rhs1,2);
+               REL_RES=[REL_RES rel_residual];  
            else
                sol=sol+r;
                r=rhs2-B2*sol;
@@ -148,6 +171,7 @@ else
                VAR=[VAR dvar];
                DX=[DX dx];
                rel_residual=norm(r,2)/norm(rhs2,2);
+               REL_RES=[REL_RES rel_residual];  
            end
            count=count+1;
        end

@@ -1,13 +1,13 @@
-function [H,rhs, precond, Prec]=fixed_point(matrix)
+function [H,rhs,u, precond, Prec]=fixed_point(matrix)
 
     addpath(strcat('../utils/model_problems/', matrix))
 
     if strcmp(matrix, 'simple')
         dimen=50;
         A=4*diag(ones(dimen,1)) - diag(ones(dimen-1,1),1) - diag(ones(dimen-1,1),-1);
-        rhs=ones(dimen,1);
-        u=A\rhs;
         A=sparse(A);
+        u=ones(size(A,1),1);
+        rhs=A*u;
 
         Prec=diag(diag(A));
         Prec=sparse(Prec); 
@@ -93,7 +93,7 @@ function [H,rhs, precond, Prec]=fixed_point(matrix)
          Prec=sparse(diag(diag(A)));
          H=speye((size(A,1)),(size(A,1)))-A*sparse(inv(Prec));
          precond='diag';
-    elseif strcmp(matrix, 'sp1_ainv') || strcmp(matrix, 'SPN_ainv')
+    elseif strcmp(matrix, 'sp1_ainv') || strcmp(matrix, 'SPN_ainv')  
         load('A.mat')
         load('prec_z')
         Z_t=spconvert(prec_z);
@@ -114,7 +114,101 @@ function [H,rhs, precond, Prec]=fixed_point(matrix)
         rhs=A*u; 
         Prec=C;
         precond='ainv';
+        
+    elseif strcmp(matrix, 'laplacian_2d_ainv')
+        load('A.mat')
+        load('prec_z')
+        Z_t=spconvert(prec_z);
+        Z_t=sparse(Z_t);
+        load('prec_w')
+        W=spconvert(prec_w);
+        W=sparse(W);
+        nn=size(Z_t,1);
+        W=W(1:nn,1:nn);
+        Z_t=Z_t(1:nn,1:nn);
 
+        D_inv=sparse(diag(diag(Z_t)));
+        Z=Z_t'*inv(D_inv);
+        C=sparse(Z * D_inv * W);
+        H = sparse(speye(nn) - C*A);
+        
+        u=ones(size(A,1),1);
+        rhs=A*u; 
+        Prec=C;
+        precond='ainv';    
+        
+    elseif strcmp(matrix, 'parabolic_ifiss')
+        load('A.mat')
+        load('prec_z')
+        Z_t=spconvert(prec_z);
+        Z_t=sparse(Z_t);
+        load('prec_w')
+        W=spconvert(prec_w);
+        W=sparse(W);
+        nn=size(Z_t,1);
+        W=W(1:nn,1:nn);
+        Z_t=Z_t(1:nn,1:nn);
+        D_inv=sparse(diag(diag(Z_t)));
+        Z=Z_t'*inv(D_inv);
+        C=sparse(Z * D_inv * W);
+        H = sparse(speye(size(A,1)) - A*C);
+        
+        u=ones(size(A,1),1);
+        rhs=A*u; 
+        Prec=C;
+        precond='ainv';    
+    
+                
+      elseif strcmp(matrix, 'parabolic_freefemS')
+        load('A.mat')
+        load('prec_z')
+        Z_t=spconvert(prec_z);
+        Z_t=sparse(Z_t);
+        load('prec_w')
+        W=spconvert(prec_w);
+        W=sparse(W);
+        nn=size(Z_t,1);
+        W=W(1:nn,1:nn);
+        Z_t=Z_t(1:nn,1:nn);
+        D_inv=sparse(diag(diag(Z_t)));
+        Z=Z_t'*inv(D_inv);
+        C=sparse(Z * D_inv * W);
+        H = sparse(speye(size(A,1)) - C*A);
+        
+        u=ones(size(A,1),1);
+        rhs=C*A*u; 
+        Prec=C;
+        precond='ainv';  
+        
+      elseif strcmp(matrix, 'parabolic_freefemL')
+        load('A.mat')
+        load('prec_z')
+        Z_t=spconvert(prec_z);
+        Z_t=sparse(Z_t);
+        load('prec_w')
+        W=spconvert(prec_w);
+        W=sparse(W);
+        nn=size(Z_t,1);
+        W=W(1:nn,1:nn);
+        Z_t=Z_t(1:nn,1:nn);
+        D_inv=sparse(diag(diag(Z_t)));
+        Z=Z_t'*inv(D_inv);
+        C=sparse(Z * D_inv * W);
+        H = sparse(speye(size(A,1)) - C*A);
+        
+        u=ones(size(A,1),1);
+        rhs=C*A*u; 
+        Prec=C;
+        precond='ainv';  
+        
+      elseif strcmp(matrix, 'parabolic_freefemL_diag') || strcmp(matrix, 'parabolic_freefemS_diag')
+         load('A.mat')
+         u=ones(size(A,1),1);
+         rhs=A*u;
+         Prec=sparse(diag(diag(A)));
+         H=speye((size(A,1)),(size(A,1)))-A*sparse(inv(Prec));
+         precond='diag';
+        
     else
          [A, dimen, ~, ~] = mmread('A.mtx');
          rhs=mmread('b.mtx');

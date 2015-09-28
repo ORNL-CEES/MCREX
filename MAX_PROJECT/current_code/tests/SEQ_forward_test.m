@@ -7,7 +7,7 @@ addpath('../utils')
 
 matrix='thermal_eq_diff';
 
-[H,rhs, precond, Prec]=fixed_point(matrix);
+[H,rhs, u, precond, Prec]=fixed_point(matrix);
 
 %% Numerical setting
 
