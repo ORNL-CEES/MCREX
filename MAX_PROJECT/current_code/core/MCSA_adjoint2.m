@@ -1,4 +1,4 @@
-function [sol, rel_res, VAR, RES, DX, NWALKS, tally, count, reject]=MCSA_adjoint2(fp, dist, P, cdf, numer, stat)
+function [sol, rel_res, VAR, REL_RES, DX, NWALKS, tally, count, reject]=MCSA_adjoint2(fp, dist, P, cdf, numer, stat)
 
 DX=[];
 NWALKS=[];
@@ -9,7 +9,7 @@ max_step=stat.max_step;
 eps=numer.eps;
 rich_it=numer.rich_it;
 VAR=cell(rich_it,1);
-RES=cell(rich_it,1);
+REL_RES=[];
 
 if ~ strcmp(fp.precond, 'alternating')
 
@@ -29,6 +29,7 @@ if ~ strcmp(fp.precond, 'alternating')
 
     r=rhs-B*sol;
     rel_residual=norm(r,2)/norm(rhs,2);
+    REL_RES=[REL_RES rel residual];
     count=1;
 
     if stat.adapt_walks==1 || stat.adapt_cutoff==1
@@ -38,8 +39,8 @@ if ~ strcmp(fp.precond, 'alternating')
              r=rhs-B*sol;
              [Pb, cdfb]=prob_adjoint_rhs(r, dist);
              
-             if stat.adapt_walks==1 && count>1 && R(end)>R(end-1) 
-                 stat.varcut=stat.varcut/ceil(R(end)/min(R));
+             if stat.adapt_walks==1 && count>1 && REL_RES(end)>REL_RES(end-1)
+                 stat.varcut=stat.varcut/ceil(REL_RES(end)/min(REL_RES));
              end
              
              [dx, dvar, tot_walks, aux, resid, rej]=MC_adjoint_adapt2(H, r, P, cdf, Pb, cdfb, stat);
@@ -50,8 +51,8 @@ if ~ strcmp(fp.precond, 'alternating')
              r=rhs-B*sol;
              display(strcat('residual norm: ', num2str(norm(r)/norm(rhs))));
              rel_residual=norm(r,2)/norm(rhs,2);
+             REL_RES=[REL_RES rel_residual];
              VAR{count}=dvar;
-             RES{count}=resid;
              DX=[DX dx];
              count=count+1;
         end
@@ -69,6 +70,7 @@ if ~ strcmp(fp.precond, 'alternating')
              r=rhs-B*sol;
              display(strcat('residual norm: ', num2str(norm(r)/norm(rhs))));
              rel_residual=norm(r,2)/norm(rhs,2);
+             REL_RES=[REL_RES rel_residual];
              VAR=[VAR dvar];            
              DX=[DX dx];
              count=count+1;
@@ -99,10 +101,11 @@ else
 
     %matrix to be used for the computation of the redisual at each Richardson
     %iteration
-    B1=(eye(size(H1))-H1);
-    B2=(eye(size(H2))-H2);
+    B1=sparse(speye(size(H1))-H1);
+    B2=sparse(speye(size(H2))-H2);
 
     rel_residual=norm(rhs1-B1*sol,2)/norm(rhs1,2);
+    REL_RES=[REL_RES rel_residual];
     count=1;
     
     VAR1=[];
@@ -116,8 +119,8 @@ else
                 r=rhs1-B1*sol;
                 [Pb, cdfb]=prob_adjoint_rhs(r, dist);
                 
-                if stat.adapt_walks==1 && count>1 && R(end)>R(end-1) 
-                   stat.varcut=stat.varcut/ceil(R(end)/min(R));
+                if stat.adapt_walks==1 && count>1 && REL_RES(end)>REL_RES(end-1) 
+                   stat.varcut=stat.varcut/ceil(REL_RES(end)/min(REL_RES));
                 end               
                 
                 [dx, dvar, tot_walks, aux, resid, rej]=MC_adjoint_adapt2(H1, r, P.P1, cdf.cdf1, Pb, cdfb, stat);
@@ -127,16 +130,16 @@ else
                 sol=sol+dx;
                 r=rhs1-B1*sol;
                 VAR{count}=dvar;
-                RES{count}=resid;
                 DX=[DX dx];
                 rel_residual=norm(r,2)/norm(rhs1,2);
+                REL_RES=[REL_RES rel_residual];
             else
                 sol=sol+r; 
                 r=rhs2-B2*sol;
                 [Pb, cdfb]=prob_adjoint_rhs(r, dist);
                 
-                if stat.adapt_walks==1 && count>1 && R(end)>R(end-1) 
-                   stat.varcut=stat.varcut/ceil(R(end)/min(R));
+                if stat.adapt_walks==1 && count>1 && REL_RES(end)>REL_RES(end-1) 
+                   stat.varcut=stat.varcut/ceil(REL_RES(end)/min(REL_RES));
                 end           
                 
                 [dx, dvar, tot_walks, aux, resid, rej]=MC_adjoint_adapt2(H2, r, P.P2, cdf.cdf2, Pb, cdfb, stat);
@@ -146,9 +149,9 @@ else
                 sol=sol+dx;
                 r=rhs2-B2*sol;
                 VAR{count}=dvar;
-                RES{count}=resid;
                 DX=[DX dx];
                 rel_residual=norm(r,2)/norm(rhs2,2);
+                REL_RES=[REL_RES rel_residual];
             end
             count=count+1;
         end
@@ -168,6 +171,7 @@ else
                 VAR=[VAR dvar];
                 DX=[DX dx];
                 rel_residual=norm(r,2)/norm(rhs1,2);
+                REL_RES=[REL_RES rel residual];
             else
                 sol=sol+r; 
                 r=rhs2-B2*sol;
@@ -180,6 +184,7 @@ else
                 VAR=[VAR dvar];
                 DX=[DX dx];
                 rel_residual=norm(r,2)/norm(rhs2,2);
+                REL_RES=[REL_RES rel_residual];
             end
             count=count+1;
         end

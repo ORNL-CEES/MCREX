@@ -4,8 +4,8 @@ function [Pc]=prob_adjoint_complement(A, p)
 
  
    if (p == 0)    
-        P=zeros(size(A));
-        for i=1:size(P,1)
+        P=sparse(zeros(size(A)));
+        for i=1:size(A,2)
                 if sum(abs(A(:,i)))>0
                     aux=find(A(:,i));
                     for j=1:length(aux)
@@ -15,8 +15,8 @@ function [Pc]=prob_adjoint_complement(A, p)
         end
 
    else
-        P=zeros(size(A));
-        for i=1:size(P,1)
+        P=sparse(zeros(size(A)));
+        for i=1:size(A,2)
                 aux=find(A(:,i));
                 if sum(abs(A(aux,i)))>0
                     for j=1:length(aux)
@@ -29,7 +29,7 @@ function [Pc]=prob_adjoint_complement(A, p)
    
     P=sparse(P);
     
-    Pc=zeros(size(A));
+    Pc=sparse(zeros(size(A)));
     for i=1:size(P,1)
         aux=find(P(i,:));
         l=length(aux);

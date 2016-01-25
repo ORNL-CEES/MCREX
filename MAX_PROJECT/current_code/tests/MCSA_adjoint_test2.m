@@ -4,10 +4,12 @@ addpath('../utils')
 % 'jpwh_991'; 'fs_680_1'; 'ifiss_convdiff'; 'shifted_laplacian_1d';
 % 'thermal_eq_diff'; 'laplacian_2d'; 'SPN'; 'sp1'; 'SPN_shift';
 % 'sp1_shift'; 'sp5_shift'; 'sp3_shift'; 'sp1_ainv': 'SPN_ainv';
-
+% 'laplacian_2d_ainv'; 'parabolic_ifiss'; 
+% 'parabolic_freefemS'; 'parabolic_freefemL'; 
+% 'parabolic_freefemS_diag'; 'parabolic_freefemL_diag'; 
 
 matrix='jpwh_991';
-[H,rhs, precond, Prec]=fixed_point(matrix);
+[H,rhs, u, precond, Prec]=fixed_point(matrix);
 
 %% Numerical setting
 
@@ -45,15 +47,22 @@ start=cputime;
 
 finish=cputime;
 
+% for i=1:iterations
+%     figure()
+%     norm_var=[];
+%     for j=1:size(VAR{i},2)
+%         norm_var=[norm_var norm(VAR{i}(:,j))];
+%     end
+%     loglog(norm_var, '-o')
+% end
 
-for i=1:iterations
-    figure()
-    norm_var=[];
-    for j=1:size(VAR{i},2)
-        norm_var=[norm_var norm(VAR{i}(:,j))];
-    end
-    loglog(norm_var, '-o')
+
+if strcmp(matrix, 'sp1_shift') || strcmp(matrix, 'sp3_shift') || strcmp(matrix, 'SPN_shift') || strcmp(matrix, 'sp5_shift') || ...
+     strcmp(matrix, 'parabolic_freefemL_diag') || strcmp(matrix, 'parabolic_freefemS_diag')    
+    sol=Prec\sol;
+    
+elseif strcmp(matrix, 'sp1_ainv') || strcmp(matrix, 'SPN_ainv')  || strcmp(matrix, 'parabolic_ifiss')
+    sol=Prec*sol;
 end
-
 
 save(strcat('../results/MCSA_adjoint2/MCSA_adjoint_test2_', matrix, '_p=', num2str(dist)))

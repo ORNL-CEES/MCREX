@@ -7,7 +7,7 @@ addpath('../utils')
 
 matrix='thermal_eq_diff';
 
-[H,rhs, precond, Prec]=fixed_point(matrix);
+[H,rhs, u, precond, Prec]=fixed_point(matrix);
 
 %% Numerical setting
 
@@ -37,25 +37,31 @@ fp.precond='diag';
 %% Monte Carlo Adjoint Method resolution
 
 start=cputime;
-[sol, rel_residual, VAR, RES, DX, NWALKS, tally, iterations, reject]=SEQ_adjoint(fp, dist, P, cdf, numer, stat);
+[sol, rel_residual, ~, ~, ~, NWALKS, tally, iterations, reject]=SEQ_adjoint(fp, dist, P, cdf, numer, stat);
 finish=cputime;
 
 
-for i=1:iterations
-    figure()
-    norm_var=[];
-    for j=1:size(VAR{i},2)
-        norm_var=[norm_var norm(VAR{i}(:,j))];
-    end
-    loglog(norm_var, '-o')
+% for i=1:iterations
+%     figure()
+%     norm_var=[];
+%     for j=1:size(VAR{i},2)
+%         norm_var=[norm_var norm(VAR{i}(:,j))];
+%     end
+%     loglog(norm_var, '-o')
+% end
+% 
+% for i=1:iterations
+%     figure()
+%     loglog(RES{i}, '-o')
+%     %axis([1 length(norm_res) 10^(-1) 10^0]);
+% end
+
+if strcmp(matrix, 'sp1_shift') || strcmp(matrix, 'sp3_shift') || strcmp(matrix, 'SPN_shift') || strcmp(matrix, 'sp5_shift') || ...
+     strcmp(matrix, 'parabolic_freefemL_diag') || strcmp(matrix, 'parabolic_freefemS_diag')    
+    sol=Prec\sol;
+    
+elseif strcmp(matrix, 'sp1_ainv') || strcmp(matrix, 'SPN_ainv')  || strcmp(matrix, 'parabolic_ifiss')
+    sol=Prec*sol;
 end
-
-for i=1:iterations
-    figure()
-    loglog(RES{i}, '-o')
-    %axis([1 length(norm_res) 10^(-1) 10^0]);
-end
-
-
 
 save(strcat('../results/MCSA_adjoint2/MCSA_adjoint_test2_', matrix, '_p=', num2str(dist)))

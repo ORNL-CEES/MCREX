@@ -1,0 +1,58 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{mathtools}
+\usepackage{bbm}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{subfig}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subfig}
+\usepackage{tabu}
+\usepackage{multirow}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[]{algorithm2e}
+\usepackage[autostyle,english=british]{csquotes}
+\usepackage{minitoc}
+
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{prop}{Proposition}
+
+%opening
+\title{Monte Carlo solvers for sparse linear systems}
+\author{Michele Benzi, Massimiliano Lupo Pasini}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We consider linear systems of equations characterized by a sparsity pattern,
+focusing in particular on problems derived from the discretization of partial
+differential equations. We propose a treatise of the current stochastic
+techniques present in literature that might be employed to solve the problems at
+hand. New theoretical results are introduced as sufficient criteria for the
+guarantee of the convergence of the methods analyzed. An analysis about viable
+preconditioners is accomplished as well.
+\end{abstract}
+
+\input{intro}
+\input{mcls}
+\input{convergence}
+\input{results}
+\input{conclusion}
+
+\addcontentsline{toc}{chapter}{\refname}
+\bibliographystyle{alpha}
+\bibliography{library}
+%\nocite{*}
+
+\end{document}

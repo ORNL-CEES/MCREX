@@ -1,0 +1,312 @@
+\section{Stochastic Linear Solvers}
+\label{sec:mcls}
+
+We consider the solution of systems of linear equations of the form
+\begin{equation}
+A \mathbf{x}=\mathbf{b},
+\label{linsys}
+\end{equation}
+where $A\in \mathbb{R}^{n\times n}$ and $\mathbf{x}$, $\mathbf{b} \in
+\mathbb{R}^n$.
+
+Equation~(\ref{linsys}) can be reinterpreted as a fixed point scheme
+\begin{equation}
+ \mathbf{x}=H\mathbf{x}+\mathbf{f}.
+ \label{fixedpoint}
+\end{equation}
+where $H=I-A$ and $\mathbf{f}=\mathbf{b}$.
+
+Assuming that the spectral radius $\rho(H)<1$, the solution to
+(\ref{fixedpoint}) can be written in terms of a power series of
+$H$ (Neumann series)
+\[
+\mathbf{x}=\sum_{i=0}^\infty H^i\mathbf{f}.
+\]
+Therefore the fixed point scheme generates a sequence of approximate solutions
+$\{\mathbf{x}^{(k)}\}_{k=0}^{\infty}$ which converges to the exact solution
+regardless of the initial guess $\mathbf{x}_0$.
+
+By restricting the attention to a single component of $\mathbf{x}$ we
+have
+\begin{equation}
+x_i=\sum_{\ell=0}^\infty \sum_{k_1}^n\sum_{k_2}^n\cdots \sum_{k_{\ell}=1}^n
+H_{k_0,k_1}H_{k_1,k_2}\cdots H_{k_{\ell-1}, k_{\ell}}f_{k_{\ell}}.
+\label{forward}
+\end{equation}
+The last equation can be reinterpreted as the realization of an estimator
+defined on a random walk.  Let us start considering a random walk whose
+state space $S$ is characterized by the set of indices of the forcing term
+$\mathbf{f}$:
+\[
+S=\{1,2,\cdots, n\} \subset \mathbb{N}.
+\]
+Each $i$-th step of the random walk has a random variable
+$k_i$ associated with it. The realization of $k_i$ represents the index of the
+component of $\mathbf{f}$
+which is visited in the current step of the random walk.
+The method of building the transition probabilities and the selection of
+the initial state of the random walk gives rise to two different approaches:
+the \textit{forward} and \textit{adjoint} methods.
+
+\subsection{Forward Method}
+\label{subsec:forward}
+
+The goal is to evaluate a functional such as
+\[
+J(\mathbf{x})=(\mathbf{h},\mathbf{x})=\sum_{i=1}^n h_i x_i.
+\]
+where $\mathbf{h}\in \mathbb{R}^n$ is the Riesz representative in
+$\mathbb{R}^n$ of the functional $J$.
+We can use it to build the initial probability $\tilde{p}:
+S\rightarrow [0,1]$ of the random walk such that
+\[
+\tilde{p}(k_0=i)=\tilde{p}_{k_0}=\frac{\lvert h_i\rvert}{\sum_{i=1}^n \lvert
+h_i\rvert}.
+\]
+It is important to stress out that the role of vector $\mathbf{h}$ is
+restricted to the construction of the initial probability and is not
+used further in the definition of the stochastic process.
+A possible choice for the transition probability $P$ can be
+\[
+p(k_i=j \;\lvert\;k_{i-1}=i )=P_{i,j}=\frac{\lvert H_{i,j}\rvert}{\sum_{k=1}^n
+\lvert H_{i,k}\rvert}.
+\]
+where $\tilde{p}(\cdot,i):S\rightarrow [0,1]$ $\forall i\in S$.
+A related sequence of random variables $w_{i,j}$ can be defined
+such that
+\[
+w_{i,j}=\frac{H_{i,j}}{P_{i,j}}.
+\]
+The probability distribution of the random variables $w_{i,j}$ is represented
+by the transition matrix that rules the stochastic process. The $w_{i,j}$'s
+just introduced can be used to build one more sequence
+of random variables.
+At first we introduce quantities $W_j$
+\[
+W_{0}=\frac{h_{k_0}}{\tilde{p}_{k_0}}, \quad W_j=W_{j-1} w_{i,j}, \quad
+j=1,\cdots, i.
+\]
+By defining
+\[
+X(\nu)=\sum_{m=0}^k W_m f_{i_m}
+\]
+as the random variable associated with a specific permutation $\nu$, we can
+define the estimator $\theta_i$ such as
+\[
+\theta=E[X]=\sum_{\nu}P_{\nu}X(\nu).
+\]
+The integer $n$ represents the size of the solution vector to (\ref{linsys})
+and
+the
+index
+$i$
+is referred to the component of the solution vector we want to compute.
+$P_{\nu}$ is the probability associated with a specific permutation of the
+random walk.
+It can be proved that
+\[
+E[W_i f_{k_i}]=(\mathbf{h},H^i\mathbf{f}), \quad i=0,1,2,\cdots
+\]
+and
+\[
+\theta_i=E\bigg[\sum_{i=0}^\infty W_i f_{k_i}\bigg]=(\mathbf{h},\mathbf{x}).
+\]
+
+A possible choice for $\mathbf{h}$ is a vector of the standard basis. This
+would correspond in setting manually the initial state of the random walk,
+which turns the related initial probability into a Kronecker delta
+\[
+\tilde{p}(k_0=i)=\delta_{i,j}.
+\]
+By doing so, we have
+\begin{equation}
+\theta_i=E\bigg[\sum_{\ell=0}^\infty W_{\ell}
+f_{k_{\ell}}\bigg]=x_i=\sum_{l=0}^\infty
+\sum_{k_1=1}^{n}\sum_{k_2=1}^n\cdots \sum_{k_{\ell}=1}^n
+P_{k_0,k_1}P_{k_1,k_2}\cdots P_{k_{\ell-1},
+k_{\ell}}w_{k_0,k_1}w_{k_1,k_2}\cdots
+w_{k_{\ell-1}, k_{\ell}}f_{k_{\ell}}.
+\label{dir_mean}
+\end{equation}
+
+As regards the variance, we remember that the following relation holds:
+\begin{equation}
+Var\bigg [\sum_{\ell=0}^\infty W_{\ell}
+f_{k_{\ell}}\bigg]=E\bigg[\sum_{\ell=0}^\infty W_{\ell}^2
+f_{k_{\ell}}^2\bigg] - \bigg (E\bigg[\sum_{\ell=0}^\infty W_{\ell}
+f_{k_{\ell}}\bigg]\bigg )^2.
+\label{dir_var}
+\end{equation}
+
+Hence the variance can be computed as the difference between the second
+moment of the random variable and the square of the first moment.\newline
+
+In order to apply the Central Limit Theorem (CLT) to the estimators defined
+above, we must require that
+the estimators have both finite expected value and variance. This is
+equivalent in
+checking the finiteness of the expected value and of the second moment.
+Therefore we have to impose the following conditions:
+
+\begin{equation}
+ E\bigg[\sum_{\ell=0}^\infty W_{\ell} f_{k_{\ell}}\bigg]<\infty
+\end{equation}
+
+\begin{equation}
+ E\bigg[\sum_{\ell=0}^\infty W_{\ell}^2
+f_{k_{\ell}}^2\bigg]<\infty
+\end{equation}
+
+The forward method presented above, however, has the limitation of employing an
+entire set of permutations to estimate just a single entry of
+the solution at a time. Therefore, in order to estimate the entire solution
+vector for Eq.~\eqref{linsys}, we have to employ a separate set of
+permutations for each entry in the solution vector.
+
+\subsection{Adjoint Method}
+\label{subsec:adjoint}
+
+A second Monte Carlo method can be derived by considering the linear system
+adjoint to (\ref{linsys})
+\begin{equation}
+A^T\mathbf{y}=\mathbf{d},
+\label{adj}
+\end{equation}
+where $\mathbf{y}$ and $\mathbf{d}$ are the adjoint solution and source term.
+
+\textcolor{red}{Provide some more details relating the adjoint to original problem.}
+
+By reformulating the fixed point scheme, introducing initial probability,
+transition probability and weight
+sequences in the same fashion as done before, the expected value for the
+estimator becomes
+\begin{equation}
+\theta_j=E\bigg[\sum_{\ell=0}^\infty W_{\ell}\delta_{k_{\ell},
+j}\bigg]=\sum_{\ell=0}^{\infty}\sum_{k_1}^n\sum_{k_2}^n\cdots\sum_{k_{\ell}}^n
+f_{k_0}P_{k_0,k_1}P_{k_1,k_2}\cdots P_{k_{\ell-1},K_{\ell}}w_{k_0,k_1}\cdots
+w_{k_{\ell-1},k_{\ell}}\delta_{k_{\ell},j}.
+\label{adj_mean}
+\end{equation}
+This estimator is known in literature as \textit{collision} estimator.
+
+The forward method adds a contribution to the component of the solution
+vector where the random walk began based on the value of the source vector
+in the state in which the walk currently resides.  The adjoint method,
+on the other hand, adds a contribution to the component of the solution
+vector where the random walk currently resides based on the value of the
+source vector in the state in which the walk began.
+The Kronecker delta at the end of the series represents a filter, indicating
+that only a subset of permutations contribute to the $j$-th component
+of the solution vector.
+
+The variance is given by
+\begin{equation}
+Var\bigg [\sum_{\ell=0}^\infty W_{\ell}
+f_{k_0}\delta_{k_{\ell},j}\bigg]=E\bigg[\sum_{\ell=0}^\infty W_{\ell}^2
+f_{k_0}^2\delta_{k_{\ell},j}\bigg ] - \bigg (E\bigg[\sum_{\ell=0}^\infty
+W_{\ell}
+f_{k_0}\delta_{k_{\ell},j}\bigg]\bigg )^2\quad j=1,\cdots,n
+\label{adj_var}.
+\end{equation}
+
+Along the same lines as the development for the forward method, we must
+impose finiteness of the expected value and second moment.
+Therefore the following
+conditions must be verified:
+
+\begin{equation}
+ E\bigg[\sum_{\ell=0}^\infty W_{\ell}\delta_{k_{\ell},
+j}\bigg]<\infty \quad j=1,\cdots,n
+\end{equation}
+and
+\begin{equation}
+ E\bigg[\sum_{\ell=0}^\infty W_{\ell}^2
+f_{k_0}^2\delta_{k_{\ell},j}\bigg]<\infty \quad j=1,\cdots,n.
+\end{equation}
+
+The main advantage of this method, compared to the forward one, consists in the
+fact that a single set of permutations is used to estimate the entire solution
+vector.  Unless only a small portion of the problem is of interest, this
+property often leads to the adjoint method being favored over the forward method.
+
+In literature another estimator is employed along with the Adjoint Monte Carlo
+method, the so called \textit{expected value} estimator. Its
+formulations is as follows:
+\begin{equation}
+\theta_j=E\bigg[f_j + \sum_{\ell=0}^\infty
+W_{\ell}H_{k_{\ell}, j}^T\bigg]=f_j
++ \sum_{\ell=0}^{\infty}\sum_{k_1}^n\sum_{k_2} ^n\cdots\sum_ { k_ { \ell}}^n
+f_{k_0}P_{k_0,k_1}P_{k_1,k_2}\cdots P_{k_{\ell-1},K_{\ell}}w_{k_0,k_1}\cdots
+w_{k_{\ell-1},k_{\ell}}H_{k_{\ell},j}^T.
+\label{adj_mean1}
+\end{equation}
+
+Thus, the expected value estimator averages
+the deterministic contribution of the iteration matrix over all the potential
+states $j$ that might be reached from the current state $\ell$. The variance
+in this case becomes:
+\begin{equation}
+Var\bigg [\sum_{\ell=0}^\infty W_{\ell}
+f_{k_0}H_{k_{\ell},j}^T\bigg]=E\bigg[\sum_{\ell=0}^\infty W_{\ell}^2
+f_{k_0}^2 {H_{k_{\ell},j}^T}^T\bigg ] - \bigg (E\bigg[\sum_{\ell=0}^\infty
+W_{\ell}
+f_{k_0}H_{k_{\ell},j}^T\bigg]\bigg )^2\quad j=1,\cdots,n
+\label{adj_var}.
+\end{equation}
+
+\subsection{Hybrid Stochastic/Deterministic Methods}
+
+The direct methods described in Sections~\ref{subsec:foward} and
+\ref{subsec:adjoint} suffer from a slow rate of convergence due to the
+$\frac{1}{\sqrt{N}}$ behavior dictated by the central limit theorem ($N$ here
+is the number of random walks used to estimate the solution).  Furthermore,
+when the spectral radius of the iteration matrix is close to unity, each
+individual random walk may require a large number of transitions to
+approximate the corresponding components in the Neumann series.
+To offset the slow convergence of the central limit theorem, schemes have
+been proposed which combine traditional fixed-point iterative methods with
+the stochastic solvers.  The first such method, due to Halton, was termed
+the Sequential Monte Carlo (SMC) method, and can be written as:
+\begin{algorithm}[H]
+ \KwData{$H$, $\mathbf{b}$, $\mathbf{x}_0$}
+ \KwResult{$x_{num}$}
+ $\mathbf{x}^{l}=\mathbf{x}_0$\;
+ \While{not reached convergence}{
+  $\mathbf{r}^{l}=\mathbf{b}-A\mathbf{x}^{l}$\;
+  $\delta \mathbf{x}^{l+1}=(I-H)^{-1}\mathbf{r}^{l}$\;
+  $\mathbf{x}^{l+1}=\mathbf{x}^{l}+\delta \mathbf{x}^{l+1}$\;
+ }
+ $x_{num}=x^{l+1}$\;
+ \caption{Sequential Monte Carlo}
+\end{algorithm}
+The Monte Carlo linear solver method is used to compute the update $\delta
+\mathbf{x}^{l}$.  This algorithm is equivalent to a preconditioned Richardson
+iteration in which the Monte Carlo process acts as the preconditioner.
+Because Monte Carlo is only applied within a single iteration, the central
+limit theorem is only applicable within that iteration rather than to
+the overall convergence behavior of the algorithm.
+
+A further extension of Halton's method, termed
+\textit{Monte Carlo Synthetic Acceleration} (MCSA), has been recently
+introduced (\cite{ESW2013} and \cite{EMSH2014}).  The MCSA algorithm can be written as
+\begin{algorithm}[H]
+ \KwData{$H$, $\mathbf{b}$, $\mathbf{x}_0$}
+ \KwResult{$x_{num}$}
+ $\mathbf{x}^{l}=\mathbf{x}_0$\;
+ \While{not reached convergence}{
+  $\mathbf{x}^{l+\frac{1}{2}}=H\mathbf{x}^l+\mathbf{b}$\;
+  $\mathbf{r}^{l+\frac{1}{2}}=\mathbf{b}-A\mathbf{x}^{l+\frac{1}{2}}$\;
+  $\delta \mathbf{x}^{l+\frac{1}{2}}=(I-H)^{-1}\mathbf{r}^{l+\frac{1}{2}}$\;
+  $\mathbf{x}^{l+1}=\mathbf{x}^{l+\frac{1}{2}}+\delta
+\mathbf{x}^{l+\frac{1}{2}}$\;
+ }
+ $x_{num}=x^{l+1}$\;
+ \caption{Monte Carlo Synthetic Acceleration}
+\end{algorithm}
+As with SMC, a Monte Carlo linear solver is used to compute the updating
+contribution $\delta \mathbf{x}^{l+\frac{1}{2}}$.  In this approach, an
+extra step of unpreconditioned Richardson iteration is added to smooth out
+some of the high-frequency noise introduced by the Monte Carlo process.
+This way, the deterministic and stochastic components of the algorithm
+act in a complementary fashion.
+

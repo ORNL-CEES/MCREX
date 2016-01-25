@@ -4,8 +4,8 @@ function [P]=prob_adjoint3(A, p)
 
  
    if (p == 0)    
-        P=zeros(size(A));
-        for i=1:size(P,1)    
+        P=sparse(zeros(size(A)));
+        for i=1:size(A,2)    
             aux=find(A(:,i));
             l=length(aux);
             for j=1:l
@@ -14,8 +14,8 @@ function [P]=prob_adjoint3(A, p)
         end
 
    else
-        P=zeros(size(A));
-        for i=1:size(P,1)
+        P=sparse(zeros(size(A)));
+        for i=1:size(A,2)
             aux=find(A(:,i));
             sump=(sum(abs(A(aux,i)).^p));
             l=length(aux);                   

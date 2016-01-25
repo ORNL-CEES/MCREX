@@ -3,8 +3,8 @@ function [P]=prob_forward2(A, p)
 display('Building of transition matrix');
 
     if (p == 0)
-        P=zeros(size(A));
-        for i=1:size(P,1)
+        P=sparse(zeros(size(A)));
+        for i=1:size(A,1)
                 Prow_ind=find(A(i,:));
                 num_elem=length(find(A(i,:)));
                 for j=1:num_elem
@@ -14,8 +14,8 @@ display('Building of transition matrix');
 
     else
 
-        P=zeros(size(A));
-        for i=1:size(P,1)
+        P=sparse(zeros(size(A)));
+        for i=1:size(A,1)
                 Prow_ind=find(A(i,:));
                 num_elem=length(Prow_ind);
                 sump=sum(abs(A(i,Prow_ind)).^p);

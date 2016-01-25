@@ -7,7 +7,13 @@ SET=struct;
 
 if strcmp(precond, 'diag') 
     [~, fp]=Prec(D, precond, fp, SET);
-    fp.H=eye(size(D))-(fp.prec)\D;
+    fp.H=sparse(eye(size(D))-(fp.prec)\D);
+    fp.rhs=(fp.prec)\rhs;
+    fp.u=u;
+    
+elseif strcmp(precond, 'block_diag')
+    [~, fp]=Prec(D, precond, fp, SET);
+    fp.H=sparse(eye(size(D,1))-fp.prec\(D));
     fp.rhs=(fp.prec)\rhs;
     fp.u=u;
 
@@ -17,19 +23,19 @@ elseif strcmp(precond, 'triblock')
    
     [MATRICES, fp]=Prec(D, precond, fp, MATRICES);
     
-    fp.M=MATRICES.M;
-    fp.N=MATRICES.N;
+    fp.M=sparse(MATRICES.M);
+    fp.N=sparse(MATRICES.N);
        
     %building of the iteration matrix
     Pr=fp.M;
-    H=eye(size(D,1))-Pr\(fp.Per'*D*fp.Per);
+    H=sparse(eye(size(D,1))-Pr\(fp.Per'*D*fp.Per));
     rhs=Pr\rhs;
     Num=size(H,1);
     H(1:Num/2, 1:Num/2)=zeros(Num/2, Num/2);
     H(Num/2+1:Num, 1:Num/2)=zeros(Num/2, Num/2);
     H(Num/2+1:Num, Num/2+1:Num)=zeros(Num/2, Num/2);
     
-    fp.H=H;
+    fp.H=sparse(H);
     fp.rhs=rhs;
     fp.u=u;
 
@@ -39,14 +45,14 @@ elseif strcmp(precond,'gs')
     
     [MATRICES, fp]=Prec(D, precond, fp, MATRICES);
  
-    H=MATRICES.M\MATRICES.N;
+    H=sparse(MATRICES.M\MATRICES.N);
     rhs=(fp.Per)'*rhs;
     rhs=(MATRICES.M)\rhs;
     u=(fp.Per)'*u;
     
     fp.H=H;
-    fp.M=MATRICES.M;
-    fp.N=MATRICES.N;
+    fp.M=sparse(MATRICES.M);
+    fp.N=sparse(MATRICES.N);
     fp.rhs=rhs;
     fp.u=u;
     
@@ -56,14 +62,14 @@ elseif strcmp(precond,'trisplit')
     [fp.Per]=redblack(G);
     [MATRICES, fp]=Prec(D, precond, fp, MATRICES);
     
-    H=MATRICES.M\MATRICES.N;
+    H=sparse(MATRICES.M\MATRICES.N);
     rhs=(fp.Per)'*rhs;
     rhs=(MATRICES.M)\rhs;
     u=(fp.Per)'*u;
     
     fp.H=H;
-    fp.M=MATRICES.M;
-    fp.N=MATRICES.N;
+    fp.M=sparse(MATRICES.M);
+    fp.N=sparse(MATRICES.N);
     fp.rhs=rhs;
     fp.u=u;
 
@@ -72,13 +78,13 @@ elseif strcmp(precond,'alternating')
     [fp.Per]=redblack(G);
     [MATRICES, fp]=Prec(D, 'gs', fp, MATRICES);
     
-    H1=MATRICES.M\MATRICES.N;
+    H1=sparse(MATRICES.M\MATRICES.N);
     rhs1=(fp.Per)'*rhs;
     rhs1=(MATRICES.M)\rhs1;
     
     fp.H1=H1;
-    fp.M=MATRICES.M;
-    fp.N=MATRICES.N;
+    fp.M=sparse(MATRICES.M);
+    fp.N=sparse(MATRICES.N);
     fp.rhs1=rhs1;
     
     [MATRICES, fp]=Prec(D, 'trisplit', fp, MATRICES);

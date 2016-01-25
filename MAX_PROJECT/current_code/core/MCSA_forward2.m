@@ -1,8 +1,9 @@
-function [sol, rel_res, VAR, DX, NWALKS, tally, count, reject]=MCSA_forward2(fp, P, cdf, numer, stat)
+function [sol, rel_res, VAR, REL_RES, DX, NWALKS, tally, count, reject]=MCSA_forward2(fp, P, cdf, numer, stat)
 
 VAR=[];
 NWALKS=[];
 DX=[];
+REL_RES=[];
 n_walks=stat.nwalks;
 max_step=stat.max_step;
 eps=numer.eps;
@@ -28,7 +29,7 @@ if ~ strcmp(fp.precond, 'alternating')
     
     r=rhs-B*sol;
     rel_residual=norm(r,2)/norm(rhs,2);
-    R=rel_residual;
+    REL_RES=[REL_RES rel residual];
 
     count=1;
 
@@ -49,7 +50,7 @@ if ~ strcmp(fp.precond, 'alternating')
             r=rhs-B*sol;
             display(strcat('residual norm: ', num2str(norm(r)/norm(rhs))));    
             rel_residual=norm(r,2)/norm(rhs,2);
-            R=[R rel_residual];            
+            REL_RES=[REL_RES rel_residual];            
             VAR=[VAR dvar];
             DX=[DX dx];
             count=count+1;
@@ -65,6 +66,7 @@ if ~ strcmp(fp.precond, 'alternating')
             r=rhs-B*sol;
             display(strcat('residual norm: ', num2str(norm(r)/norm(rhs))));    
             rel_residual=norm(r,2)/norm(rhs,2);
+            REL_RES=[REL_RES rel_residual];  
             VAR=[VAR dvar];
             DX=[DX dx];
             count=count+1;
@@ -118,6 +120,7 @@ else
                VAR=[VAR dvar];
                DX=[DX dx];
                rel_residual=norm(r,2)/norm(rhs1,2);
+               REL_RES=[REL_RES rel_residual];  
            else
                sol=sol+r;
                r=rhs2-B2*sol;
@@ -146,6 +149,7 @@ else
                VAR=[VAR dvar];
                DX=[DX dx];
                rel_residual=norm(r,2)/norm(rhs1,2);
+               REL_RES=[REL_RES rel_residual];  
            else
                sol=sol+r;
                r=rhs2-B2*sol;
@@ -156,6 +160,7 @@ else
                VAR=[VAR dvar];
                DX=[DX dx];
                rel_residual=norm(r,2)/norm(rhs2,2);
+               REL_RES=[REL_RES rel_residual];  
            end
            count=count+1;
        end

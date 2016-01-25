@@ -6,7 +6,7 @@ addpath('../utils')
 % 'sp1_shift'; 'sp5_shift'; 'sp3_shift';
 matrix='thermal_eq_diff';
 
-[H,rhs, precond, Prec]=fixed_point(matrix);
+[H,rhs, u, precond, Prec]=fixed_point(matrix);
 
 %% NUmerical setting
 

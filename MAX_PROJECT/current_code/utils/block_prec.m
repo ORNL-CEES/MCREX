@@ -6,7 +6,7 @@ A=SPN_mark;
 
 %% Block-diag preconditioning
 
-size_block=63;
+size_block=1;
 n_blocks=size(A,1)/size_block;
 
 % D=zeros(size(A));
@@ -15,7 +15,7 @@ n_blocks=size(A,1)/size_block;
 %     D(i*size_block+1:(i+1)*size_block,i*size_block+1:(i+1)*size_block)=A(i*size_block+1:(i+1)*size_block,i*size_block+1:(i+1)*size_block);
 % end
 
-D_inv=zeros(size(A));
+D_inv=sparse(size(A));
 
 for i=0:n_blocks-1
     D_inv(i*size_block+1:(i+1)*size_block,i*size_block+1:(i+1)*size_block)=inv(A(i*size_block+1:(i+1)*size_block,i*size_block+1:(i+1)*size_block));
@@ -25,7 +25,7 @@ D_inv=sparse(D_inv);
 
 B=D_inv*A;
 B=sparse(B);
-H=eye(size(A,1))-B;
+H=speye(size(A,1))-B;
 H=sparse(H);
 
 max(abs(eigs(H)))

@@ -5,6 +5,7 @@ function [A_tilde]=filtering(A, tol)
     maximum=max(abs(A_tilde));
     for i=1:size(A_tilde,1)
         index= abs(A_tilde(i,:)) < tol*maximum;
+        index = index(index~=i);
         A_tilde(i,index)=0;
     end
     

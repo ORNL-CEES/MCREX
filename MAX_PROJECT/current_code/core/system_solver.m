@@ -1,27 +1,25 @@
-function [sol, rel_res, var, VAR, DX, NWALKS, tally, iterations, time]=system_solver(scheme, method, fp, dist, P, cdf, numer, stat)
+function [sol, rel_res, VAR, REL_RES, DX, NWALKS, tally, iterations, time]=system_solver(scheme, method, fp, dist, P, cdf, numer, stat)
 
     if strcmp(scheme, 'SEQ') && strcmp(method, 'forward')
         start=cputime;
-        [sol, rel_res, var, VAR, DX, NWALKS, tally, iterations]=SEQ_forward(fp, ...
-            P, cdf, numer, stat);
+        [sol, rel_res, VAR, REL_RES, DX, NWALKS, tally, iterations, ~]=SEQ_forward(fp, P, cdf, numer, stat);
         finish=cputime;
 
     elseif strcmp(scheme, 'MCSA') && strcmp(method, 'forward')
         start=cputime;
-        [sol, rel_res, var, VAR, DX, NWALKS, tally, iterations]=MCSA_forward(fp, ...
-            P, cdf, numer, stat);
+        [sol, rel_res, VAR, REL_RES, DX, NWALKS, tally, iterations, ~]=MCSA_forward(fp, P, cdf, numer, stat);
         finish=cputime;
         
     elseif strcmp(scheme, 'SEQ') && strcmp(method, 'adjoint')
         start=cputime;
-        [sol, rel_res, var, VAR, DX, NWALKS, tally, iterations]=SEQ_adjoint(fp, ...
+        [sol, rel_res, VAR, REL_RES, DX, NWALKS, tally, iterations]=SEQ_adjoint(fp, ...
             dist, P, cdf, numer, stat);
         finish=cputime;
     
 
     elseif strcmp(scheme, 'MCSA') && strcmp(method, 'adjoint')
         start=cputime;
-        [sol, rel_res, var, VAR, DX, NWALKS, tally, iterations]=MCSA_adjoint(fp, ...
+        [sol, rel_res, VAR, REL_RES, DX, NWALKS, tally, iterations]=MCSA_adjoint(fp, ...
             dist, P, cdf, numer, stat);
         finish=cputime;
            

@@ -1,7 +1,7 @@
 function [u, D, rhs]=laplace(R, G, reac)
 
-    D = delsq(G);
-    D = D + reac * eye(size(D));
+    D = sparse(delsq(G));
+    D = sparse(D + reac * eye(size(D)));
     % Number of interior points
     Num = sum(G(:)>0);
 

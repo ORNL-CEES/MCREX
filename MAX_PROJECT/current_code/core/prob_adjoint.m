@@ -4,14 +4,14 @@ display('Building of transition matrix');
 
     if (p == 0)
         
-        Pb=zeros(size(A,1),1);
+        Pb=sparse(size(A,1),1);
         for i=1:size(Pb,1)
             Pb(i)=(b(i)~=0)/(length(find(b)));
         end
        
-        P=zeros(size(A));
-        cdf=zeros(size(A));
-        for i=1:size(P,1)
+        P=sparse(zeros(size(A)));
+        cdf=sparse(zeros(size(A)));
+        for i=1:size(A,1)
             Prow_ind=find(A(:,i));
             num_elem=length(Prow_ind);            
             for j=1:1:num_elem
@@ -23,15 +23,15 @@ display('Building of transition matrix');
     else
 
         %initial probability distribution
-        Pb=zeros(size(A,1),1);
+        Pb=sparse(size(A,1),1);
         for i=1:size(A,1)
             Pb(i)=(abs(b(i)).^p)/(sum(abs(b)).^p);
         end
 
 
-        P=zeros(size(A));
-        cdf=zeros(size(A));
-        for i=1:size(P,1)
+        P=sparse(zeros(size(A)));
+        cdf=sparse(zeros(size(A)));
+        for i=1:size(A,2)
             Prow_ind=find(A(:,i));
             num_elem=length(find(A(:,i)));  
             sump=(sum(abs(A(:,i)).^p));

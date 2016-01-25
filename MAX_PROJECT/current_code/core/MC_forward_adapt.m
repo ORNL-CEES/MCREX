@@ -12,11 +12,11 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
     VAR=zeros(size(b));
 
    for k=1:size(b,1)
-       %display(strcat('k= ',num2str(k)))
+       display(strcat('k= ',num2str(k)))
        count=0;
        x=[];
        ratio=10^6;
-       while count < 10*size(b,1) && ratio > var_cut
+       while count < (10^(7))*size(b,1) && ratio > var_cut
             for walk=1:n_walks
                 estim=0;
                 previous=k;
@@ -52,6 +52,7 @@ if stat.adapt_cutoff==1 && stat.adapt_walks==1
                ratio=0;
             end       
             count=count+n_walks;
+            display(strcat('ratio =', num2str(ratio)));
        end
        X(k)=mean(x);
        NWALKS(k)=count;
@@ -71,7 +72,7 @@ elseif stat.adapt_cutoff==0 && stat.adapt_walks==1
        count=0;
        x=[];
        ratio=1;
-       while count < 10*size(b,1) && ratio > var_cut
+       while count < 1000*size(b,1) && ratio > var_cut
             for walk=1:n_walks
                 estim=0;
                 previous=k;

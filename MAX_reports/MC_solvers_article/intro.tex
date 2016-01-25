@@ -1,0 +1,62 @@
+\section{Introduction}
+\label{sec:intro}
+
+For a long period the
+pursuit of a reliable solver for linear and nonlinear algebraic systems has
+been one of the most important issues in Numerical Analaysis. The
+mathematical properties of the model (e.g. likely sparsity pattern of the
+matrix) have urged scientists to look for efficient and pattern-driven
+solvers, capable to cope with curse of dimensionality and high scalability
+requests.
+
+As scalability computing move towards exascale facilities (which stands for
+machines computing up to $10^{18}$ flops), new numerical schemes suitable for
+this
+kind of architectures are strongly demanded. In fact the purpose is to combine
+high
+fidelity of the results with an optimized use of hardware resources at hand.
+
+Recently new algorithms that combine statistical and numerical techniques have
+been developed. Even though \textit{numerical efficiency} has been sacrificed
+sometimes, the advantages in terms of \textit{robustness} of these methods make
+it worth carrying on studies in this direction.
+A class of methods that may be employed for this purpose is represented by
+Monte Carlo linear solvers.
+
+These algorithms are the main topic covered in the work presented here,
+starting from what was developed so far by some of
+the authors who gave significant contributions (see \cite{Hal1962},
+\cite{Hal1994},
+\cite{DA1998}, \cite{DVA2001}, \cite{AADBTW2005},\cite{ESW2013} and
+\cite{EMSH2014}). \newline
+
+As underlined in \cite{DA1998}, Monte Carlo methods may be split into two
+classes: \textit{direct methods} (\cite{DA1998}, \cite{DVA2001}) and
+\textit{iterative methods} (\cite{Hal1962},
+\cite{Hal1994}, \cite{ESW2013}
+and \cite{EMSH2014}). The first are characterized by a merely stochastic
+scheme,
+therefore the provided error with respect to the exact solution is made of
+just a stochastic component. The iterative Monte Carlo methods utilize more
+traditional iterative algorithms alongside the stochastic approach,
+generating two types of error: a
+\textit{stochastic} one and a \textit{systematic} one. It does not
+mean
+that
+it will be always simple to recognize them separately. However it is important
+to
+be
+aware of this intrinsic structure, in order to target what is the part of the
+scheme that requires a refinement (e.g. increasing the number of iterations
+rather than the number of random walks).
+
+The paper is organized as follows.
+In Section~\ref{sec:mcls} we provide an overview of existing Monte Carlo
+linear solver algorithms.
+In Section~\ref{sec:convergence} we will discuss the convergence behavior
+of stochastic solvers, including a discussion of classes of matrices for
+which convergence can be guaranteed.
+Section~\ref{sec:results} provides some numerical results illustrating
+pertinent properties of the various approaches and Section~\ref{sec:conclusion}
+will provide some concluding remarks and areas for future investigation.
+
