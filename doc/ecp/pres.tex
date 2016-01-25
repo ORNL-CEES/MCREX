@@ -366,7 +366,7 @@
       full series
       \vfill
     \item Significant reduction in iteration counts are possible using
-      alternate polynomials, but generally outweighed by increase in number
+      alternate polynomials, but partially offset by increase in number
       of histories required
       \begin{itemize}
         \item May be very beneficial from resiliency and parallel efficiency
@@ -378,9 +378,66 @@
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Sparse Approximate Inverse Preconditioning}
+\begin{frame}{Preconditioning}
+  \begin{itemize}
+    \item Preconditioning for Monte Carlo introduces nonstandard considerations
+      \begin{itemize}
+        \item Elements of preconditioned matrix must be explicitly available
+        \item Goal of preconditioning is to reduce $\rho(\hat{\mathbf{H}})$,
+          may not follow ``standard'' trends
+      \end{itemize}
+  \end{itemize}
+  \vfill
 
+  \begin{table}[!h]
+  \centering
+  \begin{tabular}{|c|c|c|c|}
+  \hline
+  \textbf{Block size} & \textbf{$\frac{nnz(H)}{nnz(A)}$}& $\rho(H)$
+  &$\rho(\hat{H})$\\
+  \hline
+   3 & 1.4352 & $0.9804$ & $0.9531$\\
+  \hline
+   9 & 3.0220 & $0.9790$ & $0.9674$\\
+  \hline
+   33 & 9.8164 & $0.9783$  & $0.9774$\\
+  \hline
+  \end{tabular}
+  \caption{$\rho(H)$ and $\rho(\hat{H})$ for advection--diffusion
+  matrix with block diagonal preconditioning.}
+  \label{tab:ifiss_block}
+  \end{table}
+\end{frame}
 
+\begin{frame}{Preconditioning}
+  \begin{itemize}
+    \item Several options have been analyzed
+      \begin{itemize}
+        \item (Block) diagonal preconditioners, suitable for (block)
+          diagonally dominant systems
+        \item ILU-style preconditioners are possible, but require additional
+          filtering to maintain sparsity in preconditioned system
+        \item Approximate inverse preconditioning is attractive, forming
+          preconditioned matrix only requires sparse matrix-matrix product
+      \end{itemize}
+  \end{itemize}
+
+  \begin{table}[!h]
+  \centering
+  \begin{tabular}{|c|c|c|c|}
+  \hline
+  \textbf{Drop tolerance} & \textbf{$\frac{nnz(H)}{nnz(A)}$}& $\rho(H)$
+  &$\rho(\hat{H})$\\
+  \hline
+   0.05 & 8.2797 & $0.9610$ & $1.0231$\\
+  \hline
+   0.01 & 33.1390 & $0.8668$ & $0.8279$\\
+  \hline
+  \end{tabular}
+  \caption{$\rho(H)$ and $\rho(\hat{H})$ for 2D
+  Laplacian with AINV preconditioning.}
+  \label{tab:lap2d_ainv}
+  \end{table}
 
 \end{frame}
 
