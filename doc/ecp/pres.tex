@@ -31,7 +31,8 @@
 \setbeamercolor{item}{fg=MSUgreen}
 \beamertemplatenavigationsymbolsempty
 \setbeamertemplate{headline}{}
-\setbeamertemplate{footline}{}
+\setbeamertemplate{footline}{
+  \insertframenumber/\inserttotalframenumber}
 \setbeamertemplate{title page}
 {
   \begin{tabular}{cr}
@@ -75,7 +76,7 @@
 %%---------------------------------------------------------------------------%%
 
 \begin{frame}
-  \tableofcontents[pausesections]
+  \tableofcontents
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
@@ -409,6 +410,8 @@
   \end{table}
 \end{frame}
 
+%%---------------------------------------------------------------------------%%
+
 \begin{frame}{Preconditioning}
   \begin{itemize}
     \item Several options have been analyzed
@@ -439,6 +442,338 @@
   \label{tab:lap2d_ainv}
   \end{table}
 
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Domain Decomposed Monte Carlo}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+      \item Each parallel process owns a piece of the domain (linear
+        system)
+        \bigskip
+      \item Random walks must be transported between adjacent domains
+        through parallel communication
+        \bigskip
+      \item Domain decomposition determined by the input system
+        \bigskip
+      \item Load balancing not yet addressed
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+      \begin{figure}[htpb!]
+        \begin{center}
+          \scalebox{0.75}{ \input{ddnu_example.pdftex_t} }
+        \end{center}
+        \caption{\small Domain decomposition example illustrating
+          how domain-to-domain transport creates communication costs.}
+      \end{figure}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Asynchronous Monte Carlo Transport Kernel}
+
+  \begin{columns}
+
+    \begin{column}{0.5\textwidth}
+      \vspace{-0.1in}
+      \small
+      \begin{itemize}
+      \item General extension of the Milagro algorithm (LANL)
+      \item Asynchronous nearest neighbor communication of histories
+      \item System-tunable communication parameters of buffer size and check
+        frequency (performance impact)
+      \item Need an asynchronous strategy for exiting the transport loop
+        without a collective (running sum)
+      \end{itemize}
+
+      \vspace{-0.15in}
+      \begin{figure}[htpb!]
+        \begin{center}
+          \scalebox{0.4}{ \input{domain_to_domain.pdftex_t} }
+        \end{center}
+      \end{figure}
+
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+
+      \vspace{-0.25in}
+      \begin{figure}[htpb!]
+        \begin{center}
+          \scalebox{0.825}{ \input{transport_loop.pdftex_t} }
+        \end{center}
+      \end{figure}
+
+    \end{column}
+
+  \end{columns}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Parallel Test - Simplified $P_N$ ($SP_N$) Assembly Problem}
+\small
+\begin{columns}
+
+    \begin{column}{0.55\textwidth}
+
+      \vspace{-0.2in}
+      \begin{figure}
+        \centering
+        \includegraphics[width=2.0in]{../siam_cse_2015/presentation/prob4}
+        \vspace{-0.2in}
+        \caption{$SP_N$ solution example}
+      \end{figure}
+
+      \vspace{-0.1in}
+
+      The ($SP_N$) equations are an approximation to the Boltzmann neutron
+      transport equation used to simulate nuclear reactors
+
+      \vspace{-0.2in}
+
+      \[
+        \small
+        -\nabla \cdot \mathbb{D}_n \nabla \mathbb{U}_n + \sum_{m=1}^4
+        \mathbb{A}_{nm} \mathbb{U}_m = \frac{1}{k} \sum_{m=1}^4
+        \mathbb{F}_{nm} \mathbb{U}_m
+      \]
+
+    \end{column}
+
+    \begin{column}{0.45\textwidth}
+      Scaling problem -- $1 \times 1$ to $17 \times 17$ array of fuel
+      assemblies with 289 pins each resolved by a $2 \times 2$ spatial mesh
+      and 200 axial zones
+
+      \vfill
+
+      \begin{itemize}
+      \item 7 energy groups, 1 angular moment, 1.6M to 273.5M degrees of
+        freedom
+      \item 64 to 10,800 computational cores via domain decomposition
+      \item We are usually interested in solving generalized eigenvalue
+        problem - we use the operator from these problems to test the kernel
+        scaling
+      \end{itemize}
+    \end{column}
+
+  \end{columns}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Domain Decomposition Scaling}
+
+  \vspace{-0.2in}
+
+  \begin{table}[htb!]
+    \tiny
+    \begin{center}
+      \begin{tabular}{rrrrrrr}
+        \toprule
+        \multicolumn{1}{r}{Cores} &
+        \multicolumn{1}{r}{DOFs} &
+        \multicolumn{1}{r}{DOFs/Core} &
+        \multicolumn{1}{r}{Time Min (s)} &
+        \multicolumn{1}{r}{Time Max (s)} &
+        \multicolumn{1}{r}{Time Ave (s)} &
+        \multicolumn{1}{r}{Efficiency}
+        \\ \midrule
+        %%
+        256 & 273\,509\,600 & 1\,068\,397 & 515.51 & 515.52 & 515.52 & 1.00 \\
+        1\,024 & 273\,509\,600 & 267\,099 & 122.76 & 122.77 & 122.76 & 1.05 \\ %CACHE
+        4\,096 & 273\,509\,600 & 66\,775 & 27.96 & 27.97 & 27.96 & 1.15 \\
+        7\,744 & 273\,509\,600 & 35\,319 & 17.72 & 17.72 & 17.72 & 0.96 \\
+        10\,816 & 273\,509\,600 & 25\,288 & 13.72 & 13.72 & 13.72 & 0.89 \\
+        %%
+        \bottomrule
+      \end{tabular}
+    \end{center}
+    \vspace{-0.07in}
+    \caption{\small Strong Scaling}
+  \end{table}
+
+  \vspace{-0.4in}
+
+  \begin{table}[htb!]
+    \tiny
+    \begin{center}
+      \begin{tabular}{rrrrrrr}
+        \toprule
+        \multicolumn{1}{r}{Cores} &
+        \multicolumn{1}{r}{DOFs} &
+        \multicolumn{1}{r}{DOFs/Core} &
+        \multicolumn{1}{r}{Time Min (s)} &
+        \multicolumn{1}{r}{Time Max (s)} &
+        \multicolumn{1}{r}{Time Ave (s)} &
+        \multicolumn{1}{r}{Efficiency}
+        \\ \midrule
+        %%
+        64 & 1\,618\,400 & 25\,288 & 12.65 & 12.65 & 12.65 & 1.00 \\
+        256 & 6\,473\,600 & 25\,288 & 12.86 & 12.86 & 12.86 & 0.98 \\
+        1\,024 & 25\,894\,400 & 25\,288 & 14.59 & 14.59 & 14.59 & 0.87 \\
+        4\,096 & 103\,577\,600 & 25\,288 & 14.25 & 14.25 & 14.25 & 0.89 \\
+        7\,744 & 195\,826\,400 & 25\,288 & 14.75 & 14.78 & 14.75 & 0.86 \\
+        10\,816 & 273\,509\,600 & 25\,288 & 13.72 & 13.72 & 13.72 & 0.92 \\
+        %
+        \bottomrule
+      \end{tabular}
+    \end{center}
+        \vspace{-0.07in}
+    \caption{\small Weak Scaling}
+  \end{table}
+
+  \vspace{-0.25in}
+
+  \begin{itemize}
+    \small
+  \item Titan Cray XK7 was used with no GPUs - used Eos parameters
+  \item Results are consistent with transport literature
+  \item History length of 15 and 3 histories per DOF
+  \item Consider these effective operator apply times of 15 realizations of
+    $\ve{H}$
+  \item MC dominates run times in solver applications
+  \end{itemize}
+
+\end{frame}
+
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Replication}
+
+  \vspace{-0.1in}
+
+  Different batches of Monte Carlo samples can be combined in summation via
+  superposition if they have different random number streams.  Consider each
+  of these batches independent \textit{subsets} of a Monte Carlo operator
+  where now the operator can be formed as a general additive decomposition of
+  $N_S$ subsets:
+
+  \[
+  \mathbf{M_{MC}} = \frac{1}{N_S}\sum_{n=1}^{N_s}{\mathbf{M_n}}
+  \]
+
+  We replicate the linear problem and form each subset on a different group of
+  parallel processes. Applying the subsets to a vector requires an AllReduce
+  to form the sum. Each subset is domain decomposed.
+  \vfill
+  This provides a mechanism to support \textit{resiliency}; the replicated
+  component provides {\bf useful} work, not just redundancy
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Replication Scaling}
+
+  \begin{table}[htb!]
+    \tiny
+    \begin{center}
+      \begin{tabular}{rrrrrrr}
+        \toprule
+        \multicolumn{1}{r}{Subsets} &
+        \multicolumn{1}{r}{Cores} &
+        \multicolumn{1}{r}{DOFs} &
+        \multicolumn{1}{r}{Time Min (s)} &
+        \multicolumn{1}{r}{Time Max (s)} &
+        \multicolumn{1}{r}{Time Ave (s)} &
+        \multicolumn{1}{r}{Efficiency}
+        \\ \midrule
+        %%
+        1 & 256 & 6\,473\,600 & 12.65 & 12.65 & 12.65 & 1.00 \\
+        2 & 512 & 6\,473\,600 & 6.62 & 6.80 & 6.72 & 0.93 \\
+        3 & 768 & 6\,473\,600 & 4.50 & 4.73 & 4.66 & 0.89 \\
+        4 & 1\,024 & 6\,473\,600 & 3.62 & 3.81 & 3.71 & 0.83 \\
+        %
+        \bottomrule
+      \end{tabular}
+    \end{center}
+    \caption{\small Fixed algorithmic scaling}
+  \end{table}
+
+  \vfill
+
+  \begin{itemize}
+    \small
+  \item Timings are Monte Carlo time plus AllReduce time
+  \item 256 cores per subset with domain decomposition
+  \item $1/N_S$ samples per subset gives flat algorithmic performance
+  \item Two performance issues
+    \begin{itemize}
+    \item Dividing up samples creates work starvation
+    \item AllReduce buffer size is constant regardless of work starvation
+    \end{itemize}
+  \item Research is needed for a more performant subset combination
+  \end{itemize}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{GPU Optimization}
+
+  We have implemented a version of MCSA that uses GPUs to perform the MC
+  linear solve.
+
+  Distributed parallelism is enabled through an additive Schwartz method, all
+  MC solves
+  \begin{itemize}
+  \item All MC random walks are local
+  \item No inter-domain communication of histories
+  \end{itemize}
+
+  \begin{table}[h]
+    \begin{center}
+      \caption{2D parabolic problem with AINV preconditioning.}
+      \begin{tabular}{|c|c|c|c|}\hline
+        Node & Iterations & Time (sec) & Relative Residual \\\hline
+        CPU & 6 & 992.23 & $1.23\times 10^{-7}$ \\\hline
+        GPU & 6 & 29.83 & $1.53\times 10^{-7}$ \\\hline
+      \end{tabular}
+    \end{center}
+  \end{table}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\subsection{Research Requirements}
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}
+
+  The following important questions need to be answered before MC methods can
+  be applied to linear systems as a ``standard'' solver:
+
+  \begin{itemize}
+  \item Automatically determine history termination criteria
+    \begin{itemize}
+    \item We have investigated adaptive schemes based on variance
+    \item However, variance is not directly correlated with error
+    \end{itemize}
+  \item Identify classes of matrices and preconditioners that satisfy
+    convergence constraints
+    \begin{itemize}
+    \item This has been done for SDD and GDD
+    \end{itemize}
+  \item Demonstrate resiliency to hard MPI errors through replicated domain
+    parallelism
+  \item Further investigate non-linear, time-dependent problems
+    \begin{itemize}
+    \item This was part of the original proposal
+    \item Non-linear, sub-cycle time-stepping can result in strongly diagonally
+      dominant problems for which MCSA has been shown to be effective
+    \end{itemize}
+  \end{itemize}
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
@@ -447,21 +782,21 @@
 
 \begin{frame}{MCSA Implementations}
 
+
+  {\bf MCLS} (\underline{github.com/sslattery/MCLS})
   \begin{itemize}
-  \item {\bf MCLS} (\underline{github.com/sslattery/MCLS})
-    \begin{itemize}
-    \item Massively parallel (MPI) implementation of domain decomposed MCSA
-      algorithm
-    \item Implemented in Trilinos framework and callable through Trilinos'
-      abstract numerical algorithms (Thyra, Stratimikos) interface
-    \item Works with any Tpetra row matrix
-    \end{itemize}
-  \item {\bf Alea} (\underline{github.com/ORNL-CEES/Profugus})
-    \begin{itemize}
-    \item GPU-accelerated on-node MC solve
-    \item Domain-local MC solves implemented for distributed systems as an
-      additive Schwartz method
-    \end{itemize}
+  \item Massively parallel (MPI) implementation of domain decomposed MCSA
+    algorithm
+  \item Implemented in Trilinos framework and callable through Trilinos'
+    abstract numerical algorithms (Thyra, Stratimikos) interface
+  \item Works with any Tpetra row matrix
+  \end{itemize}
+  \vfill
+  {\bf Alea} (\underline{github.com/ORNL-CEES/Profugus})
+  \begin{itemize}
+  \item GPU-accelerated on-node MC solve
+  \item Domain-local MC solves implemented for distributed systems as an
+    additive Schwartz method
   \end{itemize}
 
 \end{frame}
