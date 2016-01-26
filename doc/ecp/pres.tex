@@ -127,7 +127,7 @@
   \item We have begun to analyze eigenvalue systems that are important in
     network systems analysis and data mining
 
-  \item Much of our analysis work has used and idealized
+  \item Much of our analysis work has used an idealized
     advection-diffusion-reaction system that has properties common to these
     application areas
 
@@ -560,7 +560,7 @@
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Scaling - DD}
+\begin{frame}{Scaling - Domain Decomposition}
 
   \begin{figure}
     \centering
@@ -576,7 +576,9 @@
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Scaling - Replication}
+\begin{frame}{Scaling - Domain Replication}
+
+  \vspace{-0.3in}
 
   \begin{figure}
     \centering
@@ -586,6 +588,13 @@
       %%
     \end{tabular}
   \end{figure}
+
+  \vfill
+  \begin{itemize}
+  \item A single subset consisted of a domain decomposed problem on 256 cores
+  \item Each additional subset replicates the original domain decomposed
+    subset creating a heirarchy of replication and decomposition
+  \end{itemize}
 
 \end{frame}
 
@@ -598,7 +607,7 @@
 
   We have implemented a version of MCSA that uses GPUs to perform the MC
   linear solve.
-
+  \vfill
   Distributed parallelism is enabled through an additive Schwartz method, all
   MC solves
   \begin{itemize}
@@ -762,7 +771,7 @@
     \begin{itemize}
     \item Replicated subsets enable useful work to occur at the same time as
       providing redundancy
-    \item Yields protection against hard errors
+    \item Yields algorithmic protection against hard errors
     \end{itemize}
   \end{itemize}
 
@@ -895,6 +904,8 @@
   \underline{\bf Goal}: Extend the general algorithmic MC exascale methods
   w.r.t. scalability and resiliency into a broader application space
 
+  \vfill
+  
   MC methods are used in many DOE application areas:
   \begin{itemize}
     \setlength{\itemsep}{-0.2\baselineskip}
@@ -924,8 +935,8 @@
   \item Used as inner linear solver in a non-linear (Newton) iteration
   \item Time-dependent applications generally have strong diagonal-dominance
     that makes MCSA competitive with Krylov methods
-  \item MCSA has resiliency and parallel efficiency benefits over subspace
-    methods
+  \item MCSA has resiliency and parallel efficiency benefits over conventional
+    subspace methods
   \end{itemize}
 
 \end{frame}
@@ -1000,6 +1011,7 @@
   \item Provides abstract solver interface for MCLS
   \item Provides build system for Alea and MCLS
   \item Provides data structures and utilities for Alea and MCLS
+  \item Provides testing harness for MCLS
   \end{itemize}
 
   \vfill
