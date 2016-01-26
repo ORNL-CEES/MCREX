@@ -109,11 +109,11 @@
 
   \begin{itemize}
 
-  \item Models defined by PDEs that result in sparse linear systems
+  \item Models defined by PDEs that result in sparse linear systems, examples:
     \begin{itemize}
     \item fluid flow
     \item radiation transport
-    \item electrostatics
+    \item gas dynamics
     \end{itemize}
 
   \item We have begun to analyze eigenvalue systems that are important in
@@ -132,6 +132,34 @@
 %%---------------------------------------------------------------------------%%
 \subsection{Overview and Status}
 %%---------------------------------------------------------------------------%%
+
+\begin{frame}{Summary}
+
+  Much of the first 2 years of the project were attempting to resolve
+  \textit{algorithmic} challenges related to solver performance and efficiency
+  \begin{itemize}
+  \item Iterative schemes to improve efficiency
+  \item Analysis to determine convergence
+  \item Development and application of effective preconditioners
+  \end{itemize}
+
+  \vfill
+
+  We have also developed scalable parallel algorithms that can take advantage
+  of the benefits of replicating Monte Carlo random walks
+  \begin{itemize}
+  \item Developed multilevel parallel strategies for domain decomposed Monte
+    Carlo that allows redundancy
+  \item Developed concurrent on-node random walk algorithms for GPU
+    optimization
+  \end{itemize}
+
+  \vfill
+
+  We have developed two open source software packages that contain
+  production-quality versions of these solvers (MPI and GPU).
+
+\end{frame}
 
 \begin{frame}{Monte Carlo for Linear Systems}
   \begin{itemize}
@@ -216,10 +244,10 @@
     \end{figure}
   \item There is a potentially restrictive limit on the spectral properties of
     $\mathbf{H}$
-    \begin{equation}
+    \begin{equation*}
       \rho(\mathbf{H}) < 1\:, \rho(\hat{\mathbf{H}}) < 1\:, \hat{H}_{ij} =
       \frac{H_{ij}^2}{P_{ij}}
-    \end{equation}
+    \end{equation*}
   \end{itemize}
 \end{frame}
 
@@ -241,44 +269,6 @@
       \mathbf{x}^{k+1} &= \mathbf{x}^{k+1/2} + \delta
     \end{align*}
   \item We still must address issue of convergence constraint by spectral radius
-  \end{itemize}
-\end{frame}
-
-%%---------------------------------------------------------------------------%%
-
-\begin{frame}{Preconditioned MCSA}
-\vspace*{-0.2in}
-  {
-    \small
-    \[
-    \ve{r}^{k} = \ve{M}_L^{-1}(\ve{b}-\ve{A}\ve{M}_R^{-1}\ve{x}^{k})
-    \]
-    \[
-    \ve{x}^{k+1/2} = \ve{x}^k + \ve{r}^k
-    \]
-    \[
-    \ve{r}^{k+1/2} = \ve{M}_L^{-1}(\ve{b}-\ve{A}\ve{M}_R^{-1}\ve{x}^{k+1/2})
-    \]
-    \[
-    \ve{M}_L^{-1}\ve{A}\ve{M}_R^{-1}\delta\ve{x}^{k+1/2} = \ve{r}^{k+1/2}
-    \]
-    \[
-    \ve{x}^{k+1} = \ve{x}^{k+1/2} + \delta \ve{x}^{k+1/2}
-    \]
-  }
-  \vspace*{-0.1in}
-  \begin{itemize}
-    \item Requires explicit construction of preconditioned matrix
-      \begin{itemize}
-        \item This has generally limited preconditioner selection to diagonal,
-          block diagonal, sparse approximate inverse approaches
-      \end{itemize}
-    \vfill
-    \item Sparsity in $\mathbf{A}$, $\mathbf{M}$, does not imply sparsity
-      in $\mathbf{M^{-1}A}$
-    \vfill
-    \item Need to investigate preconditioning strategies that lead to sparse
-      preconditioned systems
   \end{itemize}
 \end{frame}
 
@@ -381,9 +371,13 @@
 
 \begin{frame}{Preconditioning}
   \begin{itemize}
+    \item Preconditioning needed to address convergence constraints due to
+      spectral radius conditions
     \item Preconditioning for Monte Carlo introduces nonstandard considerations
       \begin{itemize}
-        \item Elements of preconditioned matrix must be explicitly available
+      \item Elements of preconditioned matrix must be explicitly available,
+        sparsity in $\mathbf{A}$, $\mathbf{M}$, does not imply sparsity in
+        $\mathbf{M^{-1}A}$
         \item Goal of preconditioning is to reduce $\rho(\hat{\mathbf{H}})$,
           may not follow ``standard'' trends
       \end{itemize}
@@ -441,6 +435,7 @@
   Laplacian with AINV preconditioning.}
   \label{tab:lap2d_ainv}
   \end{table}
+\end{frame}
 
 %%---------------------------------------------------------------------------%%
 
@@ -458,6 +453,8 @@
       \item Domain decomposition determined by the input system
         \bigskip
       \item Load balancing not yet addressed
+        \bigskip
+      \item Uses modified version of the Milagro algorithm (LANL)
       \end{itemize}
     \end{column}
 
@@ -470,48 +467,6 @@
           how domain-to-domain transport creates communication costs.}
       \end{figure}
     \end{column}
-  \end{columns}
-
-\end{frame}
-
-%%---------------------------------------------------------------------------%%
-
-\begin{frame}{Asynchronous Monte Carlo Transport Kernel}
-
-  \begin{columns}
-
-    \begin{column}{0.5\textwidth}
-      \vspace{-0.1in}
-      \small
-      \begin{itemize}
-      \item General extension of the Milagro algorithm (LANL)
-      \item Asynchronous nearest neighbor communication of histories
-      \item System-tunable communication parameters of buffer size and check
-        frequency (performance impact)
-      \item Need an asynchronous strategy for exiting the transport loop
-        without a collective (running sum)
-      \end{itemize}
-
-      \vspace{-0.15in}
-      \begin{figure}[htpb!]
-        \begin{center}
-          \scalebox{0.4}{ \input{domain_to_domain.pdftex_t} }
-        \end{center}
-      \end{figure}
-
-    \end{column}
-
-    \begin{column}{0.5\textwidth}
-
-      \vspace{-0.25in}
-      \begin{figure}[htpb!]
-        \begin{center}
-          \scalebox{0.825}{ \input{transport_loop.pdftex_t} }
-        \end{center}
-      \end{figure}
-
-    \end{column}
-
   \end{columns}
 
 \end{frame}
@@ -749,7 +704,7 @@
 \subsection{Research Requirements}
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}
+\begin{frame}{Remaining Research}
 
   The following important questions need to be answered before MC methods can
   be applied to linear systems as a ``standard'' solver:
@@ -798,14 +753,159 @@
   \item Domain-local MC solves implemented for distributed systems as an
     additive Schwartz method
   \end{itemize}
+  \vfill
+  All software is BSD open source.
+  \vfill
+  Uses TriBITS (Trilinos) open source build system
+  \vfill
+  Both software packages contain a complete suite of unit-tests integrated
+  through GoogleTest (Alea) or TeuchosTest (MCLS)
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Publications and Presentations}
+
+  \underline{Publications}
+  \begin{itemize}
+  \item M. Benzi, T.M. Evans, S.P. Hamilton, M.L. Pasini, and
+    S.R. Slattery. Analysis of Monte Carlo Accelerated Iterative Methods for
+    Sparse Linear Systems. \textit{in preparation}, 2016.
+  \item S.R. Slattery, T.M. Evans, P.P.H. Wilson. A Spectral Analysis of the
+    Domain Decomposed Monte Carlo Method for Linear Systems. \textit{Nuclear
+      Engineering Design},  {\bf 295}, 632--638, 2015.
+  \item T.M. Evans, S.W. Mosher, S.R. Slattery, and S.P. Hamilton. A Monte Carlo
+    Synthetic Acceleration Method for Solving the Thermal Radiation Diffusion
+    Equation. \textit{J. Comp. Phys.}, {\bf 258}, 338--358, 2014.
+  \end{itemize}
+
+  \underline{Presentations}
+  \begin{itemize}
+  \item Monte Carlo Synthetic Acceleration Methods for Sparse Linear Systems
+    (M.L. Pasini, M. Benzi, T. Evans, S. Hamilton, S. Slattery), \textit{SIAM
+      ALA}, October 30, 2015.
+  \item Parallel Algorithms for the Monte Carlo Synthetic Acceleration Linear
+    Solver Method (S. Slattery, T. Evans, S. Hamilton), \textit{SIAM CSE},
+    Salt Lake City, 2015.
+  \item Iterative Performance of Monte Carlo Linear Solver Methods
+    (M.L. Pasini), \textit{SIAM CSE}, Salt Lake City, 2015.
+  \item A multilevel Monte Carlo method for linear systems (S. Slattery,
+    T. Evans, S. Hamilton), \textit{Copper Mountain Conference on Iterative
+      Solvers}, Copper MT, CO, 2014.
+  \item Monte Carlo Synthetic Acceleration as approximate polynomial
+    preconditioning (S. Hamilton, T. Evans, S. Slattery), \textit{Copper
+      Mountain Conference on Iterative Solvers}, Copper MT, CO, 2014.
+  \item Monte Carlo Linear Solvers (S. Slattery, T. Evans, S. Hamilton),
+    \textit{NC State Seminar}, Nov. 4, 2014.
+  \item Monte Carlo Linear Solvers (S. Hamilton, T. Evans, S. Slattery),
+    \textit{Emory Mathematics Dept. Seminar}, Sept. 19, 2014.
+  \item Monte Carlo Methods for Linear Systems (T. Evans), \textit{MIT Nuclear
+      Engineering Dept Seminar Series}, Sept. 30, 2014.
+  \end{itemize}
 
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
 \section{Transition and Roadmap}
 %%---------------------------------------------------------------------------%%
+\subsection{ECP Application Requirements}
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Connection to ECP Requirements}
+
+  \begin{itemize}
+
+  \item Inter-Operability
+    \begin{itemize}
+    \item MCLS built using Trilinos solver API
+    \item Utilizes Hypre/ParaSAILS for AINV preconditioning
+    \item Enables testing of MC solver algorithms in a wide variety of
+      applications, ie. anyone who uses Trilinos
+    \end{itemize}
+
+  \item Scalability
+    \begin{itemize}
+    \item Multilevel inter-node domain decomposition methods show excellent
+      scalability
+    \item GPU-enabled on-node MC kernel yields measures speedups of 30 -
+      50$\times$
+    \end{itemize}
+
+  \item Resiliency
+    \begin{itemize}
+    \item Replicated subsets enable useful work to occur at the same time as
+      providing redundancy
+    \item Yields protection against hard errors
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Inter-Operatibility Example}
 
 
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{ECP Coordinated Reasearch}
+
+  \underline{\bf Goal}: Extend the general algorithmic MC exascale methods
+  w.r.t. scalability and resiliency into a broader application space
+
+  \vfill
+
+  MC methods are used in many DOE application areas:
+  \begin{itemize}
+  \item high-energy density physics
+  \item astrophysics
+  \item nuclear engineering
+  \item particle accelerators and neutron scattering
+  \item quantum chemistry
+  \item visualization
+  \item fluid dynamics
+  \item computational biology
+  \end{itemize}
+
+  \vfill
+
+  Much of the algorithmic research performed in MCREX is directly applicable
+  to the use of MC methods in these other application areas
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Continued Research for MC Linear Solvers}
+
+  Investigate use in time-dependent applications, e.g. non-linear radiation
+  hydrodynamics for high-energy density physics applications:
+  \begin{itemize}
+  \item Used as inner linear solver in a non-linear (Newton) iteration
+  \item Time-dependent applications generally have strong diagonal-dominance
+    that makes MCSA competitive with Krylov methods
+  \item MCSA has resiliency and parallel efficiency benefits over subspace
+    methods
+  \end{itemize}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Building on ASCR Funding}
+
+  MCREX has leveraged and built on work derived from several ASCR projects:
+  \begin{itemize}
+  \item Trilinos
+  \item XPress
+  \item xSim
+  \item Ideas
+  \end{itemize}
+
+\end{frame}
 
 %%---------------------------------------------------------------------------%%
 
@@ -814,6 +914,88 @@
 \centering
 \huge Questions?
 \vfill
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\section*{Extra Slides}
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Preconditioned MCSA}
+\vspace*{-0.2in}
+  {
+    \small
+    \[
+    \ve{r}^{k} = \ve{M}_L^{-1}(\ve{b}-\ve{A}\ve{M}_R^{-1}\ve{x}^{k})
+    \]
+    \[
+    \ve{x}^{k+1/2} = \ve{x}^k + \ve{r}^k
+    \]
+    \[
+    \ve{r}^{k+1/2} = \ve{M}_L^{-1}(\ve{b}-\ve{A}\ve{M}_R^{-1}\ve{x}^{k+1/2})
+    \]
+    \[
+    \ve{M}_L^{-1}\ve{A}\ve{M}_R^{-1}\delta\ve{x}^{k+1/2} = \ve{r}^{k+1/2}
+    \]
+    \[
+    \ve{x}^{k+1} = \ve{x}^{k+1/2} + \delta \ve{x}^{k+1/2}
+    \]
+  }
+  \vspace*{-0.1in}
+  \begin{itemize}
+    \item Requires explicit construction of preconditioned matrix
+      \begin{itemize}
+        \item This has generally limited preconditioner selection to diagonal,
+          block diagonal, sparse approximate inverse approaches
+      \end{itemize}
+    \vfill
+    \item Sparsity in $\mathbf{A}$, $\mathbf{M}$, does not imply sparsity
+      in $\mathbf{M^{-1}A}$
+    \vfill
+    \item Need to investigate preconditioning strategies that lead to sparse
+      preconditioned systems
+  \end{itemize}
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Asynchronous Monte Carlo Transport Kernel}
+
+  \begin{columns}
+
+    \begin{column}{0.5\textwidth}
+      \vspace{-0.1in}
+      \small
+      \begin{itemize}
+      \item General extension of the Milagro algorithm (LANL)
+      \item Asynchronous nearest neighbor communication of histories
+      \item System-tunable communication parameters of buffer size and check
+        frequency (performance impact)
+      \item Need an asynchronous strategy for exiting the transport loop
+        without a collective (running sum)
+      \end{itemize}
+
+      \vspace{-0.15in}
+      \begin{figure}[htpb!]
+        \begin{center}
+          \scalebox{0.4}{ \input{domain_to_domain.pdftex_t} }
+        \end{center}
+      \end{figure}
+
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+
+      \vspace{-0.25in}
+      \begin{figure}[htpb!]
+        \begin{center}
+          \scalebox{0.825}{ \input{transport_loop.pdftex_t} }
+        \end{center}
+      \end{figure}
+
+    \end{column}
+
+  \end{columns}
+
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
