@@ -55,9 +55,16 @@
 
 \title[MCREX]{Using Monte Carlo Algorithms to Achieve Resiliency \& Performance
   at Scale for Linear and Nonlinear Solver Applications}
-\author{Thomas Evans \and Steven Hamilton}
-\date[DOE, 2016]{DOE RX-Solvers \\ January 29, 2016}
-\institute[ORNL]{Oak Ridge National Lab}
+\author{Thomas Evans (PI, ORNL)\\
+  Michele Benzi (Co-PI, Emory)\\
+  Steven Hamilton (ORNL)\\
+  Stuart Slattery (ORNL)\\
+  Christian Engelmann (ORNL)\\
+  Wayne Joubert (ORNL)\\
+  Massimiliano Lupo Pasini (Emory)
+}
+\date[DOE, 2016]{DOE RX-Solvers, 1/29/2016}
+%\institute[ORNL]{Oak Ridge National Lab}
 
 %%---------------------------------------------------------------------------%%
 \begin{document}
@@ -970,6 +977,8 @@
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
+\subsection{ECP R\&D}
+%%---------------------------------------------------------------------------%%
 
 \begin{frame}{ECP Coordinated Reasearch}
 
@@ -1071,6 +1080,8 @@
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
+\subsection{Building on ASCR Funding}
+%%---------------------------------------------------------------------------%%
 
 \begin{frame}{Building on ASCR Funding}
 
@@ -1096,20 +1107,22 @@
 
   \underline{\bf XPRESS}
   \begin{itemize}
+    \setlength{\itemsep}{-0.1\baselineskip}
   \item We are currently implementing a CUDA transport kernel with scheduling
     optimized by HPX as part of XPRESS
   \item We have already compared OpenMP versus HPX for on-node MC particle
     transport algorithms
+    \begin{figure}
+      \centering
+      \begin{tabular}{cc}
+        \subfigure[time]{\includegraphics[width=1.8in]{time}}
+        &
+        \subfigure[efficiency]{\includegraphics[width=1.8in]{tallies}}
+      \end{tabular}
+    \end{figure}
+  \item All code implementations are available in the open source Profugus
+    mini-app (\underline{github.com/ORNL-CEES/Profugus})
   \end{itemize}
-
-  \begin{figure}
-    \centering
-    \begin{tabular}{cc}
-      \subfigure[time]{\includegraphics[width=2in]{time}}
-      &
-      \subfigure[efficiency]{\includegraphics[width=2in]{tallies}}
-    \end{tabular}
-  \end{figure}
 
 \end{frame}
 
