@@ -286,68 +286,24 @@
   \begin{itemize}
     \item Using history length cutoff, Monte Carlo process is approximating
       a fixed length Neumann series polynomial
-      \[
-      x_i = \sum_{k=0}^{\infty}\sum_{i_1}^{N}\sum_{i_2}^{N}\ldots
-      \sum_{i_k}^{N}h_{i,i_1}h_{i_1,i_2}\ldots h_{i_{k-1},i_k}b_{i_k}
-      \]
-    \vfill
-    \item As number of histories grows, iteration count becomes identical to
-      using ``true'' polynomial
     \vfill
     \item Why limit ourselves to the Neumann series polynomial?
       \begin{itemize}
         \item Chebyshev or GMRES polynomials are viable alternatives
       \end{itemize}
   \end{itemize}
-\end{frame}
 
-%%---------------------------------------------------------------------------%%
-
-\begin{frame}{Neumann Series Polynomial}
   \begin{table}
-    \caption{Adjoint MCSA with Neumann Polynomial, $1000 \times 1000$ Shifted Laplacian Matrix.
-      Values are MCSA iteration counts (timing in milliseconds)
-      \label{tab:lap_adjoint_neumann}}
+    \caption{Polynomial MCSA - Shifted Laplacian}
     \centering
     \begin{tabular}{cccc}
       \toprule
-      Histories per & \multicolumn{3}{c}{Polynomial Order} \\
-      \cmidrule(lr){2-4}
-      Iteration & 2 & 4 & 6 \\
+      Polynomial & Polynomial & MCSA & Histories per \\
+      Type & Order & Iterations & Iteration \\
       \midrule
-      250 &  775(100) & 651(96) & 664(110) \\
-      500 &  725(122) & 502(104) & 394(95) \\
-      1000 & 707(174) & 482(179) & 366(144) \\
-      2000 & 703(280) & 471(259) & 356(251) \\
-      4000 & 698(494) & 467(497) & 350(458) \\
-      8000 & 697(923) & 464(905) & 350(873) \\
-      16000 & 695(1796) & 462(1768) & 347(1711) \\
-      \bottomrule
-    \end{tabular}
-  \end{table}
-\end{frame}
-
-%%---------------------------------------------------------------------------%%
-
-\begin{frame}{Chebyshev Polynomial}
-  \begin{table}
-    \caption{Adjoint MCSA with Chebyshev Polynomial, $1000 \times 1000$ Shifted Laplacian Matrix.
-      Values are MCSA iteration counts (timing in milliseconds)
-      \label{tab:lap_adjoint_cheby}}
-    \centering
-    \begin{tabular}{cccc}
-      \toprule
-      Histories per & \multicolumn{3}{c}{Polynomial Order} \\
-      \cmidrule(lr){2-4}
-      Iteration & 1 & 2 & 3 \\
-      \midrule
-      250 & - & - & - \\
-      500 & - & - & - \\
-      1000 & - & - & - \\
-      2000 & - & 328(134) & - \\
-      4000 & - & 296(210) & - \\
-      8000 & - & 288(380) & 262(423) \\
-      16000 & 1132(1866) & 283(721) & 175(550) \\
+      Neumann & 4 & 502 & 500 \\
+      Chebyshev & 4 & 246 & 16000 \\
+      GMRES & 4 & 260 & 2000 \\
       \bottomrule
     \end{tabular}
   \end{table}
