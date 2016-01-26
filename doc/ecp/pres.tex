@@ -178,7 +178,7 @@
 %%---------------------------------------------------------------------------%%
 
 \begin{frame}{Monte Carlo for Linear Systems}
-  
+
   First reference, G.E. Forsythe and R.A. Leibler. Matrix Inverstion by a
   Monte Carlo Method. \textit{Math. Tables and Comp.}, {\bf 4}(31), 127--129,
   1950 (credited to von Neumann and Ulam, 1940s).
@@ -266,7 +266,7 @@
 %%---------------------------------------------------------------------------%%
 
 \begin{frame}{Limitations of Monte Carlo---Convergence}
-  
+
   \begin{itemize}
   \item Because we are using MC to estimate terms in the Neumann series, the
     spectral radius of the iteration matrix must be
@@ -276,11 +276,11 @@
 
   \item Additionally, because we are estimating these terms stochastically,
     the relationship of the variance of the estimates to the error imposes an
-    additional restriction 
+    additional restriction
     \[
-    \rho(\hat{\mathbf{H}}) < 1\:, 
+    \rho(\hat{\mathbf{H}}) < 1\:,
     \]
-    where 
+    where
     \[
     \hat{H}_{ij} = \frac{H_{ij}^2}{P_{ij}}
     \]
@@ -304,18 +304,18 @@
   \item Form iterative method in which Richardson iteration is a ``smoother''
     in between Monte Carlo steps:
     \begin{align*}
-      \mathbf{x}^{k+1/2} &= (\ve{I} - \ve{A})\mathbf{x}^k + \ve{b} 
+      \mathbf{x}^{k+1/2} &= (\ve{I} - \ve{A})\mathbf{x}^k + \ve{b}
       && \text{Richardson Iteration}\\
-      %% 
-      \mathbf{r}^{k+1/2} &= \mathbf{b} - \mathbf{Ax}^{k+1/2} && 
+      %%
+      \mathbf{r}^{k+1/2} &= \mathbf{b} - \mathbf{Ax}^{k+1/2} &&
       \text{compute residual}\\
-      %% 
+      %%
       \hat{\mathbf{A}} \mathbf{\delta}_{MC} &= \mathbf{r}^{k+1/2}
       && \text{solve using MC}\\
       %%
-      \mathbf{x}^{k+1} &= \mathbf{x}^{k+1/2} + \delta_{MC} 
-      && \text{update} 
-      %% 
+      \mathbf{x}^{k+1} &= \mathbf{x}^{k+1/2} + \delta_{MC}
+      && \text{update}
+      %%
     \end{align*}
   \item This scheme is still constrained by the spectral limits on $\ve{H}$
   \end{itemize}
@@ -357,7 +357,7 @@
       \bottomrule
     \end{tabular}
   \end{table}
-  
+
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
@@ -377,19 +377,17 @@
   \end{itemize}
   \vfill
 
-  \begin{table}[!h]
+  \begin{table}
   \centering
-  \begin{tabular}{|c|c|c|c|}
-  \hline
+  \begin{tabular}{cccc}
+  \toprule
   \textbf{Block size} & \textbf{$\frac{nnz(H)}{nnz(A)}$}& $\rho(H)$
   &$\rho(\hat{H})$\\
-  \hline
+  \midrule
    3 & 1.4352 & $0.9804$ & $0.9531$\\
-  \hline
    9 & 3.0220 & $0.9790$ & $0.9674$\\
-  \hline
    33 & 9.8164 & $0.9783$  & $0.9774$\\
-  \hline
+  \bottomrule
   \end{tabular}
   \caption{$\rho(H)$ and $\rho(\hat{H})$ for advection--diffusion
   matrix with block diagonal preconditioning.}
@@ -412,17 +410,16 @@
       \end{itemize}
   \end{itemize}
 
-  \begin{table}[!h]
+  \begin{table}
   \centering
-  \begin{tabular}{|c|c|c|c|}
-  \hline
+  \begin{tabular}{cccc}
+  \toprule
   \textbf{Drop tolerance} & \textbf{$\frac{nnz(H)}{nnz(A)}$}& $\rho(H)$
   &$\rho(\hat{H})$\\
-  \hline
-   0.05 & 8.2797 & $0.9610$ & $1.0231$\\
-  \hline
-   0.01 & 33.1390 & $0.8668$ & $0.8279$\\
-  \hline
+  \midrule
+   0.05 & 8.2797 & $0.9610$ & $1.0231$  \\
+   0.01 & 33.1390 & $0.8668$ & $0.8279$ \\
+  \bottomrule
   \end{tabular}
   \caption{$\rho(H)$ and $\rho(\hat{H})$ for 2D
   Laplacian with AINV preconditioning.}
@@ -480,7 +477,7 @@
     \]
     \vfill
   \item We replicate the linear problem and form each subset on a different
-    group of parallel processes.  Each subset is domain decomposed.  
+    group of parallel processes.  Each subset is domain decomposed.
     \vfill
   \item This provides a mechanism to support \textit{resiliency}; the
     replicated component provides {\bf useful} work, not just redundancy
@@ -620,10 +617,13 @@
   \begin{table}[h]
     \begin{center}
       \caption{2D parabolic problem with AINV preconditioning.}
-      \begin{tabular}{|c|c|c|c|}\hline
-        Node & Iterations & Time (sec) & Relative Residual \\\hline
-        CPU & 6 & 992.23 & $1.23\times 10^{-7}$ \\\hline
-        GPU & 6 & 29.83 & $1.53\times 10^{-7}$ \\\hline
+      \begin{tabular}{cccc}
+        \toprule
+        Node & Iterations & Time (sec) & Relative Residual \\
+        \midrule
+        CPU & 6 & 992.23 & $1.23\times 10^{-7}$ \\
+        GPU & 6 & 29.83 & $1.53\times 10^{-7}$ \\
+        \bottomrule
       \end{tabular}
     \end{center}
   \end{table}
@@ -818,39 +818,41 @@
     \begin{column}{0.6\textwidth}
 
       \small{
-        \begin{table}[h!]
+        \begin{table}
           \begin{center}
-            \begin{tabular}{lccc}\hline\hline
+            \begin{tabular}{lccc}
+              \toprule
               \multicolumn{1}{l}{Benchmark}&
               \multicolumn{1}{c}{NK}&
               \multicolumn{1}{c}{FANM}&
               \multicolumn{1}{c}{NR}\\
-              \hline
+              \midrule
               Ra=\sn{1}{3} & 5 & 5 & 5\\
               Ra=\sn{1}{4} & 7 & 7 & 7\\
               Ra=\sn{1}{5} & 9 & 10 & 9\\
               Ra=\sn{1}{6} & 11 & 11 & 11\\
               %%
-              \hline\hline
+              \bottomrule
             \end{tabular}`
           \end{center}
           \caption{Nonlinear iterations.}
         \end{table}
 
-        \begin{table}[h!]
+        \begin{table}
           \begin{center}
-            \begin{tabular}{lccc}\hline\hline
+            \begin{tabular}{lccc}
+              \toprule
               \multicolumn{1}{l}{Benchmark}&
               \multicolumn{1}{c}{GMRES}&
               \multicolumn{1}{c}{MCSA}&
               \multicolumn{1}{c}{Richardson}\\
-              \hline
+              \midrule
               Ra=\sn{1}{3} & 32 & 18 & 38\\
               Ra=\sn{1}{4} & 23 & 17 & 34\\
               Ra=\sn{1}{5} & 25 & 20 & 34\\
               Ra=\sn{1}{6} & 39 & 25 & 48\\
               %%
-              \hline\hline
+              \bottomrule
             \end{tabular}
           \end{center}
           \caption{Total linear solver iterations.}
@@ -882,7 +884,7 @@
   w.r.t. scalability and resiliency into a broader application space
 
   \vfill
-  
+
   MC methods are used in many DOE application areas:
   \begin{itemize}
     \setlength{\itemsep}{-0.2\baselineskip}
@@ -1025,7 +1027,7 @@
   \item All code implementations are available in the open source Profugus
     mini-app (\underline{github.com/ORNL-CEES/Profugus})
   \end{itemize}
-  
+
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
