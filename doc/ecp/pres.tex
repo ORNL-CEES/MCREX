@@ -988,28 +988,50 @@
 \subsection{Building on ASCR Funding}
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Building on ASCR Funding}
+\begin{frame}{Trilinos Enables Inter-Operability}
 
-  \underline{\bf Trilinos}
   \begin{itemize}
-  \item Provides abstract solver interface for MCLS
-  \item Provides build system for Alea and MCLS
+  \item Provides abstract numerical algorithms
+    \begin{itemize}
+    \item solver interfaces
+    \item operator/vector interfaces
+    \item preconditioner interfaces
+    \end{itemize}
+    \vfill
+  \item Provides build system (TriBITS) for Alea and MCLS
+    \vfill
   \item Provides data structures and utilities for Alea and MCLS
+    \vfill
   \item Provides testing harness for MCLS
-  \end{itemize}
-
-  \vfill
-
-  \underline{\bf xSIM}
-  \begin{itemize}
-  \item Simulator to test for hard error detection and remediation
   \end{itemize}
 
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Building on ASCR Funding}
+\begin{frame}{xSIM Development and Fault Analysis Supported by MCREX}
+
+  \begin{itemize}
+  \item Use xSIM to model communication performance of MPI messaging
+    \begin{itemize}
+    \item Latency, bandwidth, contention, routing, and rendevous protocol
+    \item Star, ring, mesh, torus, twisted torus, and tree topologies
+    \item Hierarchical combinations of topologies, e.g. on-chip, on-node,
+      off-node
+    \end{itemize}
+  \item Also used to simulate hard errors to test for detection and recovery
+  \end{itemize}
+  \vfill
+  \begin{figure}
+    \centering
+    \includegraphics[height=.4\textwidth]{xsim}
+  \end{figure}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Using XSTACK Technologies Developed by XPRESS}
 
   \underline{\bf XPRESS}
   \begin{itemize}
