@@ -9,7 +9,7 @@
 \usepackage{amsthm} \usepackage{amsmath} \usepackage{tmadd,tmath}
 \usepackage{booktabs}
 \usepackage{multirow}
-\usepackage{subfigure}
+\usepackage{subcaption}
 \usepackage[compatibility=false]{caption}
 \usepackage{tikz}
 \usepackage{ragged2e}
@@ -49,6 +49,9 @@
 }
 
 \newlength{\DUtablewidth} % internal use in tables
+
+% Phantom minus sign for helping with alignment of matrices
+\newcommand{\phmin}{\ensuremath{\phantom{-}}}
 
 %%---------------------------------------------------------------------------%%
 %% TITLE
@@ -106,8 +109,11 @@
     implementation of Monte Carlo algorithms for linear systems
  \end{itemize}
  The end goal is to develop a set of resilient, scalable algorithms for the
- solution of linear systems.  We have made significant progress in each of
- these areas as summarized below.
+ solution of linear systems.
+
+ \vfill
+
+ \underline{Budget}: 300K/year (ORNL), 70K/year (Emory)
 
 \end{frame}
 
@@ -138,12 +144,10 @@
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\subsection{Overview and Status}
-%%---------------------------------------------------------------------------%%
 
-\begin{frame}{Summary}
+\begin{frame}{Project Achievements}
 
-  Much of the first 2 years of the project were attempting to resolve
+  Much of the first 2 years of the project was spent resolving
   \textit{algorithmic} challenges related to solver performance and efficiency
   \begin{itemize}
   \item Iterative schemes to improve efficiency
@@ -165,11 +169,20 @@
   \vfill
 
   We have developed two open source software packages that contain
-  production-quality versions of these solvers (MPI and GPU).
+  parallel, production-quality versions of these solvers (MPI and GPU).
 
 \end{frame}
 
+%%---------------------------------------------------------------------------%%
+\subsection{Overview and Status}
+%%---------------------------------------------------------------------------%%
+
 \begin{frame}{Monte Carlo for Linear Systems}
+  
+  First reference, G.E. Forsythe and R.A. Leibler. Matrix Inverstion by a
+  Monte Carlo Method. \textit{Math. Tables and Comp.}, {\bf 4}(31), 127--129,
+  1950 (credited to von Neumann and Ulam, 1940s).
+  \vfill
   \begin{itemize}
     \item Suppose we want to solve $\mathbf{Ax}=\mathbf{b}$
     \vfill
@@ -193,7 +206,6 @@
   \begin{itemize}
   \item Define a sequence of state transitions
   \end{itemize}
-  \vspace*{-0.1in}
   \[
   \nu = i \rightarrow i_1 \rightarrow \cdots \rightarrow i_{k-1}
   \rightarrow i_{k}
@@ -239,59 +251,97 @@
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Limitations of Monte Carlo}
+\begin{frame}{Limitations of Monte Carlo---Efficiency}
   \begin{itemize}
   \item Solving linear systems of equations with ``pure'' Monte Carlo methods
     is generally intractable
-    \begin{itemize}
-    \item Central limit theorem is barrier to accurate solutions
-    \end{itemize}
+  \item Central limit theorem is barrier to accurate solutions
     \begin{figure}
       \centering
-      \includegraphics[width=1.75in]{../NCState_seminar_2014/Ifiss_ConvDiff}
+      \includegraphics[width=3in]{../NCState_seminar_2014/Ifiss_ConvDiff}
     \end{figure}
-  \item There is a potentially restrictive limit on the spectral properties of
-    $\mathbf{H}$
-    \begin{equation*}
-      \rho(\mathbf{H}) < 1\:, \rho(\hat{\mathbf{H}}) < 1\:, \hat{H}_{ij} =
-      \frac{H_{ij}^2}{P_{ij}}
-    \end{equation*}
   \end{itemize}
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Monte Carlo Synthetic Acceleration}
+\begin{frame}{Limitations of Monte Carlo---Convergence}
+  
   \begin{itemize}
-  \item Address issue of convergence constrained by CLT
-    \vfill
-  \item Can be abstracted as a general linear solver
-    \vfill
-  \item Combine with Richardson iteration as a ``smoother'' in between
-    Monte Carlo steps:
+  \item Because we are using MC to estimate terms in the Neumann series, the
+    spectral radius of the iteration matrix must be
+    \[
+    \rho(\mathbf{H}) < 1
+    \]
+
+  \item Additionally, because we are estimating these terms stochastically,
+    the relationship of the variance of the estimates to the error imposes an
+    additional restriction 
+    \[
+    \rho(\hat{\mathbf{H}}) < 1\:, 
+    \]
+    where 
+    \[
+    \hat{H}_{ij} = \frac{H_{ij}^2}{P_{ij}}
+    \]
+    and the probabillities come from the decomposition of $\mathbf{H}$
+    \[
+    \mathbf{H} = \mathbf{P}\circ\mathbf{W}
+    \]
+  \end{itemize}
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Can Monte Carlo Convergence be Improved?}
+
+  \underline{Monte Carlo Synthetic Acceleration}
+  \vfill
+  \begin{itemize}
+  \item Building on Halton's Sequential Monte Carlo, we obtain Monte Carlo as
+    a corrective term as opposed to a direct solver to achieve exponential
+    convergence
+  \item Form iterative method in which Richardson iteration is a ``smoother''
+    in between Monte Carlo steps:
     \begin{align*}
-      \mathbf{r}^k &= \mathbf{b} - \mathbf{Ax}^k \\
-      \mathbf{x}^{k+1/2} &= \mathbf{x}^k + \mathbf{r}^k \\
-      \mathbf{r}^{k+1/2} &= \mathbf{b} - \mathbf{Ax}^{k+1/2} \\
-      \hat{\mathbf{A}} \mathbf{\delta} &= \mathbf{r}^{k+1/2} \\
-      \mathbf{x}^{k+1} &= \mathbf{x}^{k+1/2} + \delta
+      \mathbf{x}^{k+1/2} &= (\ve{I} - \ve{A})\mathbf{x}^k + \ve{b} 
+      && \text{Richardson Iteration}\\
+      %% 
+      \mathbf{r}^{k+1/2} &= \mathbf{b} - \mathbf{Ax}^{k+1/2} && 
+      \text{compute residual}\\
+      %% 
+      \hat{\mathbf{A}} \mathbf{\delta}_{MC} &= \mathbf{r}^{k+1/2}
+      && \text{solve using MC}\\
+      %%
+      \mathbf{x}^{k+1} &= \mathbf{x}^{k+1/2} + \delta_{MC} 
+      && \text{update} 
+      %% 
     \end{align*}
-  \item We still must address issue of convergence constraint by spectral radius
+  \item This scheme is still constrained by the spectral limits on $\ve{H}$
   \end{itemize}
+  \vfill\centering
+  \fbox{MCSA is a general linear solver}
+
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Monte Carlo as Approximate Polynomial Preconditioning}
+\begin{frame}{Why limit to the Neumann series polynomial?}
   \begin{itemize}
-    \item Using history length cutoff, Monte Carlo process is approximating
-      a fixed length Neumann series polynomial
-    \vfill
-    \item Why limit ourselves to the Neumann series polynomial?
-      \begin{itemize}
-        \item Chebyshev or GMRES polynomials are viable alternatives
-      \end{itemize}
+  \item Chebyshev or GMRES polynomials are viable alternatives
+  \vfill
+  \item A good approximation to a few terms in the polynomial
+    performs better than a statistically noisy approximation to
+    full series
+  \vfill
+  \item Using history length cutoff rather than weight cutoff can lead to
+    large reductions in iteration counts
+  \vfill
+  \item Significant reduction in iteration counts are possible using
+    alternate polynomials, but partially offset by increase in number
+    of histories required
   \end{itemize}
+  \vfill
 
   \begin{table}
     \caption{Polynomial MCSA - Shifted Laplacian}
@@ -307,33 +357,12 @@
       \bottomrule
     \end{tabular}
   \end{table}
+  
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Polynomial Methods -- Summary}
-  \begin{itemize}
-    \item Using history length cutoff rather than weight cutoff can lead to
-      large reductions in iteration counts
-      \vfill
-    \item A good approximation to a few terms in the Neumann series
-      performs better than a statistically noisy approximation to
-      full series
-      \vfill
-    \item Significant reduction in iteration counts are possible using
-      alternate polynomials, but partially offset by increase in number
-      of histories required
-      \begin{itemize}
-        \item May be very beneficial from resiliency and parallel efficiency
-          standpoints
-        \item Will be re-evaluated in future efforts
-      \end{itemize}
-  \end{itemize}
-\end{frame}
-
-%%---------------------------------------------------------------------------%%
-
-\begin{frame}{Preconditioning}
+\begin{frame}{Enabling Convergence through Preconditioning}
   \begin{itemize}
     \item Preconditioning needed to address convergence constraints due to
       spectral radius conditions
@@ -403,7 +432,7 @@
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Domain Decomposed Monte Carlo}
+\begin{frame}{Monte Carlo Scalability---Domain Decomposed Monte Carlo}
 
   \begin{columns}
     \begin{column}{0.5\textwidth}
@@ -438,32 +467,29 @@
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Replication}
+\begin{frame}{Combining History Decomposition with Domain Decomposition}
 
-  \vspace{-0.1in}
-
-  Different batches of Monte Carlo samples can be combined in summation via
-  superposition if they have different random number streams.  Consider each
-  of these batches independent \textit{subsets} of a Monte Carlo operator
-  where now the operator can be formed as a general additive decomposition of
-  $N_S$ subsets:
-
-  \[
-  \mathbf{M_{MC}} = \frac{1}{N_S}\sum_{n=1}^{N_s}{\mathbf{M_n}}
-  \]
-
-  We replicate the linear problem and form each subset on a different group of
-  parallel processes. Applying the subsets to a vector requires an AllReduce
-  to form the sum. Each subset is domain decomposed.
-  \vfill
-  This provides a mechanism to support \textit{resiliency}; the replicated
-  component provides {\bf useful} work, not just redundancy
-
+  \begin{itemize}
+  \item Different batches of Monte Carlo samples can be combined in summation
+    via superposition if they have different random number streams
+    \vfill
+  \item The new operator can be formed as a general additive
+    decomposition of $N_S$ subsets:
+    \[
+    \mathbf{M_{MC}} = \frac{1}{N_S}\sum_{n=1}^{N_s}{\mathbf{M_n}}
+    \]
+    \vfill
+  \item We replicate the linear problem and form each subset on a different
+    group of parallel processes.  Each subset is domain decomposed.  
+    \vfill
+  \item This provides a mechanism to support \textit{resiliency}; the
+    replicated component provides {\bf useful} work, not just redundancy
+  \end{itemize}
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Parallel Test - Simplified $P_N$ ($SP_N$) Assembly Problem}
+\begin{frame}{Application to Nuclear Reactor Analysis}
 \small
 \begin{columns}
 
@@ -516,33 +542,56 @@
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Scaling - Domain Decomposition}
+\begin{frame}{Scaling---Domain Decomposition}
 
   \begin{figure}
     \centering
-    \begin{tabular}{cc}
-      \subfigure[Strong time]{\includegraphics[width=1.8in]{strong_dd_time}} &
-      \subfigure[Strong efficiency]{\includegraphics[width=1.8in]{strong_dd_eff}} \\
-      %%
-      \subfigure[Weak time]{\includegraphics[width=1.8in]{weak_dd_time}} &
-      \subfigure[Weak efficiency]{\includegraphics[width=1.8in]{weak_dd_eff}} \\
-    \end{tabular}
+    \begin{subfigure}{0.35\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{strong_dd_time}
+      \caption{Strong scaling time}
+    \end{subfigure}
+    ~
+    \begin{subfigure}{0.35\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{strong_dd_eff}
+      \caption{Strong scaling efficiency}
+    \end{subfigure}\\
+    %%
+    \begin{subfigure}{0.35\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{weak_dd_time}
+      \caption{Weak scaling time}
+    \end{subfigure}
+    ~
+    \begin{subfigure}{0.35\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{weak_dd_eff}
+      \caption{Weak scaling efficiency}
+    \end{subfigure}
   \end{figure}
+
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Scaling - Domain Replication}
+\begin{frame}{Scaling---History Replication + Domain Decomposition}
 
   \vspace{-0.3in}
 
   \begin{figure}
     \centering
-    \begin{tabular}{cc}
-      \subfigure[Strong time]{\includegraphics[width=2in]{strong_rep_time}} &
-      \subfigure[Strong efficiency]{\includegraphics[width=2in]{strong_rep_eff}} \\
-      %%
-    \end{tabular}
+    \begin{subfigure}{0.4\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{strong_rep_time}
+      \caption{Strong scaling time}
+    \end{subfigure}
+    ~
+    \begin{subfigure}{0.4\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{strong_rep_eff}
+      \caption{Strong scaling efficiency}
+    \end{subfigure}
   \end{figure}
 
   \vfill
@@ -556,10 +605,7 @@
 
 %%---------------------------------------------------------------------------%%
 
-
-%%---------------------------------------------------------------------------%%
-
-\begin{frame}{GPU Optimization}
+\begin{frame}{Monte Carlo GPU Algorithm for Linear Systems}
 
   We have implemented a version of MCSA that uses GPUs to perform the MC
   linear solve.
@@ -585,42 +631,10 @@
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\subsection{Research Requirements}
-%%---------------------------------------------------------------------------%%
-
-\begin{frame}{Continued Research is Necessary}
-
-  The following important questions need to be answered before MC methods can
-  be applied to linear systems as a ``standard'' solver:
-
-  \begin{itemize}
-  \item Automatically determine history termination criteria
-    \begin{itemize}
-    \item We have investigated adaptive schemes based on variance
-    \item However, variance is not directly correlated with error
-    \end{itemize}
-  \item Identify classes of matrices and preconditioners that satisfy
-    convergence constraints
-    \begin{itemize}
-    \item This has been done for SDD and GDD
-    \end{itemize}
-  \item Demonstrate resiliency to hard MPI errors through replicated domain
-    parallelism
-  \item Further investigate non-linear, time-dependent problems
-    \begin{itemize}
-    \item This was part of the original proposal
-    \item Non-linear, sub-cycle time-stepping can result in strongly diagonally
-      dominant problems for which MCSA has been shown to be effective
-    \end{itemize}
-  \end{itemize}
-\end{frame}
-
-%%---------------------------------------------------------------------------%%
 \subsection{Software}
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{MCSA Implementations}
-
+\begin{frame}{Evolution of MC Linear Solver Software Products}
 
   {\bf MCLS} (\underline{github.com/sslattery/MCLS})
   \begin{itemize}
@@ -644,6 +658,34 @@
   \vfill
   Both software packages contain a complete suite of unit-tests integrated
   through GoogleTest (Alea) or TeuchosTest (MCLS)
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+\subsection{Research Requirements}
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{What research remains for DOE ECP integration?}
+
+  The following important questions need to be answered before MC methods can
+  be applied to linear systems as a ``standard'' solver in ECP applications
+
+  \begin{itemize}
+  \item Automatically determine history termination criteria
+    \begin{itemize}
+    \item We have investigated adaptive schemes based on variance
+    \item However, variance is not directly correlated with error
+    \end{itemize}
+  \item Identify classes of matrices and preconditioners that satisfy
+    convergence constraints
+    \begin{itemize}
+    \item This has been done for SDD and GDD
+    \end{itemize}
+  \item Demonstrate resiliency to hard MPI errors through replicated domain
+    parallelism
+  \item Identify optimal, tunable parameter values for performance in
+    different applications
+  \end{itemize}
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
@@ -703,7 +745,7 @@
 \subsection{ECP Application Requirements}
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Connection to ECP Requirements}
+\begin{frame}{Ties to Identified Requirements of ECP Applications}
 
   \begin{itemize}
 
@@ -735,13 +777,17 @@
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Inter-Operatibility Example}
+\begin{frame}{Inter-Operability---Connecting to Production Applications}
 
-  Using the MCLS interface to Trilinos, it is straightforward to implement
-  MCSA in other applications
+  MCLS implements Trilinos ANA interfaces making it straightforward to
+  implement MCSA in other applications
+  \begin{itemize}
+  \item Exnihilo neutronics (shown before)
+  \item Drekar (SNL) CFD
+  \end{itemize}
   \vfill
-  We implemented MCSA in the production CFD code, Drekar (SNL) using a
-  Newton-MCSA algorithm:
+  We implemented MCSA in Drekar using a Newton-MCSA algorithm via the Trilinos
+  package NOX:
   \begin{algorithm}[H]
     \footnotesize
     \begin{algorithmic}[1]
@@ -749,7 +795,7 @@
       \WHILE{$||\ve{F}(\ve{u}^{k})|| > \epsilon
         ||\ve{F}(\ve{u}^{0})||$}
       \STATE $\ve{J}(\ve{u}^{k}) \leftarrow AD(\ve{F}(\ve{u}^k))$
-      \COMMENT{Automatic differentiation - Panzer}
+      \COMMENT{Automatic differentiation - Trilinos FAD}
       \STATE $\ve{J}(\ve{u}^k) \delta \ve{u}^k = -\ve{F}(\ve{u}^{k})$
       \COMMENT{Solve for the Newton correction with MCSA}
       \STATE $\ve{u}^{k+1} \leftarrow \ve{u}^k + \delta \ve{u}^k$
@@ -759,17 +805,14 @@
     \caption{FANM}
   \end{algorithm}
   \vfill
-  Because MCLS was built with Trilinos abstract numerical algorithms this
-  integration was straightforward and we can test MCLS in a whole new problem
-  space
-  \vfill
-  We are also able to utilize all of Trilinos' preconditioners
+  \centering
+  \fbox{Trilinos ANA enables application integration}
 
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Thermal Convection Cavity Results}
+\begin{frame}{Drekar-MCLS Thermal Convection Cavity Results}
 
   \begin{columns}
     \begin{column}{0.6\textwidth}
@@ -815,38 +858,16 @@
       }
 
     \end{column}
-
+    %%
     \begin{column}{0.4\textwidth}
-
-      \small{
-        \begin{itemize}
-        \item Weaker preconditioning at Ra=\sn{1}{5} case
-          \medskip
-        \item Constant forcing term for Ra=\sn{1}{6} case
-        \end{itemize}
-      }
-
-      \bigskip
-
-      \tiny{
-        \begin{table}[h!]
-          \begin{center}
-            \begin{tabular}{lc}\hline\hline
-              \multicolumn{1}{l}{Benchmark}&
-              \multicolumn{1}{c}{NK Speedup}\\
-              \hline
-              Ra=\sn{1}{3} & 338 \\
-              Ra=\sn{1}{4} & 336 \\
-              Ra=\sn{1}{5} & 346 \\
-              Ra=\sn{1}{6} & 465 \\
-              \hline\hline
-            \end{tabular}
-          \end{center}
-          \caption{Newton-Krylov speedup over FANM.}
-        \end{table}
-      }
-
+      \vspace{-0.4in}
+      \begin{figure}
+        \centering
+        \includegraphics[width=0.9\textwidth]{convection_isotherms}
+        \caption{Steady state isotherms.}
+      \end{figure}
     \end{column}
+
   \end{columns}
 
 \end{frame}
@@ -991,17 +1012,20 @@
   \item We have already compared OpenMP versus HPX for on-node MC particle
     transport algorithms
     \begin{figure}
-      \centering
-      \begin{tabular}{cc}
-        \subfigure[time]{\includegraphics[width=1.8in]{time}}
-        &
-        \subfigure[efficiency]{\includegraphics[width=1.8in]{tallies}}
-      \end{tabular}
+      \begin{subfigure}{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{time}
+      \end{subfigure}
+      ~
+      \begin{subfigure}{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{tallies}
+      \end{subfigure}
     \end{figure}
   \item All code implementations are available in the open source Profugus
     mini-app (\underline{github.com/ORNL-CEES/Profugus})
   \end{itemize}
-
+  
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
@@ -1015,6 +1039,91 @@
 
 %%---------------------------------------------------------------------------%%
 \section*{Extra Slides}
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Forward Monte Carlo}
+\begin{itemize}
+  \item Choose a row-stochastic matrix $\mathbf{P}$ and weight matrix
+    $\mathbf{W}$ such that $\mathbf{H} = \mathbf{P} \circ \mathbf{W}$
+  \item Typical choice (Monte Carlo Almost-Optimal):
+    \begin{equation*}
+      \mathbf{P}_{ij} = \frac{| \mathbf{H}_{ij}| }
+      {\sum_{j=1}^{N} | \mathbf{H}_{ij} | }
+    \end{equation*}
+  \item To compute solution component $\mathbf{x}_i$:
+    \begin{itemize}
+      \item Start a history in state $i$ (with initial weight of 1)
+      \item Transition to new state $j$ based probabilities determined by
+        $\mathbf{P}_i$
+      \item Modify history weight based on corresponding entry in
+        $\mathbf{W}_{ij}$
+      \item Add contribution to $\mathbf{x}_i$ based on current history weight
+        and value of $\mathbf{b}_j$
+    \end{itemize}
+  \item A given random walk can only contribute to a single component of
+    the solution vector
+\end{itemize}
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Sampling Example (Forward Monte Carlo)}
+  \begin{itemize}
+    \item Suppose
+  \begin{equation*}
+    \mathbf{A} = \begin{bmatrix}
+      \phmin 1.0 & -0.2 & -0.6 \\
+      -0.4 & \phmin 1.0 & -0.4 \\
+      -0.1 & -0.4 & \phmin 1.0 \end{bmatrix} \to
+    \mathbf{H} \equiv (\mathbf{I-A}) = \begin{bmatrix}
+       0.0 &  0.2 &  0.6 \\
+       0.4 &  0.0 &  0.4 \\
+       0.1 &  0.4 &  0.0 \end{bmatrix}
+  \end{equation*}
+    then
+  \begin{equation*}
+    \mathbf{P} = \begin{bmatrix}
+       0.0 & 0.25 & 0.75 \\
+       0.5 &  0.0 & 0.5 \\
+       0.2 &  0.8 & 0.0 \end{bmatrix}, \quad
+    \mathbf{W} = \begin{bmatrix}
+       0.0 &  0.8 &  0.8 \\
+       0.8 &  0.0 &  0.8 \\
+       0.5 &  0.5 &  0.0 \end{bmatrix}
+  \end{equation*}
+    \vfill
+    \item If a history is started in state $3$, there is a $20\%$ chance of
+      it transitioning to state $1$ and an $80\%$ chance of moving to state
+      $2$
+  \end{itemize}
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Adjoint Monte Carlo}
+\begin{itemize}
+  \item Choose $\mathbf{P}$ and $\mathbf{W}$ such that
+    $\mathbf{H}^{T} = \mathbf{P} \circ \mathbf{W}$
+  \item Typical choice (Monte Carlo Almost-Optimal):
+    \begin{equation*}
+      \mathbf{P}_{ij} = \frac{| \mathbf{H}_{ji}| }
+      {\sum_{i=1}^{N} | \mathbf{H}_{ji} |}
+    \end{equation*}
+  \item To estimate solution:
+    \begin{itemize}
+      \item Start a history in random state $i$ by sampling from distribution
+        determined by $\mathbf{b}$
+      \item Transition to new state $j$ based probabilities determined by
+        $\mathbf{P}_i$
+      \item Modify history weight based on corresponding entry in
+        $\mathbf{W}_{ij}$
+      \item Add contribution to $\mathbf{x}_j$ based on current history weight
+    \end{itemize}
+  \item A given random walk can contribute to many different components of
+    the solution vector
+\end{itemize}
+\end{frame}
+
 %%---------------------------------------------------------------------------%%
 
 \begin{frame}{Preconditioned MCSA}
@@ -1051,6 +1160,35 @@
     \item Need to investigate preconditioning strategies that lead to sparse
       preconditioned systems
   \end{itemize}
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Monte Carlo as Approximate Polynomial Preconditioning}
+  \begin{itemize}
+    \item Using history length cutoff, Monte Carlo process is approximating
+      a fixed length Neumann series polynomial
+    \vfill
+    \item Why limit ourselves to the Neumann series polynomial?
+      \begin{itemize}
+        \item Chebyshev or GMRES polynomials are viable alternatives
+      \end{itemize}
+  \end{itemize}
+
+  \begin{table}
+    \caption{Polynomial MCSA - Shifted Laplacian}
+    \centering
+    \begin{tabular}{cccc}
+      \toprule
+      Polynomial & Polynomial & MCSA & Histories per \\
+      Type & Order & Iterations & Iteration \\
+      \midrule
+      Neumann & 4 & 502 & 500 \\
+      Chebyshev & 4 & 246 & 16000 \\
+      GMRES & 4 & 260 & 2000 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
