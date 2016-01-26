@@ -482,6 +482,31 @@
 
 %%---------------------------------------------------------------------------%%
 
+\begin{frame}{Replication}
+
+  \vspace{-0.1in}
+
+  Different batches of Monte Carlo samples can be combined in summation via
+  superposition if they have different random number streams.  Consider each
+  of these batches independent \textit{subsets} of a Monte Carlo operator
+  where now the operator can be formed as a general additive decomposition of
+  $N_S$ subsets:
+
+  \[
+  \mathbf{M_{MC}} = \frac{1}{N_S}\sum_{n=1}^{N_s}{\mathbf{M_n}}
+  \]
+
+  We replicate the linear problem and form each subset on a different group of
+  parallel processes. Applying the subsets to a vector requires an AllReduce
+  to form the sum. Each subset is domain decomposed.
+  \vfill
+  This provides a mechanism to support \textit{resiliency}; the replicated
+  component provides {\bf useful} work, not just redundancy
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
 \begin{frame}{Parallel Test - Simplified $P_N$ ($SP_N$) Assembly Problem}
 \small
 \begin{columns}
@@ -535,152 +560,37 @@
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Domain Decomposition Scaling}
+\begin{frame}{Scaling - DD}
 
-  \vspace{-0.2in}
-
-  \begin{table}[htb!]
-    \tiny
-    \begin{center}
-      \begin{tabular}{rrrrrrr}
-        \toprule
-        \multicolumn{1}{r}{Cores} &
-        \multicolumn{1}{r}{DOFs} &
-        \multicolumn{1}{r}{DOFs/Core} &
-        \multicolumn{1}{r}{Time Min (s)} &
-        \multicolumn{1}{r}{Time Max (s)} &
-        \multicolumn{1}{r}{Time Ave (s)} &
-        \multicolumn{1}{r}{Efficiency}
-        \\ \midrule
-        %%
-        256 & 273\,509\,600 & 1\,068\,397 & 515.51 & 515.52 & 515.52 & 1.00 \\
-        1\,024 & 273\,509\,600 & 267\,099 & 122.76 & 122.77 & 122.76 & 1.05 \\ %CACHE
-        4\,096 & 273\,509\,600 & 66\,775 & 27.96 & 27.97 & 27.96 & 1.15 \\
-        7\,744 & 273\,509\,600 & 35\,319 & 17.72 & 17.72 & 17.72 & 0.96 \\
-        10\,816 & 273\,509\,600 & 25\,288 & 13.72 & 13.72 & 13.72 & 0.89 \\
-        %%
-        \bottomrule
-      \end{tabular}
-    \end{center}
-    \vspace{-0.07in}
-    \caption{\small Strong Scaling}
-  \end{table}
-
-  \vspace{-0.4in}
-
-  \begin{table}[htb!]
-    \tiny
-    \begin{center}
-      \begin{tabular}{rrrrrrr}
-        \toprule
-        \multicolumn{1}{r}{Cores} &
-        \multicolumn{1}{r}{DOFs} &
-        \multicolumn{1}{r}{DOFs/Core} &
-        \multicolumn{1}{r}{Time Min (s)} &
-        \multicolumn{1}{r}{Time Max (s)} &
-        \multicolumn{1}{r}{Time Ave (s)} &
-        \multicolumn{1}{r}{Efficiency}
-        \\ \midrule
-        %%
-        64 & 1\,618\,400 & 25\,288 & 12.65 & 12.65 & 12.65 & 1.00 \\
-        256 & 6\,473\,600 & 25\,288 & 12.86 & 12.86 & 12.86 & 0.98 \\
-        1\,024 & 25\,894\,400 & 25\,288 & 14.59 & 14.59 & 14.59 & 0.87 \\
-        4\,096 & 103\,577\,600 & 25\,288 & 14.25 & 14.25 & 14.25 & 0.89 \\
-        7\,744 & 195\,826\,400 & 25\,288 & 14.75 & 14.78 & 14.75 & 0.86 \\
-        10\,816 & 273\,509\,600 & 25\,288 & 13.72 & 13.72 & 13.72 & 0.92 \\
-        %
-        \bottomrule
-      \end{tabular}
-    \end{center}
-        \vspace{-0.07in}
-    \caption{\small Weak Scaling}
-  \end{table}
-
-  \vspace{-0.25in}
-
-  \begin{itemize}
-    \small
-  \item Titan Cray XK7 was used with no GPUs - used Eos parameters
-  \item Results are consistent with transport literature
-  \item History length of 15 and 3 histories per DOF
-  \item Consider these effective operator apply times of 15 realizations of
-    $\ve{H}$
-  \item MC dominates run times in solver applications
-  \end{itemize}
-
+  \begin{figure}
+    \centering
+    \begin{tabular}{cc}
+      \subfigure[Strong time]{\includegraphics[width=1.8in]{strong_dd_time}} &
+      \subfigure[Strong efficiency]{\includegraphics[width=1.8in]{strong_dd_eff}} \\
+      %%
+      \subfigure[Weak time]{\includegraphics[width=1.8in]{weak_dd_time}} &
+      \subfigure[Weak efficiency]{\includegraphics[width=1.8in]{weak_dd_eff}} \\
+    \end{tabular}
+  \end{figure}
 \end{frame}
-
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Replication}
+\begin{frame}{Scaling - Replication}
 
-  \vspace{-0.1in}
-
-  Different batches of Monte Carlo samples can be combined in summation via
-  superposition if they have different random number streams.  Consider each
-  of these batches independent \textit{subsets} of a Monte Carlo operator
-  where now the operator can be formed as a general additive decomposition of
-  $N_S$ subsets:
-
-  \[
-  \mathbf{M_{MC}} = \frac{1}{N_S}\sum_{n=1}^{N_s}{\mathbf{M_n}}
-  \]
-
-  We replicate the linear problem and form each subset on a different group of
-  parallel processes. Applying the subsets to a vector requires an AllReduce
-  to form the sum. Each subset is domain decomposed.
-  \vfill
-  This provides a mechanism to support \textit{resiliency}; the replicated
-  component provides {\bf useful} work, not just redundancy
+  \begin{figure}
+    \centering
+    \begin{tabular}{cc}
+      \subfigure[Strong time]{\includegraphics[width=2in]{strong_rep_time}} &
+      \subfigure[Strong efficiency]{\includegraphics[width=2in]{strong_rep_eff}} \\
+      %%
+    \end{tabular}
+  \end{figure}
 
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Replication Scaling}
-
-  \begin{table}[htb!]
-    \tiny
-    \begin{center}
-      \begin{tabular}{rrrrrrr}
-        \toprule
-        \multicolumn{1}{r}{Subsets} &
-        \multicolumn{1}{r}{Cores} &
-        \multicolumn{1}{r}{DOFs} &
-        \multicolumn{1}{r}{Time Min (s)} &
-        \multicolumn{1}{r}{Time Max (s)} &
-        \multicolumn{1}{r}{Time Ave (s)} &
-        \multicolumn{1}{r}{Efficiency}
-        \\ \midrule
-        %%
-        1 & 256 & 6\,473\,600 & 12.65 & 12.65 & 12.65 & 1.00 \\
-        2 & 512 & 6\,473\,600 & 6.62 & 6.80 & 6.72 & 0.93 \\
-        3 & 768 & 6\,473\,600 & 4.50 & 4.73 & 4.66 & 0.89 \\
-        4 & 1\,024 & 6\,473\,600 & 3.62 & 3.81 & 3.71 & 0.83 \\
-        %
-        \bottomrule
-      \end{tabular}
-    \end{center}
-    \caption{\small Fixed algorithmic scaling}
-  \end{table}
-
-  \vfill
-
-  \begin{itemize}
-    \small
-  \item Timings are Monte Carlo time plus AllReduce time
-  \item 256 cores per subset with domain decomposition
-  \item $1/N_S$ samples per subset gives flat algorithmic performance
-  \item Two performance issues
-    \begin{itemize}
-    \item Dividing up samples creates work starvation
-    \item AllReduce buffer size is constant regardless of work starvation
-    \end{itemize}
-  \item Research is needed for a more performant subset combination
-  \end{itemize}
-
-\end{frame}
 
 %%---------------------------------------------------------------------------%%
 
@@ -1214,6 +1124,129 @@
     \end{column}
 
   \end{columns}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Domain Decomposition Scaling}
+
+  \vspace{-0.2in}
+
+  \begin{table}[htb!]
+    \tiny
+    \begin{center}
+      \begin{tabular}{rrrrrrr}
+        \toprule
+        \multicolumn{1}{r}{Cores} &
+        \multicolumn{1}{r}{DOFs} &
+        \multicolumn{1}{r}{DOFs/Core} &
+        \multicolumn{1}{r}{Time Min (s)} &
+        \multicolumn{1}{r}{Time Max (s)} &
+        \multicolumn{1}{r}{Time Ave (s)} &
+        \multicolumn{1}{r}{Efficiency}
+        \\ \midrule
+        %%
+        256 & 273\,509\,600 & 1\,068\,397 & 515.51 & 515.52 & 515.52 & 1.00 \\
+        1\,024 & 273\,509\,600 & 267\,099 & 122.76 & 122.77 & 122.76 & 1.05 \\ %CACHE
+        4\,096 & 273\,509\,600 & 66\,775 & 27.96 & 27.97 & 27.96 & 1.15 \\
+        7\,744 & 273\,509\,600 & 35\,319 & 17.72 & 17.72 & 17.72 & 0.96 \\
+        10\,816 & 273\,509\,600 & 25\,288 & 13.72 & 13.72 & 13.72 & 0.89 \\
+        %%
+        \bottomrule
+      \end{tabular}
+    \end{center}
+    \vspace{-0.07in}
+    \caption{\small Strong Scaling}
+  \end{table}
+
+  \vspace{-0.4in}
+
+  \begin{table}[htb!]
+    \tiny
+    \begin{center}
+      \begin{tabular}{rrrrrrr}
+        \toprule
+        \multicolumn{1}{r}{Cores} &
+        \multicolumn{1}{r}{DOFs} &
+        \multicolumn{1}{r}{DOFs/Core} &
+        \multicolumn{1}{r}{Time Min (s)} &
+        \multicolumn{1}{r}{Time Max (s)} &
+        \multicolumn{1}{r}{Time Ave (s)} &
+        \multicolumn{1}{r}{Efficiency}
+        \\ \midrule
+        %%
+        64 & 1\,618\,400 & 25\,288 & 12.65 & 12.65 & 12.65 & 1.00 \\
+        256 & 6\,473\,600 & 25\,288 & 12.86 & 12.86 & 12.86 & 0.98 \\
+        1\,024 & 25\,894\,400 & 25\,288 & 14.59 & 14.59 & 14.59 & 0.87 \\
+        4\,096 & 103\,577\,600 & 25\,288 & 14.25 & 14.25 & 14.25 & 0.89 \\
+        7\,744 & 195\,826\,400 & 25\,288 & 14.75 & 14.78 & 14.75 & 0.86 \\
+        10\,816 & 273\,509\,600 & 25\,288 & 13.72 & 13.72 & 13.72 & 0.92 \\
+        %
+        \bottomrule
+      \end{tabular}
+    \end{center}
+        \vspace{-0.07in}
+    \caption{\small Weak Scaling}
+  \end{table}
+
+  \vspace{-0.25in}
+
+  \begin{itemize}
+    \small
+  \item Titan Cray XK7 was used with no GPUs - used Eos parameters
+  \item Results are consistent with transport literature
+  \item History length of 15 and 3 histories per DOF
+  \item Consider these effective operator apply times of 15 realizations of
+    $\ve{H}$
+  \item MC dominates run times in solver applications
+  \end{itemize}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Replication Scaling}
+
+  \begin{table}[htb!]
+    \tiny
+    \begin{center}
+      \begin{tabular}{rrrrrrr}
+        \toprule
+        \multicolumn{1}{r}{Subsets} &
+        \multicolumn{1}{r}{Cores} &
+        \multicolumn{1}{r}{DOFs} &
+        \multicolumn{1}{r}{Time Min (s)} &
+        \multicolumn{1}{r}{Time Max (s)} &
+        \multicolumn{1}{r}{Time Ave (s)} &
+        \multicolumn{1}{r}{Efficiency}
+        \\ \midrule
+        %%
+        1 & 256 & 6\,473\,600 & 12.65 & 12.65 & 12.65 & 1.00 \\
+        2 & 512 & 6\,473\,600 & 6.62 & 6.80 & 6.72 & 0.93 \\
+        3 & 768 & 6\,473\,600 & 4.50 & 4.73 & 4.66 & 0.89 \\
+        4 & 1\,024 & 6\,473\,600 & 3.62 & 3.81 & 3.71 & 0.83 \\
+        %
+        \bottomrule
+      \end{tabular}
+    \end{center}
+    \caption{\small Fixed algorithmic scaling}
+  \end{table}
+
+  \vfill
+
+  \begin{itemize}
+    \small
+  \item Timings are Monte Carlo time plus AllReduce time
+  \item 256 cores per subset with domain decomposition
+  \item $1/N_S$ samples per subset gives flat algorithmic performance
+  \item Two performance issues
+    \begin{itemize}
+    \item Dividing up samples creates work starvation
+    \item AllReduce buffer size is constant regardless of work starvation
+    \end{itemize}
+  \item Research is needed for a more performant subset combination
+  \end{itemize}
 
 \end{frame}
 
