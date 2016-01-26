@@ -875,10 +875,10 @@
 \end{frame}
 
 %%---------------------------------------------------------------------------%%
-\subsection{ECP R\&D}
+\subsection{R\&D in ECP}
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{ECP Coordinated Reasearch}
+\begin{frame}{Monte Carlo R\&D in ECP}
 
   \underline{\bf Goal}: Extend the general algorithmic MC exascale methods
   w.r.t. scalability and resiliency into a broader application space
@@ -888,14 +888,14 @@
   MC methods are used in many DOE application areas:
   \begin{itemize}
     \setlength{\itemsep}{-0.2\baselineskip}
-  \item high-energy density physics
-  \item astrophysics
-  \item nuclear engineering
-  \item particle accelerators and neutron spallation source
-  \item quantum chemistry
-  \item visualization
   \item fluid dynamics
   \item combustion
+  \item quantum chemistry
+  \item visualization
+  \item nuclear engineering
+  \item high-energy density physics
+  \item astrophysics
+  \item particle accelerators and neutron spallation source
   \item computational biology
   \end{itemize}
 
@@ -906,14 +906,18 @@
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{ECP R\&D I: Time-dependent Problems}
+\begin{frame}{Monte Carlo for Time-dependent Applications in ECP}
 
-  Investigate use in time-dependent applications, e.g. non-linear radiation
-  hydrodynamics for high-energy density physics applications:
+  Investigate use in time-dependent applications, e.g. fluid flow, compustion,
+  non-linear radiation hydrodynamics for high-energy density physics
+  applications:
+  \vfill
   \begin{itemize}
   \item Used as inner linear solver in a non-linear (Newton) iteration
+  \vfill
   \item Time-dependent applications generally have strong diagonal-dominance
     that makes MCSA competitive with Krylov methods
+  \vfill
   \item MCSA has resiliency and parallel efficiency benefits over conventional
     subspace methods
   \end{itemize}
@@ -922,16 +926,16 @@
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{ECP R\&D II: Monte Carlo Particle Transport}
+\begin{frame}{Monte Carlo for Particle Transport Applications in ECP}
 
-  MC particle transport has applications in many areas across the DOE complex
+  MC particle transport has applications across the DOE complex
   \begin{itemize}
     \setlength{\itemsep}{-0.2\baselineskip}
-  \item high-energy density physics
-  \item neutron spallation source
-  \item nuclear engineering
-  \item astrophysics
   \item combustion
+  \item nuclear engineering
+  \item rarefied gas dynamics
+  \item astrophysics
+  \item high-energy density physics
   \end{itemize}
 
   \vfill
@@ -939,6 +943,7 @@
   There are significant challenges in porting random walk algorithms to modern
   heterogeneous computing devices
   \begin{enumerate}
+    \setlength{\itemsep}{-0.2\baselineskip}
   \item Random walks are dominated by branching statements $\rightarrow$
     thread divergence
   \item Runtime is often dominated by sampling and interpolating large fields
@@ -955,7 +960,7 @@
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{ECP R\&D III: Particle Methods}
+\begin{frame}{General Particle Applications in ECP}
 
   Non-stochastic particle methods share a great deal of algorithmic features
   with stochastic particle methods
