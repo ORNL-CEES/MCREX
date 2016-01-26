@@ -9,10 +9,11 @@
 \usepackage{amsthm} \usepackage{amsmath} \usepackage{tmadd,tmath}
 \usepackage{booktabs}
 \usepackage{multirow}
+\usepackage{subfigure}
 \usepackage[compatibility=false]{caption}
-\usepackage[labelformat=empty]{subcaption}
 \usepackage{tikz}
 \usepackage{ragged2e}
+\usepackage{algorithm,algorithmic}
 
 \usetikzlibrary{arrows}
 
@@ -444,6 +445,7 @@
   \begin{columns}
     \begin{column}{0.5\textwidth}
       \begin{itemize}
+        \setlength{\itemsep}{-0.4\baselineskip}
       \item Each parallel process owns a piece of the domain (linear
         system)
         \bigskip
@@ -704,7 +706,7 @@
 \subsection{Research Requirements}
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Remaining Research}
+\begin{frame}{Continued Research is Necessary}
 
   The following important questions need to be answered before MC methods can
   be applied to linear systems as a ``standard'' solver:
@@ -779,8 +781,16 @@
     Equation. \textit{J. Comp. Phys.}, {\bf 258}, 338--358, 2014.
   \end{itemize}
 
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Publications and Presentations}
+
   \underline{Presentations}
   \begin{itemize}
+    \footnotesize
+    \setlength{\itemsep}{-0.1\baselineskip}
   \item Monte Carlo Synthetic Acceleration Methods for Sparse Linear Systems
     (M.L. Pasini, M. Benzi, T. Evans, S. Hamilton, S. Slattery), \textit{SIAM
       ALA}, October 30, 2015.
@@ -845,7 +855,117 @@
 
 \begin{frame}{Inter-Operatibility Example}
 
+  Using the MCLS interface to Trilinos, it is straightforward to implement
+  MCSA in other applications
+  \vfill
+  We implemented MCSA in the production CFD code, Drekar (SNL) using a
+  Newton-MCSA algorithm:
+  \begin{algorithm}[H]
+    \footnotesize
+    \begin{algorithmic}[1]
+      \STATE $k := 0$
+      \WHILE{$||\ve{F}(\ve{u}^{k})|| > \epsilon
+        ||\ve{F}(\ve{u}^{0})||$}
+      \STATE $\ve{J}(\ve{u}^{k}) \leftarrow AD(\ve{F}(\ve{u}^k))$
+      \COMMENT{Automatic differentiation - Panzer}
+      \STATE $\ve{J}(\ve{u}^k) \delta \ve{u}^k = -\ve{F}(\ve{u}^{k})$
+      \COMMENT{Solve for the Newton correction with MCSA}
+      \STATE $\ve{u}^{k+1} \leftarrow \ve{u}^k + \delta \ve{u}^k$
+      \STATE $k \leftarrow k+1$
+      \ENDWHILE
+    \end{algorithmic}
+    \caption{FANM}
+  \end{algorithm}
+  \vfill
+  Because MCLS was built with Trilinos abstract numerical algorithms this
+  integration was straightforward and we can test MCLS in a whole new problem
+  space
+  \vfill
+  We are also able to utilize all of Trilinos' preconditioners
 
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Thermal Convection Cavity Results}
+
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+
+      \small{
+        \begin{table}[h!]
+          \begin{center}
+            \begin{tabular}{lccc}\hline\hline
+              \multicolumn{1}{l}{Benchmark}&
+              \multicolumn{1}{c}{NK}&
+              \multicolumn{1}{c}{FANM}&
+              \multicolumn{1}{c}{NR}\\
+              \hline
+              Ra=\sn{1}{3} & 5 & 5 & 5\\
+              Ra=\sn{1}{4} & 7 & 7 & 7\\
+              Ra=\sn{1}{5} & 9 & 10 & 9\\
+              Ra=\sn{1}{6} & 11 & 11 & 11\\
+              %%
+              \hline\hline
+            \end{tabular}`
+          \end{center}
+          \caption{Nonlinear iterations.}
+        \end{table}
+
+        \begin{table}[h!]
+          \begin{center}
+            \begin{tabular}{lccc}\hline\hline
+              \multicolumn{1}{l}{Benchmark}&
+              \multicolumn{1}{c}{GMRES}&
+              \multicolumn{1}{c}{MCSA}&
+              \multicolumn{1}{c}{Richardson}\\
+              \hline
+              Ra=\sn{1}{3} & 32 & 18 & 38\\
+              Ra=\sn{1}{4} & 23 & 17 & 34\\
+              Ra=\sn{1}{5} & 25 & 20 & 34\\
+              Ra=\sn{1}{6} & 39 & 25 & 48\\
+              %%
+              \hline\hline
+            \end{tabular}
+          \end{center}
+          \caption{Total linear solver iterations.}
+        \end{table}
+      }
+
+    \end{column}
+
+    \begin{column}{0.4\textwidth}
+
+      \small{
+        \begin{itemize}
+        \item Weaker preconditioning at Ra=\sn{1}{5} case
+          \medskip
+        \item Constant forcing term for Ra=\sn{1}{6} case
+        \end{itemize}
+      }
+
+      \bigskip
+
+      \tiny{
+        \begin{table}[h!]
+          \begin{center}
+            \begin{tabular}{lc}\hline\hline
+              \multicolumn{1}{l}{Benchmark}&
+              \multicolumn{1}{c}{NK Speedup}\\
+              \hline
+              Ra=\sn{1}{3} & 338 \\
+              Ra=\sn{1}{4} & 336 \\
+              Ra=\sn{1}{5} & 346 \\
+              Ra=\sn{1}{6} & 465 \\
+              \hline\hline
+            \end{tabular}
+          \end{center}
+          \caption{Newton-Krylov speedup over FANM.}
+        \end{table}
+      }
+
+    \end{column}
+  \end{columns}
 
 \end{frame}
 
@@ -856,21 +976,19 @@
   \underline{\bf Goal}: Extend the general algorithmic MC exascale methods
   w.r.t. scalability and resiliency into a broader application space
 
-  \vfill
-
   MC methods are used in many DOE application areas:
   \begin{itemize}
+    \setlength{\itemsep}{-0.2\baselineskip}
   \item high-energy density physics
   \item astrophysics
   \item nuclear engineering
-  \item particle accelerators and neutron scattering
+  \item particle accelerators and neutron spallation source
   \item quantum chemistry
   \item visualization
   \item fluid dynamics
+  \item combustion
   \item computational biology
   \end{itemize}
-
-  \vfill
 
   Much of the algorithmic research performed in MCREX is directly applicable
   to the use of MC methods in these other application areas
@@ -879,7 +997,7 @@
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Continued Research for MC Linear Solvers}
+\begin{frame}{ECP R\&D I: Time-dependent Problems}
 
   Investigate use in time-dependent applications, e.g. non-linear radiation
   hydrodynamics for high-energy density physics applications:
@@ -895,15 +1013,103 @@
 
 %%---------------------------------------------------------------------------%%
 
+\begin{frame}{ECP R\&D II: Monte Carlo Particle Transport}
+
+  MC particle transport has applications in many areas across the DOE complex
+  \begin{itemize}
+    \setlength{\itemsep}{-0.2\baselineskip}
+  \item high-energy density physics
+  \item neutron spallation source
+  \item nuclear engineering
+  \item astrophysics
+  \item combustion
+  \end{itemize}
+
+  \vfill
+
+  There are significant challenges in porting random walk algorithms to modern
+  heterogeneous computing devices
+  \begin{enumerate}
+  \item Random walks are dominated by branching statements $\rightarrow$
+    thread divergence
+  \item Runtime is often dominated by sampling and interpolating large fields
+    of data (keeping the GPUs fed)
+  \end{enumerate}
+
+  \vfill
+
+  Supporting research into the efficient parallelization and instrumentation
+  of random walk algorithms for particle transport will benefit many
+  applications in DOE
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{ECP R\&D III: Particle Methods}
+
+  Non-stochastic particle methods share a great deal of algorithmic features
+  with stochastic particle methods
+  \begin{itemize}
+  \item Particles must be ordered and sorted efficiently
+  \item Particles must be moved through a combinatorial and mesh-based
+    geometries
+  \item Data structures must be optimized for efficient vectorization (over
+    32-thread warps on GPUs)
+  \item Inter-node communication of particle data structures are required for
+    domain decomposition parallel topologies
+  \item Physical parameters must be mapped between particles and an underlying
+    data representation (grid)
+  \end{itemize}
+
+  \vfill
+
+  A supporting technolgies research effort on a generalized set of libraries
+  for managing particle-based data structures on heterogeneous computing
+  platforms will benefit many applications in DOE
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
 \begin{frame}{Building on ASCR Funding}
 
-  MCREX has leveraged and built on work derived from several ASCR projects:
+  \underline{\bf Trilinos}
   \begin{itemize}
-  \item Trilinos
-  \item XPress
-  \item xSim
-  \item Ideas
+  \item Provides abstract solver interface for MCLS
+  \item Provides build system for Alea and MCLS
+  \item Provides data structures and utilities for Alea and MCLS
   \end{itemize}
+
+  \vfill
+
+  \underline{\bf xSIM}
+  \begin{itemize}
+  \item Simulator to test for hard error detection and remediation
+  \end{itemize}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Building on ASCR Funding}
+
+  \underline{\bf XPRESS}
+  \begin{itemize}
+  \item We are currently implementing a CUDA transport kernel with scheduling
+    optimized by HPX as part of XPRESS
+  \item We have already compared OpenMP versus HPX for on-node MC particle
+    transport algorithms
+  \end{itemize}
+
+  \begin{figure}
+    \centering
+    \begin{tabular}{cc}
+      \subfigure[time]{\includegraphics[width=2in]{time}}
+      &
+      \subfigure[efficiency]{\includegraphics[width=2in]{tallies}}
+    \end{tabular}
+  \end{figure}
 
 \end{frame}
 
