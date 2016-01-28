@@ -27,13 +27,14 @@
 %% SETUP STUFF
 %%---------------------------------------------------------------------------%%
 
-\logo{\includegraphics[width=2cm]{new_logo}}
+\logo{\includegraphics[width=2cm]{faded_logo}}
 
 \setbeamercolor{item}{fg=MSUgreen}
 \beamertemplatenavigationsymbolsempty
-\setbeamertemplate{headline}{}
-\setbeamertemplate{footline}{
-  \insertframenumber/\inserttotalframenumber}
+%\setbeamertemplate{headline}{}
+%\setbeamertemplate{footline}{
+%  \insertframenumber/\inserttotalframenumber}
+
 \setbeamertemplate{title page}
 {
   \begin{tabular}{cr}
@@ -41,7 +42,7 @@
       {\RaggedRight \bf \large \textcolor{MSUgreen}{\inserttitle}}\\
       \vspace{\baselineskip}\\
       \insertauthor\\
-      \vspace{0.5\baselineskip}\\
+      %\vspace{0.5\baselineskip}\\
       \insertinstitute\\
       \insertdate
     \end{minipage}
@@ -56,16 +57,15 @@
 %%---------------------------------------------------------------------------%%
 %% TITLE
 
-\title[MCREX]{Using Monte Carlo Algorithms to Achieve Resiliency \& Performance
-  at Scale for Linear and Nonlinear Solver Applications}
-\author{Thomas Evans (PI, ORNL)\\
+\title[MCREX]{MCREX: Using Monte Carlo Algorithms to Achieve Resiliency \&
+  Performance at Scale for Linear and Nonlinear Solver Applications}
+\author[Evans et al.]{Thomas Evans (PI, ORNL)\\
   Michele Benzi (Co-PI, Emory)\\
   Steven Hamilton (ORNL)\\
   Stuart Slattery (ORNL)\\
   Christian Engelmann (ORNL)\\
   Wayne Joubert (ORNL)\\
-  Massimiliano Lupo Pasini (Emory)
-}
+  Massimiliano Lupo Pasini (Emory) }
 \date[DOE, 2016]{DOE RX-Solvers, 1/29/2016}
 %\institute[ORNL]{Oak Ridge National Lab}
 
@@ -74,10 +74,12 @@
 %%---------------------------------------------------------------------------%%
 
 {
+  \setbeamertemplate{headline}{}
+  \setbeamertemplate{footline}{}
   \usebackgroundtemplate{
     \includegraphics[width=\paperwidth,height=\paperheight]{title_template}}
   \setbeamertemplate{logo}{}
-  \begin{frame}
+  \begin{frame}[plain]
     \titlepage
   \end{frame}
 }
@@ -162,8 +164,7 @@
   \begin{itemize}
   \item Developed multilevel parallel strategies for domain decomposed Monte
     Carlo that allows redundancy
-  \item Developed concurrent on-node random walk algorithms for GPU
-    optimization
+  \item Developed on-node random walk algorithms for GPU optimization
   \end{itemize}
 
   \vfill
@@ -179,10 +180,9 @@
 
 \begin{frame}{Monte Carlo for Linear Systems}
 
-  First reference, G.E. Forsythe and R.A. Leibler. Matrix Inverstion by a
-  Monte Carlo Method. \textit{Math. Tables and Comp.}, {\bf 4}(31), 127--129,
-  1950 (credited to von Neumann and Ulam, 1940s).
-  \vfill
+  First reference: G.E. Forsythe and R.A. Leibler. Matrix Inversion by
+    a Monte Carlo Method. \textit{Math. Tables and Comp.}, {\bf 4}(31),
+    127--129, 1950 (credited to von Neumann and Ulam, 1940s).
   \begin{itemize}
     \item Suppose we want to solve $\mathbf{Ax}=\mathbf{b}$
     \vfill
@@ -229,22 +229,14 @@
       \includegraphics<8>[width=4in]{../NCState_seminar_2014/adjoint_10000000}
     \end{center}
     \caption{
-      \only<1>{\textbf{Adjoint solution.}
-        \textit{\sn{1}{0} total histories.} }
-      \only<2>{\textbf{Adjoint solution.}
-        \textit{\sn{1}{1} total histories.} }
-      \only<3>{\textbf{Adjoint solution.}
-        \textit{\sn{1}{2} total histories.} }
-      \only<4>{\textbf{Adjoint solution.}
-        \textit{\sn{1}{3} total histories.} }
-      \only<5>{\textbf{Adjoint solution.}
-        \textit{\sn{1}{4} total histories.} }
-      \only<6>{\textbf{Adjoint solution.}
-        \textit{\sn{1}{5} total histories.} }
-      \only<7>{\textbf{Adjoint solution.}
-        \textit{\sn{1}{6} total histories.} }
-      \only<8>{\textbf{Adjoint solution.}
-        \textit{\sn{1}{7} total histories.} }
+      \only<1>{\textit{\sn{1}{0} total histories.} }%
+      \only<2>{\textit{\sn{1}{1} total histories.} }%
+      \only<3>{\textit{\sn{1}{2} total histories.} }%
+      \only<4>{\textit{\sn{1}{3} total histories.} }%
+      \only<5>{\textit{\sn{1}{4} total histories.} }%
+      \only<6>{\textit{\sn{1}{5} total histories.} }%
+      \only<7>{\textit{\sn{1}{6} total histories.} }%
+      \only<8>{\textit{\sn{1}{7} total histories.} }%
     }
   \end{figure}
 \end{frame}
@@ -341,8 +333,7 @@
     alternate polynomials, but partially offset by increase in number
     of histories required
   \end{itemize}
-  \vfill
-
+  \vspace{-0.6\baselineskip}
   \begin{table}
     \caption{Polynomial MCSA - Shifted Laplacian}
     \centering
@@ -379,6 +370,7 @@
 
   \begin{table}
   \centering
+  \caption{Advection--diffusion matrix with block diagonal preconditioning.}
   \begin{tabular}{cccc}
   \toprule
   \textbf{Block size} & \textbf{$\frac{nnz(H)}{nnz(A)}$}& $\rho(H)$
@@ -389,9 +381,6 @@
    33 & 9.8164 & $0.9783$  & $0.9774$\\
   \bottomrule
   \end{tabular}
-  \caption{$\rho(H)$ and $\rho(\hat{H})$ for advection--diffusion
-  matrix with block diagonal preconditioning.}
-  \label{tab:ifiss_block}
   \end{table}
 \end{frame}
 
@@ -412,6 +401,7 @@
 
   \begin{table}
   \centering
+  \caption{2D Laplacian with AINV preconditioning.}
   \begin{tabular}{cccc}
   \toprule
   \textbf{Drop tolerance} & \textbf{$\frac{nnz(H)}{nnz(A)}$}& $\rho(H)$
@@ -421,9 +411,6 @@
    0.01 & 33.1390 & $0.8668$ & $0.8279$ \\
   \bottomrule
   \end{tabular}
-  \caption{$\rho(H)$ and $\rho(\hat{H})$ for 2D
-  Laplacian with AINV preconditioning.}
-  \label{tab:lap2d_ainv}
   \end{table}
 \end{frame}
 
@@ -434,17 +421,13 @@
   \begin{columns}
     \begin{column}{0.5\textwidth}
       \begin{itemize}
-        \setlength{\itemsep}{-0.4\baselineskip}
+        %\setlength{\itemsep}{-0.4\baselineskip}
       \item Each parallel process owns a piece of the domain (linear
         system)
-        \bigskip
       \item Random walks must be transported between adjacent domains
         through parallel communication
-        \bigskip
       \item Domain decomposition determined by the input system
-        \bigskip
       \item Load balancing not yet addressed
-        \bigskip
       \item Uses modified version of the Milagro algorithm (LANL)
       \end{itemize}
     \end{column}
@@ -690,13 +673,16 @@
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Publications and Presentations}
+\begin{frame}{Publications}
 
-  \underline{Publications}
   \begin{itemize}
   \item M. Benzi, T.M. Evans, S.P. Hamilton, M.L. Pasini, and
     S.R. Slattery. Analysis of Monte Carlo Accelerated Iterative Methods for
     Sparse Linear Systems. \textit{in preparation}, 2016.
+  \item C. Engelmann and T. Naughton. A New Deadlock Resolution Protocol and
+    Message Matching Algorithm for the Extreme-scale
+    Simulator. \textit{Concurrency and Computation: Practice and Experience,
+      2016}. John Wiley \& Sons, Inc.. ISSN 1532-0634, 2016.
   \item S.R. Slattery, T.M. Evans, P.P.H. Wilson. A Spectral Analysis of the
     Domain Decomposed Monte Carlo Method for Linear Systems. \textit{Nuclear
       Engineering Design},  {\bf 295}, 632--638, 2015.
@@ -709,26 +695,67 @@
 
 %%---------------------------------------------------------------------------%%
 
-\begin{frame}{Publications and Presentations}
+\begin{frame}{Conferences}
 
-  \underline{Presentations}
   \begin{itemize}
     \footnotesize
     \setlength{\itemsep}{-0.1\baselineskip}
+  \item C. Engelmann and T. Naughton. Supporting the Development of Soft-Error
+    Resilient Message Passing Applications using Simulation. In
+    \textit{Proceedings of the 13th IASTED International Conference on
+      Parallel and Distributed Computing and Networks (PDCN) 2016}, Innsbruck,
+    Austria, February 15-16, 2016. ACTA Press, Calgary, AB, Canada.
   \item Monte Carlo Synthetic Acceleration Methods for Sparse Linear Systems
     (M.L. Pasini, M. Benzi, T. Evans, S. Hamilton, S. Slattery), \textit{SIAM
       ALA}, October 30, 2015.
   \item Parallel Algorithms for the Monte Carlo Synthetic Acceleration Linear
     Solver Method (S. Slattery, T. Evans, S. Hamilton), \textit{SIAM CSE},
     Salt Lake City, 2015.
+  \item C. Engelmann and T. Naughton. A Network Contention Model for the
+    Extreme-scale Simulator. In \textit{Proceedings of the 34th IASTED
+      International Conference on Modelling, Identification and Control (MIC)
+      2015}, Innsbruck, Austria, February 17-18, 2015. ACTA Press, Calgary,
+    AB, Canada.
   \item Iterative Performance of Monte Carlo Linear Solver Methods
     (M.L. Pasini), \textit{SIAM CSE}, Salt Lake City, 2015.
+  \end{itemize}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Conferences}
+
+  \begin{itemize}
+    \footnotesize
+    \setlength{\itemsep}{-0.1\baselineskip}
   \item A multilevel Monte Carlo method for linear systems (S. Slattery,
     T. Evans, S. Hamilton), \textit{Copper Mountain Conference on Iterative
       Solvers}, Copper MT, CO, 2014.
   \item Monte Carlo Synthetic Acceleration as approximate polynomial
     preconditioning (S. Hamilton, T. Evans, S. Slattery), \textit{Copper
       Mountain Conference on Iterative Solvers}, Copper MT, CO, 2014.
+  \item C. Engelmann and T. Naughton. Improving the Performance of the
+    Extreme-scale Simulator. In \textit{Proceedings of the 18th IEEE/ACM
+      International Symposium on Distributed Simulation and Real Time
+      Applications (DS-RT) 2014}, pages 198-207, Toulouse, France, October
+    1-3, 2014. IEEE Computer Society, Los Alamitos, CA, USA. ISBN
+    978-1-4799-6143-6. ISSN 1550-6525.
+  \item T. Naughton, C. Engelmann, G. Vallée, and S. Böhm. Supporting the
+    Development of Resilient Message Passing Applications using Simulation. In
+    \textit{Proceedings of the 22nd Euromicro International Conference on
+      Parallel, Distributed, and network-based Processing (PDP) 2014}, pages
+    271-278, Turin, Italy, February 12-14, 2014. IEEE Computer Society, Los
+    Alamitos, CA, USA. ISSN 1066-6192. Acceptance rate 32.6\% (73/224).
+  \end{itemize}
+
+\end{frame}
+
+%%---------------------------------------------------------------------------%%
+
+\begin{frame}{Presentations}
+
+  \begin{itemize}
   \item Monte Carlo Linear Solvers (S. Slattery, T. Evans, S. Hamilton),
     \textit{NC State Seminar}, Nov. 4, 2014.
   \item Monte Carlo Linear Solvers (S. Hamilton, T. Evans, S. Slattery),
@@ -837,7 +864,7 @@
           \end{center}
           \caption{Nonlinear iterations.}
         \end{table}
-
+        \vspace{-0.5\baselineskip}
         \begin{table}
           \begin{center}
             \begin{tabular}{lccc}
@@ -1024,7 +1051,7 @@
   \vfill
   \begin{figure}
     \centering
-    \includegraphics[height=.4\textwidth]{xsim}
+    \includegraphics[height=.35\textwidth]{xsim}
   \end{figure}
 
 \end{frame}
